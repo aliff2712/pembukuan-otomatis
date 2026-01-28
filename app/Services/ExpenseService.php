@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use App\Models\Expense;
-use App\Models\Journal;
+use App\Models\JournalEntry;
 use App\Models\JournalLine;
 use Illuminate\Support\Facades\DB;
 
@@ -25,9 +25,9 @@ class ExpenseService
             ]);
 
             /**
-             * 2. Buat journal header
+             * 2. Journal header (journal_entries)
              */
-            $journal = Journal::create([
+            $journalEntry = JournalEntry::create([
                 'journal_date' => $data['expense_date'],
                 'description'  => $data['description'] 
                                   ?? 'Pengeluaran operasional',
@@ -39,27 +39,27 @@ class ExpenseService
              * 3. Debit → Beban
              */
             JournalLine::create([
-                'journal_id' => $journal->id,
-                'coa_id'     => $data['expense_coa_id'],
-                'debit'      => $data['amount'],
-                'credit'     => 0,
+                'journal_entry_id' => $journalEntry->id,
+                'coa_id'           => $data['expense_coa_id'],
+                'debit'            => $data['amount'],
+                'credit'           => 0,
             ]);
 
             /**
-             * 4. Kredit → Kas
+             * 4. Kredit → Kas / Bank
              */
             JournalLine::create([
-                'journal_id' => $journal->id,
-                'coa_id'     => $data['cash_coa_id'],
-                'debit'      => 0,
-                'credit'     => $data['amount'],
+                'journal_entry_id' => $journalEntry->id,
+                'coa_id'           => $data['cash_coa_id'],
+                'debit'            => 0,
+                'credit'           => $data['amount'],
             ]);
 
             /**
-             * 5. Post ke ledger
-             * (kalau lu pakai event / observer, bagian ini bisa kosong)
+             * 5. Ledger posting
+             * (boleh via observer / event)
              */
-            // LedgerService::postFromJournal($journal);
+            // LedgerService::postFromJournal($journalEntry);
 
             return $expense;
         });

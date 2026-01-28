@@ -2,31 +2,19 @@
 
 namespace App\Console\Commands;
 
-use App\Models\JournalEntry;
-use Illuminate\Console\Command;
 use App\Models\DailyVoucherSale;
+use App\Models\JournalEntry;
+use App\Models\JournalLine;
+use App\Models\ChartOfAccount;
+use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 
 class JournalizeMikhmon extends Command
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
     protected $signature = 'journal:mikhmon {date?}';
+    protected $description = 'Generate journal from daily voucher sales';
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-       protected $description = 'Generate journal from daily voucher sales';
-
-    /**
-     * Execute the console command.
-     */
-      public function handle(): int
+    public function handle(): int
     {
         $date = $this->argument('date');
 
@@ -41,6 +29,10 @@ class JournalizeMikhmon extends Command
             $this->info('No daily voucher sales found.');
             return Command::SUCCESS;
         }
+
+        // === ambil COA (single source of truth) ===
+        $cashCoa = ChartOfAccount::where('account_code', '1101')->firstOrFail();   // Kas
+        $voucherRevenueCoa = ChartOfAccount::where('account_code', '4101')->firstOrFail(); // Pendapatan Voucher
 
         DB::beginTransaction();
 
@@ -57,6 +49,9 @@ class JournalizeMikhmon extends Command
                     continue;
                 }
 
+                /**
+                 * 1. Journal header
+                 */
                 $entry = JournalEntry::create([
                     'journal_date'  => $sale->sale_date,
                     'description'   => 'Penjualan voucher harian',
@@ -67,19 +62,24 @@ class JournalizeMikhmon extends Command
                     'total_credit' => $sale->total_amount,
                 ]);
 
-                $entry->lines()->createMany([
-                    [
-                        'account_code' => '1101',
-                        'account_name' => 'Kas',
-                        'debit'  => $sale->total_amount,
-                        'credit' => 0,
-                    ],
-                    [
-                        'account_code' => '4101',
-                        'account_name' => 'Pendapatan Voucher',
-                        'debit'  => 0,
-                        'credit' => $sale->total_amount,
-                    ],
+                /**
+                 * 2. Debit → Kas
+                 */
+                JournalLine::create([
+                    'journal_entry_id' => $entry->id,
+                    'coa_id'           => $cashCoa->id,
+                    'debit'            => $sale->total_amount,
+                    'credit'           => 0,
+                ]);
+
+                /**
+                 * 3. Kredit → Pendapatan Voucher
+                 */
+                JournalLine::create([
+                    'journal_entry_id' => $entry->id,
+                    'coa_id'           => $voucherRevenueCoa->id,
+                    'debit'            => 0,
+                    'credit'           => $sale->total_amount,
                 ]);
 
                 $this->info("Journal created for {$sale->sale_date}");

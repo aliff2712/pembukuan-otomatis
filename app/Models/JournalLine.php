@@ -8,14 +8,15 @@ class JournalLine extends Model
 {
     protected $fillable = [
         'journal_entry_id',
-        'account_code',
-        'account_name',
+        'coa_id',
         'debit',
-        'credit'
+        'credit',
     ];
-     public function coa()
+
+    public function coa()
     {
-        return $this->belongsTo(ChartOfAccount::class, 'coa_id');
+        return $this->belongsTo(ChartOfAccount::class);
     }
 }
+
 

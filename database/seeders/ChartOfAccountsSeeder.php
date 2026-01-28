@@ -18,6 +18,11 @@ class ChartOfAccountsSeeder extends Seeder
                 'account_type' => 'asset',
             ],
             [
+                'account_code' => '1102',
+                'account_name' => 'Bank',
+                'account_type' => 'asset',
+            ],
+            [
                 'account_code' => '1201',
                 'account_name' => 'Piutang Usaha',
                 'account_type' => 'asset',
@@ -27,6 +32,11 @@ class ChartOfAccountsSeeder extends Seeder
             [
                 'account_code' => '4101',
                 'account_name' => 'Pendapatan Voucher',
+                'account_type' => 'revenue',
+            ],
+            [
+                'account_code' => '4201',
+                'account_name' => 'Pendapatan Jasa',
                 'account_type' => 'revenue',
             ],
             [
@@ -66,4 +76,3 @@ class ChartOfAccountsSeeder extends Seeder
         }
     }
 }
-

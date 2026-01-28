@@ -1,4 +1,13 @@
 <h2>Catat Pengeluaran</h2>
+@if ($errors->any())
+    <div style="color:red">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
 
 @if(session('success'))
     <p style="color: green">{{ session('success') }}</p>
@@ -26,15 +35,16 @@
 
     <div>
         <label>Ambil dari Kas / Bank</label><br>
-       <select name="expense_coa_id" required>
-            <option value="">-- Pilih Beban --</option>
-            @foreach ($expenseAccounts as $account)
+        <select name="cash_coa_id" required>
+            <option value="">-- Pilih Kas / Bank --</option>
+            @foreach ($cashAccounts as $account)
                 <option value="{{ $account->id }}">
-{{ $account->account_code }} - {{ $account->account_name }}
+                    {{ $account->account_code }} - {{ $account->account_name }}
                 </option>
             @endforeach
         </select>
     </div>
+
 
     <div>
         <label>Nominal</label><br>

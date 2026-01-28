@@ -18,9 +18,12 @@ class ExpenseController extends Controller
     {
         return view('expenses.create', [
             'expenseAccounts' => ChartOfAccount::where('account_type', 'expense')->get(),
-            'cashAccounts' => ChartOfAccount::whereIn('account_type', ['cash', 'bank'])->get(),
+            'cashAccounts' => ChartOfAccount::where('account_type', 'asset')
+                ->where('is_cash', true)
+                ->get(),
         ]);
     }
+
 
     /**
      * SIMPAN EXPENSE → JOURNAL → LEDGER

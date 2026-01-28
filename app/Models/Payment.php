@@ -2,8 +2,6 @@
 
 namespace App\Models;
 
-use App\Models\Journal;
-use App\Models\BeatInvoice;
 use Illuminate\Database\Eloquent\Model;
 
 class Payment extends Model
@@ -12,7 +10,7 @@ class Payment extends Model
         'invoice_id',
         'payment_date',
         'amount',
-        'method',
+        'method',      // cash | bank
         'reference',
         'note',
     ];
@@ -25,10 +23,5 @@ class Payment extends Model
     public function invoice()
     {
         return $this->belongsTo(BeatInvoice::class, 'invoice_id');
-    }
-
-    public function journal()
-    {
-        return $this->morphOne(Journal::class, 'journalable');
     }
 }
