@@ -1,78 +1,115 @@
 <?php
 
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ChartOfAccountController;
+use App\Http\Controllers\JournalEntryController;
+use App\Http\Controllers\VoucherSaleController;
+use App\Http\Controllers\BeatInvoiceController;
+use App\Http\Controllers\PaymentController;
 use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
-| Web Routes - Dashboard
+| Web Routes - DHS FINANCE
 |--------------------------------------------------------------------------
 |
-| Route untuk halaman dashboard aplikasi pembukuan ISP
+| Route untuk aplikasi pembukuan ISP
 |
 */
 
-// Dashboard Route
+// =====================================================================
+// DASHBOARD
+// =====================================================================
 Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
 
-// API endpoint untuk mendapatkan data dashboard (opsional, untuk AJAX refresh)
+// API endpoint untuk data dashboard (AJAX refresh)
 Route::get('/api/dashboard/data', [DashboardController::class, 'apiData'])->name('dashboard.api');
 
-/*
-|--------------------------------------------------------------------------
-| Tambahkan route lainnya di bawah ini
-|--------------------------------------------------------------------------
-*/
+// =====================================================================
+// CHART OF ACCOUNTS
+// =====================================================================
+Route::resource('chart-of-accounts', ChartOfAccountController::class);
 
-// Beat Invoices
-Route::prefix('beat-invoices')->name('beat-invoices.')->group(function () {
-    Route::get('/', function() { return 'List Beat Invoices'; })->name('index');
-    Route::get('/create', function() { return 'Create Invoice'; })->name('create');
-    Route::get('/{id}', function($id) { return 'Show Invoice ' . $id; })->name('show');
-    Route::get('/{id}/edit', function($id) { return 'Edit Invoice ' . $id; })->name('edit');
-});
+// API endpoints untuk dropdown
+Route::get('/api/chart-of-accounts/by-type', [ChartOfAccountController::class, 'getByType'])
+    ->name('chart-of-accounts.by-type');
+Route::get('/api/chart-of-accounts/cash', [ChartOfAccountController::class, 'getCashAccounts'])
+    ->name('chart-of-accounts.cash');
 
-// Payments
-Route::prefix('payments')->name('payments.')->group(function () {
-    Route::get('/', function() { return 'List Payments'; })->name('index');
-    Route::get('/create', function() { return 'Create Payment'; })->name('create');
-    Route::get('/{id}', function($id) { return 'Show Payment ' . $id; })->name('show');
-});
-
-// Expenses
-Route::prefix('expenses')->name('expenses.')->group(function () {
-    Route::get('/', function() { return 'List Expenses'; })->name('index');
-    Route::get('/create', function() { return 'Create Expense'; })->name('create');
-    Route::get('/{id}', function($id) { return 'Show Expense ' . $id; })->name('show');
-    Route::get('/{id}/edit', function($id) { return 'Edit Expense ' . $id; })->name('edit');
-});
-
-// Voucher Sales
-Route::prefix('voucher-sales')->name('voucher-sales.')->group(function () {
-    Route::get('/', function() { return 'List Voucher Sales'; })->name('index');
-    Route::get('/create', function() { return 'Create Voucher Sale'; })->name('create');
-    Route::get('/{id}', function($id) { return 'Show Voucher Sale ' . $id; })->name('show');
-});
-
-// Journal Entries
+// =====================================================================
+// JOURNAL ENTRIES
+// =====================================================================
 Route::prefix('journal-entries')->name('journal-entries.')->group(function () {
-    Route::get('/', function() { return 'List Journal Entries'; })->name('index');
-    Route::get('/create', function() { return 'Create Journal Entry'; })->name('create');
-    Route::get('/{id}', function($id) { return 'Show Journal Entry ' . $id; })->name('show');
+    Route::get('/', [JournalEntryController::class, 'index'])->name('index');
+    Route::get('/daily', [JournalEntryController::class, 'daily'])->name('daily');
+    Route::get('/summary', [JournalEntryController::class, 'summaryByAccount'])->name('summary');
+    Route::get('/export', [JournalEntryController::class, 'export'])->name('export');
+    Route::get('/{id}', [JournalEntryController::class, 'show'])->name('show');
 });
 
-// Chart of Accounts
-Route::prefix('chart-of-accounts')->name('chart-of-accounts.')->group(function () {
-    Route::get('/', function() { return 'List Chart of Accounts'; })->name('index');
-    Route::get('/create', function() { return 'Create Account'; })->name('create');
-    Route::get('/{id}/edit', function($id) { return 'Edit Account ' . $id; })->name('edit');
+// API endpoint
+Route::get('/api/journal-entries', [JournalEntryController::class, 'api'])
+    ->name('journal-entries.api');
+
+// =====================================================================
+// VOUCHER SALES (Mikhmon)
+// =====================================================================
+Route::prefix('voucher-sales')->name('voucher-sales.')->group(function () {
+    Route::get('/', [VoucherSaleController::class, 'index'])->name('index');
+    Route::get('/reimport/form', [VoucherSaleController::class, 'reimportForm'])->name('reimport-form');
+    Route::post('/reimport', [VoucherSaleController::class, 'reimport'])->name('reimport');
+    Route::get('/export', [VoucherSaleController::class, 'export'])->name('export');
+    Route::get('/{id}', [VoucherSaleController::class, 'show'])->name('show');
+    Route::delete('/{id}', [VoucherSaleController::class, 'void'])->name('void');
 });
 
-// Reports
+// API endpoint untuk chart
+Route::get('/api/voucher-sales/chart', [VoucherSaleController::class, 'chartData'])
+    ->name('voucher-sales.chart');
+
+// =====================================================================
+// BEAT INVOICES
+// =====================================================================
+Route::prefix('beat-invoices')->name('beat-invoices.')->group(function () {
+    Route::get('/', [BeatInvoiceController::class, 'index'])->name('index');
+    Route::get('/export', [BeatInvoiceController::class, 'export'])->name('export');
+    Route::get('/{id}', [BeatInvoiceController::class, 'show'])->name('show');
+    Route::get('/{id}/pdf', [BeatInvoiceController::class, 'exportPDF'])->name('pdf');
+    Route::get('/{id}/preview', [BeatInvoiceController::class, 'previewPDF'])->name('preview');
+});
+
+// API endpoint untuk payment form
+Route::get('/api/invoices/unpaid', [BeatInvoiceController::class, 'getUnpaid'])
+    ->name('beat-invoices.unpaid');
+
+// =====================================================================
+// PAYMENTS
+// =====================================================================
+Route::prefix('payments')->name('payments.')->group(function () {
+    Route::get('/', [PaymentController::class, 'index'])->name('index');
+    Route::get('/create', [PaymentController::class, 'create'])->name('create');
+    Route::post('/', [PaymentController::class, 'store'])->name('store');
+    Route::get('/export', [PaymentController::class, 'export'])->name('export');
+    Route::get('/{id}', [PaymentController::class, 'show'])->name('show');
+    Route::delete('/{id}', [PaymentController::class, 'destroy'])->name('destroy');
+});
+
+// =====================================================================
+// EXPENSES (Akan ditambahkan approval flow)
+// =====================================================================
+Route::prefix('expenses')->name('expenses.')->group(function () {
+    Route::get('/', function() { return 'List Expenses - Coming Soon'; })->name('index');
+    Route::get('/create', function() { return 'Create Expense - Coming Soon'; })->name('create');
+    Route::get('/{id}', function($id) { return 'Show Expense - Coming Soon'; })->name('show');
+});
+
+// =====================================================================
+// REPORTS
+// =====================================================================
 Route::prefix('reports')->name('reports.')->group(function () {
-    Route::get('/ledger', function() { return 'Ledger Report'; })->name('ledger');
-    Route::get('/ar-aging', function() { return 'AR Aging Report'; })->name('ar-aging');
-    Route::get('/income-statement', function() { return 'Income Statement'; })->name('income-statement');
-    Route::get('/balance-sheet', function() { return 'Balance Sheet'; })->name('balance-sheet');
+    Route::get('/ledger', function() { return 'Ledger Report - Coming Soon'; })->name('ledger');
+    Route::get('/ar-aging', function() { return 'AR Aging Report - Coming Soon'; })->name('ar-aging');
+    Route::get('/income-statement', function() { return 'Income Statement - Coming Soon'; })->name('income-statement');
+    Route::get('/balance-sheet', function() { return 'Balance Sheet - Coming Soon'; })->name('balance-sheet');
 });
