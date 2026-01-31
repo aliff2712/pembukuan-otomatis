@@ -54,7 +54,7 @@
         .sidebar {
             width: 14rem;
             min-height: 100vh;
-            background: linear-gradient(180deg, #4e73df 10%, #224abe 100%);
+            background: linear-gradient(180deg, #f11313 10%, #d37919 100%);
         }
 
         .sidebar .sidebar-brand {
