@@ -1,13 +1,13 @@
 @extends('layouts.app')
 
-@section('title', 'Add Expense')
-@section('page-title', 'Add New Expense')
+@section('title', 'Edit Expense')
+@section('page-title', 'Edit Expense')
 
 @section('content')
 <!-- Back Button -->
 <div class="mb-3">
-    <a href="{{ route('expenses.index') }}" class="btn btn-secondary btn-sm">
-        <i class="fas fa-arrow-left"></i> Back to Expenses
+    <a href="{{ route('expenses.show', $expense->id) }}" class="btn btn-secondary btn-sm">
+        <i class="fas fa-arrow-left"></i> Back to Detail
     </a>
 </div>
 
@@ -15,7 +15,7 @@
 <div class="card shadow mb-4">
     <div class="card-header py-3">
         <h6 class="m-0 font-weight-bold text-primary">
-            <i class="fas fa-receipt"></i> Expense Information
+            <i class="fas fa-edit"></i> Edit Expense Information
         </h6>
     </div>
     <div class="card-body">
@@ -32,8 +32,9 @@
             </div>
         @endif
 
-        <form method="POST" action="{{ route('expenses.store') }}">
+        <form method="POST" action="{{ route('expenses.update', $expense->id) }}">
             @csrf
+            @method('PUT')
 
             <div class="row">
                 <!-- Expense Date -->
@@ -45,7 +46,7 @@
                         class="form-control @error('expense_date') is-invalid @enderror" 
                         id="expense_date" 
                         name="expense_date" 
-                        value="{{ old('expense_date', date('Y-m-d')) }}"
+                        value="{{ old('expense_date', $expense->expense_date) }}"
                         required>
                     @error('expense_date')
                         <div class="invalid-feedback">{{ $message }}</div>
@@ -63,7 +64,7 @@
                             class="form-control @error('amount') is-invalid @enderror" 
                             id="amount" 
                             name="amount" 
-                            value="{{ old('amount') }}"
+                            value="{{ old('amount', $expense->amount) }}"
                             placeholder="0"
                             min="0"
                             step="1"
@@ -88,7 +89,8 @@
                         required>
                         <option value="">-- Select Expense Account --</option>
                         @foreach($expenseAccounts as $account)
-                            <option value="{{ $account->id }}" {{ old('expense_coa_id') == $account->id ? 'selected' : '' }}>
+                            <option value="{{ $account->id }}" 
+                                {{ old('expense_coa_id', $expense->expense_coa_id) == $account->id ? 'selected' : '' }}>
                                 {{ $account->account_code }} - {{ $account->account_name }}
                             </option>
                         @endforeach
@@ -112,7 +114,8 @@
                         required>
                         <option value="">-- Select Cash/Bank Account --</option>
                         @foreach($cashAccounts as $account)
-                            <option value="{{ $account->id }}" {{ old('cash_coa_id') == $account->id ? 'selected' : '' }}>
+                            <option value="{{ $account->id }}" 
+                                {{ old('cash_coa_id', $expense->cash_coa_id) == $account->id ? 'selected' : '' }}>
                                 {{ $account->account_code }} - {{ $account->account_name }}
                             </option>
                         @endforeach
@@ -134,8 +137,8 @@
                         id="description" 
                         name="description" 
                         rows="4" 
-                        placeholder="Enter expense description (e.g., Pembelian alat kantor, Bayar listrik bulan ini, dll)"
-                        required>{{ old('description') }}</textarea>
+                        placeholder="Enter expense description"
+                        required>{{ old('description', $expense->description) }}</textarea>
                     @error('description')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -147,37 +150,24 @@
 
             <hr>
 
-            <!-- Info Box -->
-            <div class="alert alert-info" role="alert">
+            <!-- Warning Box -->
+            <div class="alert alert-warning" role="alert">
                 <h6 class="alert-heading">
-                    <i class="fas fa-info-circle"></i> Journal Entry Preview
+                    <i class="fas fa-exclamation-triangle"></i> Important Notice
                 </h6>
-                <p class="mb-0">
-                    When you save this expense, the system will automatically create a journal entry:
+                <p class="mb-0 small">
+                    When you update this expense, the related journal entry will also be updated automatically. 
+                    This will affect your financial reports and account balances.
                 </p>
-                <table class="table table-sm table-borderless mt-2 mb-0">
-                    <tr>
-                        <td width="100"><strong>Debit:</strong></td>
-                        <td id="preview-debit" class="text-muted">
-                            <em>Select expense account to see preview</em>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><strong>Credit:</strong></td>
-                        <td id="preview-credit" class="text-muted">
-                            <em>Select cash/bank account to see preview</em>
-                        </td>
-                    </tr>
-                </table>
             </div>
 
             <!-- Submit Buttons -->
             <div class="d-flex justify-content-between">
-                <a href="{{ route('expenses.index') }}" class="btn btn-secondary">
+                <a href="{{ route('expenses.show', $expense->id) }}" class="btn btn-secondary">
                     <i class="fas fa-times"></i> Cancel
                 </a>
                 <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-save"></i> Save Expense
+                    <i class="fas fa-save"></i> Update Expense
                 </button>
             </div>
         </form>
@@ -194,35 +184,11 @@ document.getElementById('amount').addEventListener('input', function(e) {
     document.getElementById('amountText').textContent = 'Rp ' + formatted;
 });
 
-// Update journal entry preview
-function updatePreview() {
-    const expenseSelect = document.getElementById('expense_coa_id');
-    const cashSelect = document.getElementById('cash_coa_id');
+// Trigger on page load
+window.addEventListener('load', function() {
     const amount = parseFloat(document.getElementById('amount').value) || 0;
-    
-    const expenseText = expenseSelect.options[expenseSelect.selectedIndex]?.text || '';
-    const cashText = cashSelect.options[cashSelect.selectedIndex]?.text || '';
-    
-    const amountFormatted = 'Rp ' + new Intl.NumberFormat('id-ID').format(amount);
-    
-    if (expenseText && expenseText !== '-- Select Expense Account --') {
-        document.getElementById('preview-debit').innerHTML = `<strong>${expenseText}</strong> - ${amountFormatted}`;
-    } else {
-        document.getElementById('preview-debit').innerHTML = '<em>Select expense account to see preview</em>';
-    }
-    
-    if (cashText && cashText !== '-- Select Cash/Bank Account --') {
-        document.getElementById('preview-credit').innerHTML = `<strong>${cashText}</strong> - ${amountFormatted}`;
-    } else {
-        document.getElementById('preview-credit').innerHTML = '<em>Select cash/bank account to see preview</em>';
-    }
-}
-
-document.getElementById('expense_coa_id').addEventListener('change', updatePreview);
-document.getElementById('cash_coa_id').addEventListener('change', updatePreview);
-document.getElementById('amount').addEventListener('input', updatePreview);
-
-// Trigger on page load if old values exist
-window.addEventListener('load', updatePreview);
+    const formatted = new Intl.NumberFormat('id-ID').format(amount);
+    document.getElementById('amountText').textContent = 'Rp ' + formatted;
+});
 </script>
 @endpush

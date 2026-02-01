@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+<nav class="navbar navbar-expand navbar-light topbar mb-4 static-top shadow topbar-silver">
     <!-- Sidebar Toggle (Topbar) -->
     <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle me-3">
         <i class="fa fa-bars"></i>
@@ -189,6 +189,26 @@
 </div>
 
 <style>
+    .topbar-silver {
+    background: linear-gradient(
+        180deg,
+        #f2f2f2 0%,
+        #e6e6e6 50%,
+        #d9d9d9 100%
+    );
+    border-bottom: 1px solid #cfcfcf;
+}
+.topbar-silver .nav-link,
+.topbar-silver .text-gray-800,
+.topbar-silver .text-gray-600 {
+    color: #5a5c69 !important;
+}
+
+.topbar-silver .nav-link:hover {
+    color: #ea6f0a !important; /* aksen orange */
+}
+
+
     .icon-circle {
         height: 2.5rem;
         width: 2.5rem;

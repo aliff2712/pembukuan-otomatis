@@ -1,12 +1,13 @@
 <?php
 
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\ChartOfAccountController;
-use App\Http\Controllers\JournalEntryController;
-use App\Http\Controllers\VoucherSaleController;
-use App\Http\Controllers\BeatInvoiceController;
-use App\Http\Controllers\PaymentController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ExpenseController;
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\BeatInvoiceController;
+use App\Http\Controllers\VoucherSaleController;
+use App\Http\Controllers\JournalEntryController;
+use App\Http\Controllers\ChartOfAccountController;
 
 /*
 |--------------------------------------------------------------------------
@@ -87,6 +88,7 @@ Route::get('/api/invoices/unpaid', [BeatInvoiceController::class, 'getUnpaid'])
 // PAYMENTS
 // =====================================================================
 Route::prefix('payments')->name('payments.')->group(function () {
+    route::get('/receipt/{id}', [PaymentController::class, 'receipt'])->name('receipt');
     Route::get('/', [PaymentController::class, 'index'])->name('index');
     Route::get('/create', [PaymentController::class, 'create'])->name('create');
     Route::post('/', [PaymentController::class, 'store'])->name('store');
@@ -96,13 +98,14 @@ Route::prefix('payments')->name('payments.')->group(function () {
 });
 
 // =====================================================================
-// EXPENSES (Akan ditambahkan approval flow)
 // =====================================================================
-Route::prefix('expenses')->name('expenses.')->group(function () {
-    Route::get('/', function() { return 'List Expenses - Coming Soon'; })->name('index');
-    Route::get('/create', function() { return 'Create Expense - Coming Soon'; })->name('create');
-    Route::get('/{id}', function($id) { return 'Show Expense - Coming Soon'; })->name('show');
-});
+Route::resource('expenses', ExpenseController::class);
+
+// Export expenses
+Route::get('/expenses-export', [ExpenseController::class, 'export'])->name('expenses.export');
+
+// Summary by account
+Route::get('/expenses-summary', [ExpenseController::class, 'summaryByAccount'])->name('expenses.summary');
 
 // =====================================================================
 // REPORTS

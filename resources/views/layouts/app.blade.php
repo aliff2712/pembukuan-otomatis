@@ -52,10 +52,27 @@
 
         /* Sidebar Styles */
         .sidebar {
-            width: 14rem;
-            min-height: 100vh;
-            background: linear-gradient(180deg, #f11313 10%, #d37919 100%);
-        }
+        position: relative;
+        width: 14rem;
+        min-height: 100vh;
+        background-color: #ea6f0a; /* warna dasar sidebar */
+        overflow: hidden;
+    }
+
+    /* background logo */
+    .sidebar::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image: url('/assets/img/dhs-logo.png');
+        background-repeat: no-repeat;
+        background-position: center top;
+        background-position: center 25%;
+        background-size: 100%;
+        opacity: 0.12; /* jangan lebih dari ini */
+        pointer-events: none;
+    }
+
 
         .sidebar .sidebar-brand {
             height: 4.375rem;
@@ -174,7 +191,7 @@
         /* Topbar */
         .topbar {
             height: 4.375rem;
-            background-color: #fff;
+            background-color: #ffffff8a;
             box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
         }
 
