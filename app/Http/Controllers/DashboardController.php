@@ -53,18 +53,22 @@ class DashboardController extends Controller
      */
     private function calculateBalance(string $accountCode): float
     {
-        $result = JournalLine::where('coa_id', $accountCode)
+        $result = JournalLine::join(
+                'chart_of_accounts as coa',
+                'coa.id',
+                '=',
+                'journal_lines.coa_id'
+            )
+            ->where('coa.account_code', $accountCode)
             ->selectRaw('
-                SUM(debit) as total_debit,
-                SUM(credit) as total_credit
+                COALESCE(SUM(journal_lines.debit), 0) -
+                COALESCE(SUM(journal_lines.credit), 0) as saldo
             ')
-            ->first();
+            ->value('saldo');
 
-        $totalDebit = $result->total_debit ?? 0;
-        $totalCredit = $result->total_credit ?? 0;
-
-        return $totalDebit - $totalCredit;
+        return $result;
     }
+
 
     /**
      * Menghitung pendapatan bulan ini
