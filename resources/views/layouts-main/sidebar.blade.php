@@ -58,6 +58,14 @@
         </a>
     </li>
 
+    <!-- Nav Item - Other Income -->
+    <li class="nav-item {{ request()->routeIs('other-incomes*') ? 'active' : '' }}">
+        <a class="nav-link" href="{{ route('other-incomes.index') }}">
+            <i class="fas fa-fw fa-wallet"></i>
+            <span>Other Income</span>
+        </a>
+    </li>
+
     <!-- Divider -->
     <hr class="sidebar-divider">
 

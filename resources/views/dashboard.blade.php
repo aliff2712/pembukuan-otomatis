@@ -137,6 +137,30 @@
                     </div>
                 </div>
 
+                <!-- Kartu Other Income Bulan Ini -->
+                <div class="col-12">
+                    <div class="card border-left-primary shadow mb-4">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                        Other Income (Bulan Ini)
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                        Rp {{ number_format($otherIncomeThisMonth ?? 0, 0, ',', '.') }}
+                                    </div>
+                                    <div class="mt-2 mb-0 text-muted text-xs">
+                                        <small>Sumber pendapatan selain invoice & voucher</small>
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-wallet fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Kartu Beban Bulan Ini -->
                 <div class="col-12">
                     <div class="card border-left-danger shadow mb-4">
@@ -216,6 +240,9 @@
                         </a>
                         <a href="{{ route('expenses.create') }}" class="list-group-item list-group-item-action">
                             <i class="fas fa-receipt text-danger"></i> Input Pengeluaran
+                        </a>
+                        <a href="{{ route('other-incomes.index') }}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-wallet text-success"></i> Kelola Other Income
                         </a>
                         <a href="{{ route('voucher-sales.index') }}" class="list-group-item list-group-item-action">
                             <i class="fas fa-ticket-alt text-warning"></i> Penjualan Voucher
