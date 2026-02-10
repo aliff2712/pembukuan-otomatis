@@ -7,6 +7,7 @@ use App\Models\DailyVoucherSale;
 use App\Models\Expense;
 use App\Models\Payment;
 use App\Models\JournalLine;
+use App\Models\OtherIncome;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
@@ -31,6 +32,11 @@ class DashboardController extends Controller
         // 4. PENDAPATAN BULAN INI
         $revenueThisMonth = $this->getRevenueThisMonth();
 
+        // 4b. OTHER INCOME BULAN INI
+        $otherIncomeThisMonth = OtherIncome::whereMonth('income_date', now()->month)
+            ->whereYear('income_date', now()->year)
+            ->sum('amount');
+
         // 5. BEBAN BULAN INI
         $expenseThisMonth = $this->getExpenseThisMonth();
 
@@ -42,6 +48,7 @@ class DashboardController extends Controller
             'bankBalance',
             'arBalance',
             'revenueThisMonth',
+            'otherIncomeThisMonth',
             'expenseThisMonth',
             'monthlyStats'
         ));
@@ -89,7 +96,12 @@ class DashboardController extends Controller
             ->whereYear('sale_date', $currentYear)
             ->sum('total_amount');
 
-        return $paymentRevenue + $voucherRevenue;
+        // Pendapatan dari sumber lain (OtherIncome)
+        $otherIncomeRevenue = OtherIncome::whereMonth('income_date', $currentMonth)
+            ->whereYear('income_date', $currentYear)
+            ->sum('amount');
+
+        return $paymentRevenue + $voucherRevenue + $otherIncomeRevenue;
     }
 
     /**
@@ -129,7 +141,11 @@ class DashboardController extends Controller
                 ->whereYear('sale_date', $year)
                 ->sum('total_amount');
 
-            $revenueData[] = $paymentRevenue + $voucherRevenue;
+            $otherIncome = OtherIncome::whereMonth('income_date', $month)
+                ->whereYear('income_date', $year)
+                ->sum('amount');
+
+            $revenueData[] = $paymentRevenue + $voucherRevenue + $otherIncome;
 
             // Beban bulan tersebut
             $expenseData[] = Expense::whereMonth('expense_date', $month)
@@ -158,6 +174,9 @@ class DashboardController extends Controller
                     $q->whereNotIn('status', ['paid', 'void']);
                 })->sum('amount'),
             'revenueThisMonth' => $this->getRevenueThisMonth(),
+            'otherIncomeThisMonth' => OtherIncome::whereMonth('income_date', now()->month)
+                ->whereYear('income_date', now()->year)
+                ->sum('amount'),
             'expenseThisMonth' => $this->getExpenseThisMonth(),
             'monthlyStats' => $this->getMonthlyStats(),
         ]);

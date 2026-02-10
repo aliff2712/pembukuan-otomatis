@@ -144,6 +144,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // =====================================================================
     // REPORTS
+            // OTHER INCOME
+            // =====================================================================
+            Route::resource('other-incomes', \App\Http\Controllers\OtherIncomeController::class);
+
+            // =====================================================================
+            // REPORTS
+            // =====================================================================
+        // =====================================================================
     // =====================================================================
     Route::prefix('reports')->name('reports.')->group(function () {
         Route::get('/ledger', function() { return 'Ledger Report - Coming Soon'; })->name('ledger');
@@ -155,8 +163,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // =====================================================================
     // PROFILE
     // =====================================================================
-    Route::post('/profile/password', [ProfileController::class, 'updatePassword'])
-    ->name('profile.password');
+    Route::patch('/profile/password', [ProfileController::class, 'updatePassword'])
+        ->name('profile.password');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

@@ -25,9 +25,9 @@ class ProfileController extends Controller
     }
 
     /**
-     * Update the user's profile information.
+     * Update the user's password.
      */
-   public function update(Request $request): RedirectResponse
+   public function updatePassword(Request $request): RedirectResponse
 {
     $validated = $request->validateWithBag('updatePassword', [
         'current_password' => ['required', 'current_password'],

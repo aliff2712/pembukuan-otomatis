@@ -1,6 +1,6 @@
 <form method="POST" action="{{ route('profile.password') }}" id="passwordForm">
     @csrf
-    @method('PUT')
+    @method('PATCH')
 
     <!-- Current Password -->
     <div class="mb-3">
@@ -105,31 +105,5 @@
     setupPasswordToggle('password', 'togglePassword');
     setupPasswordToggle('password_confirmation', 'togglePasswordConfirmation');
 
-    // Password match validation
-    const passwordInput = document.getElementById('password');
-    const confirmPasswordInput = document.getElementById('password_confirmation');
-
-    if (passwordInput && confirmPasswordInput) {
-        confirmPasswordInput.addEventListener('input', function() {
-            const password = passwordInput.value;
-            const confirmation = this.value;
-            
-            if (confirmation && password !== confirmation) {
-                this.classList.add('is-invalid');
-                if (!this.nextElementSibling || !this.nextElementSibling.classList.contains('invalid-feedback')) {
-                    const feedback = document.createElement('div');
-                    feedback.className = 'text-danger small mt-1';
-                    feedback.textContent = 'Password tidak cocok';
-                    this.parentElement.parentElement.appendChild(feedback);
-                }
-            } else {
-                this.classList.remove('is-invalid');
-                const feedback = this.parentElement.parentElement.querySelector('.text-danger');
-                if (feedback && feedback.textContent === 'Password tidak cocok') {
-                    feedback.remove();
-                }
-            }
-        });
-    }
 </script>
 @endpush
