@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts-main.app')
 
 @section('title', 'Re-import Voucher Sales')
 @section('page-title', 'Re-import Voucher Sales from Mikhmon')

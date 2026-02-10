@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts-main.app')
 
 @section('title', 'Add Payment')
 @section('page-title', 'Record New Payment')

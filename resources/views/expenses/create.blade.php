@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts-main.app')
 
 @section('title', 'Add Expense')
 @section('page-title', 'Add New Expense')

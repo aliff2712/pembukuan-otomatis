@@ -37,14 +37,45 @@ class ChartOfAccountController extends Controller
 
         $accounts = $query->orderBy('account_code')->paginate(20);
 
-        // Summary statistics
+        // Summary statistics with balance calculation
+        // Accounting equation: Assets = Liabilities + Equity
+        $assetBalance = JournalLine::join('chart_of_accounts', 'journal_lines.coa_id', '=', 'chart_of_accounts.account_code')
+            ->where('chart_of_accounts.account_type', 'asset')
+            ->selectRaw('SUM(debit) - SUM(credit) as balance')
+            ->value('balance') ?? 0;
+
+        $liabilityBalance = JournalLine::join('chart_of_accounts', 'journal_lines.coa_id', '=', 'chart_of_accounts.account_code')
+            ->where('chart_of_accounts.account_type', 'liability')
+            ->selectRaw('SUM(credit) - SUM(debit) as balance')
+            ->value('balance') ?? 0;
+
+        $equityBalance = JournalLine::join('chart_of_accounts', 'journal_lines.coa_id', '=', 'chart_of_accounts.account_code')
+            ->where('chart_of_accounts.account_type', 'equity')
+            ->selectRaw('SUM(credit) - SUM(debit) as balance')
+            ->value('balance') ?? 0;
+
+        $revenueBalance = JournalLine::join('chart_of_accounts', 'journal_lines.coa_id', '=', 'chart_of_accounts.account_code')
+            ->where('chart_of_accounts.account_type', 'revenue')
+            ->selectRaw('COALESCE(SUM(credit), 0) - COALESCE(SUM(debit), 0) as balance')
+            ->value('balance') ?? 0;
+
+        $expenseBalance = JournalLine::join('chart_of_accounts', 'journal_lines.coa_id', '=', 'chart_of_accounts.account_code')
+            ->where('chart_of_accounts.account_type', 'expense')
+            ->selectRaw('COALESCE(SUM(debit), 0) - COALESCE(SUM(credit), 0) as balance')
+            ->value('balance') ?? 0;
+
         $stats = [
             'total' => ChartOfAccount::count(),
-            'asset' => ChartOfAccount::where('account_type', 'asset')->count(),
-            'liability' => ChartOfAccount::where('account_type', 'liability')->count(),
-            'equity' => ChartOfAccount::where('account_type', 'equity')->count(),
-            'revenue' => ChartOfAccount::where('account_type', 'revenue')->count(),
-            'expense' => ChartOfAccount::where('account_type', 'expense')->count(),
+            'asset_count' => ChartOfAccount::where('account_type', 'asset')->count(),
+            // 'liability_count' => ChartOfAccount::where('account_type', 'liability')->count(),
+            'equity_count' => ChartOfAccount::where('account_type', 'equity')->count(),
+            'revenue_count' => ChartOfAccount::where('account_type', 'revenue')->count(),
+            'expense_count' => ChartOfAccount::where('account_type', 'expense')->count(),
+            'asset_balance' => $assetBalance,
+            // 'liability_balance' => $liabilityBalance,
+            'equity_balance' => $equityBalance,
+            'revenue_balance' => $revenueBalance,
+            'expense_balance' => $expenseBalance,
         ];
 
         return view('chart-of-accounts.index', compact('accounts', 'stats'));

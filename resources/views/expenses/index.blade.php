@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts-main.app')
 
 @section('title', 'Expenses')
 @section('page-title', 'Expenses - Pengeluaran Operasional')

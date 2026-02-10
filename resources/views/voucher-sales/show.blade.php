@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts-main.app')
 
 @section('title', 'Voucher Sale Detail')
 @section('page-title', 'Voucher Sale Detail')

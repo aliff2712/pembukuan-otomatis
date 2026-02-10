@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts-main.app')
 
 @section('title', 'Dashboard')
 @section('page-title', 'Dashboard Keuangan DHS Dipanet Hotspot Solution')

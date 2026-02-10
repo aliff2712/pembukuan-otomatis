@@ -334,7 +334,7 @@
     <!-- Page Wrapper -->
     <div id="wrapper">
         <!-- Sidebar -->
-        @include('layouts.sidebar')
+        @include('layouts-main.sidebar')
         <!-- End of Sidebar -->
 
         <!-- Content Wrapper -->
@@ -342,7 +342,7 @@
             <!-- Main Content -->
             <div id="content">
                 <!-- Topbar -->
-                @include('layouts.navbar')
+                @include('layouts-main.navbar')
                 <!-- End of Topbar -->
 
                 <!-- Begin Page Content -->
@@ -354,7 +354,7 @@
             <!-- End of Main Content -->
 
             <!-- Footer -->
-            @include('layouts.footer')
+            @include('layouts-main.footer')
             <!-- End of Footer -->
         </div>
         <!-- End of Content Wrapper -->

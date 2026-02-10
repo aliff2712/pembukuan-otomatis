@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts-main.app')
 
 @section('title', 'Voucher Sales')
 @section('page-title', 'Voucher Sales - Mikhmon')
@@ -180,7 +180,6 @@
                         <th>Total Transactions</th>
                         <th>Total Amount</th>
                         <th>Source</th>
-                        <th>Import Batch</th>
                         <th>Last Updated</th>
                         <th>Actions</th>
                     </tr>
@@ -202,9 +201,7 @@
                             <td>
                                 <span class="badge bg-secondary">{{ $sale->source }}</span>
                             </td>
-                            <td>
-                                <small class="text-muted">{{ $sale->import_batch_id ?? '-' }}</small>
-                            </td>
+                           
                             <td>
                                 <small>{{ \Carbon\Carbon::parse($sale->updated_at)->format('d/m/Y H:i') }}</small>
                             </td>

@@ -36,61 +36,6 @@
                 </form>
             </div>
         </li>
-
-        <!-- Nav Item - Alerts -->
-        <li class="nav-item dropdown no-arrow mx-1">
-            <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button"
-                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <i class="fas fa-bell fa-fw"></i>
-                <!-- Counter - Alerts -->
-                <span class="badge badge-danger badge-counter" 
-                    style="position: absolute; top: 0.5rem; right: 0.25rem; font-size: 0.7rem; padding: 0.25rem 0.4rem; background-color: #e74a3b;">
-                    3+
-                </span>
-            </a>
-            <!-- Dropdown - Alerts -->
-            <div class="dropdown-menu dropdown-menu-end shadow animated--grow-in"
-                aria-labelledby="alertsDropdown" style="min-width: 20rem;">
-                <h6 class="dropdown-header" style="background-color: #4e73df; color: white; font-weight: 700;">
-                    Alerts Center
-                </h6>
-                <a class="dropdown-item d-flex align-items-center" href="#">
-                    <div class="me-3">
-                        <div class="icon-circle bg-primary">
-                            <i class="fas fa-file-alt text-white" style="font-size: 0.85rem;"></i>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="small text-gray-500">December 12, 2024</div>
-                        <span class="font-weight-bold">3 Invoice belum dibayar bulan ini</span>
-                    </div>
-                </a>
-                <a class="dropdown-item d-flex align-items-center" href="#">
-                    <div class="me-3">
-                        <div class="icon-circle bg-success">
-                            <i class="fas fa-donate text-white" style="font-size: 0.85rem;"></i>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="small text-gray-500">December 7, 2024</div>
-                        Pembayaran Rp 2.900.000 telah diterima
-                    </div>
-                </a>
-                <a class="dropdown-item d-flex align-items-center" href="#">
-                    <div class="me-3">
-                        <div class="icon-circle bg-warning">
-                            <i class="fas fa-exclamation-triangle text-white" style="font-size: 0.85rem;"></i>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="small text-gray-500">December 2, 2024</div>
-                        Saldo kas menipis, segera isi ulang
-                    </div>
-                </a>
-                <a class="dropdown-item text-center small text-gray-500" href="#">Show All Alerts</a>
-            </div>
-        </li>
-
         <!-- Nav Item - Messages -->
         <li class="nav-item dropdown no-arrow mx-1">
             <a class="nav-link dropdown-toggle" href="#" id="messagesDropdown" role="button"
