@@ -425,7 +425,7 @@
             <div class="amount-label">JUMLAH PEMBAYARAN</div>
             <div class="amount-value">Rp {{ number_format($payment->amount, 0, ',', '.') }}</div>
             <div class="amount-words">
-                {{ ucwords(\App\Helpers\NumberToWordsHelper::convert($payment->amount)) }} Rupiah
+                
             </div>
         </div>
 

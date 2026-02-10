@@ -130,13 +130,15 @@
                 <tbody>
                     @php
                         $lines = \DB::table('journal_lines')
+                            ->leftJoin('chart_of_accounts as coa', 'coa.id', '=', 'journal_lines.coa_id')
                             ->where('journal_entry_id', $journalEntry->id)
+                            ->select('journal_lines.*', 'coa.account_code', 'coa.account_name')
                             ->get();
                     @endphp
                     @foreach($lines as $line)
                         <tr>
-                            <td>{{ $line->account_code }}</td>
-                            <td>{{ $line->account_name }}</td>
+                            <td>{{ $line->account_code ?? $line->coa_id }}</td>
+                            <td>{{ $line->account_name ?? '-' }}</td>
                             <td class="text-end">
                                 {{ $line->debit > 0 ? 'Rp ' . number_format($line->debit, 0, ',', '.') : '-' }}
                             </td>

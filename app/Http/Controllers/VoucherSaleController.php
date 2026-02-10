@@ -50,18 +50,19 @@ class VoucherSaleController extends Controller
     /**
      * Display the specified voucher sale
      */
-    // public function show($id)
-    // {
-    //     $sale = DailyVoucherSale::findOrFail($id);
+     public function show($id)
+        {    
 
-    //     // Get journal entry related to this sale (if any)
-    //     // $journalEntry = \DB::table('journal_entries')
-    //         ->where('source_type', 'mikhmon')
-    //         ->where('source_id', $sale->id)
-    //         ->first();
+        $sale = DailyVoucherSale::findOrFail($id);
 
-    //     return view('voucher-sales.show', compact('sale', 'journalEntry'));
-    // }
+        // Get journal entry related to this sale (if any)
+        $journalEntry = DB::table('journal_entries')
+            ->where('source_type', 'mikhmon')
+            ->where('source_id', $sale->id)
+            ->first();
+
+        return view('voucher-sales.show', compact('sale', 'journalEntry'));
+    }
 
     /**
      * Re-import voucher sales (trigger command)
