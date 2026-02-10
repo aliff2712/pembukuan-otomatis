@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('journal_lines', function (Blueprint $table) {
         $table->id();
         $table->foreignId('journal_entry_id')->constrained()->cascadeOnDelete();
-        $table->string('account_code');
-        $table->string('account_name');
+        // $table->string('account_code');
+        // $table->string('account_name');
         $table->decimal('debit', 14, 2)->default(0);
         $table->decimal('credit', 14, 2)->default(0);
         $table->timestamps();

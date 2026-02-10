@@ -10,12 +10,34 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class BeatImportRaw extends Command
 {
-    protected $signature = 'beat:import-raw {file}';
+    protected $signature = 'beat:import-raw {file?}';
     protected $description = 'Import RAW Beat CSV/XLSX';
 
   public function handle(): int
 {
     $file = $this->argument('file');
+
+    // If no file provided, look for the latest file in a default import directory
+    if (!$file) {
+        $importDir = storage_path('imports/beat');
+        if (!is_dir($importDir)) {
+            $this->error("Import directory not found: {$importDir}");
+            return Command::FAILURE;
+        }
+
+        $files = glob($importDir . '/*.{csv,xlsx,xls}', GLOB_BRACE);
+        if (empty($files)) {
+            $this->info("No files to import in: {$importDir}");
+            return Command::SUCCESS;
+        }
+
+        // Get the most recently modified file
+        usort($files, function($a, $b) {
+            return filemtime($b) - filemtime($a);
+        });
+        $file = $files[0];
+        $this->info("Using file: {$file}");
+    }
 
     if (! file_exists($file)) {
         $this->error("File not found: {$file}");

@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Expense;
+use App\Models\ChartOfAccount;
 use App\Models\JournalEntry;
 use App\Models\JournalLine;
 use Illuminate\Support\Facades\DB;
@@ -25,41 +26,44 @@ class ExpenseService
             ]);
 
             /**
-             * 2. Journal header (journal_entries)
+             * 2. Get account info
+             */
+            $expenseAccount = ChartOfAccount::findOrFail($data['expense_coa_id']);
+            $cashAccount = ChartOfAccount::findOrFail($data['cash_coa_id']);
+
+            /**
+             * 3. Journal header (journal_entries)
              */
             $journalEntry = JournalEntry::create([
-                'journal_date' => $data['expense_date'],
-                'description'  => $data['description'] 
-                                  ?? 'Pengeluaran operasional',
-                'source_type'  => 'expense',
-                'source_id'    => $expense->id,
+                'journal_date'   => $data['expense_date'],
+                'description'    => $data['description'] ?? 'Pengeluaran operasional',
+                'source_type'    => 'expense',
+                'source_id'      => $expense->id,
+                'total_debit'    => $data['amount'],  // ✅ TAMBAHKAN INI
+                'total_credit'   => $data['amount'],  // ✅ TAMBAHKAN INI
             ]);
 
             /**
-             * 3. Debit → Beban
+             * 4. Debit → Beban
              */
             JournalLine::create([
                 'journal_entry_id' => $journalEntry->id,
-                'coa_id'           => $data['expense_coa_id'],
+                'account_code'     => $expenseAccount->account_code,
+                'account_name'     => $expenseAccount->account_name,
                 'debit'            => $data['amount'],
                 'credit'           => 0,
             ]);
 
             /**
-             * 4. Kredit → Kas / Bank
+             * 5. Kredit → Kas / Bank
              */
             JournalLine::create([
                 'journal_entry_id' => $journalEntry->id,
-                'coa_id'           => $data['cash_coa_id'],
+                'account_code'     => $cashAccount->account_code,
+                'account_name'     => $cashAccount->account_name,
                 'debit'            => 0,
                 'credit'           => $data['amount'],
             ]);
-
-            /**
-             * 5. Ledger posting
-             * (boleh via observer / event)
-             */
-            // LedgerService::postFromJournal($journalEntry);
 
             return $expense;
         });

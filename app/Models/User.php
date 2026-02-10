@@ -33,15 +33,52 @@ class User extends Authenticatable
     ];
 
     /**
-     * Get the attributes that should be cast.
+     * The attributes that should be cast.
      *
-     * @return array<string, string>
+     * @var array<string,string>
      */
-    protected function casts(): array
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',
+    ];
+    // Tambahkan di dalam class User
+// Tambahkan di app/Models/User.php
+
+    public function sentMessages()
     {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
+        return $this->hasMany(Message::class, 'sender_id')
+            ->latest();
     }
+
+    public function receivedMessages()
+    {
+        return $this->hasMany(Message::class, 'receiver_id')
+            ->latest();
+    }
+
+    public function unreadMessages()
+    {
+        return $this->receivedMessages()
+            ->unread();
+    }
+
+    // Optimized accessor dengan caching
+    public function getUnreadCountAttribute()
+    {
+        // Cache untuk 30 detik
+        return cache()->remember(
+            'user.'. $this->id .'.unread_count',
+            30,
+            fn() => $this->unreadMessages()->count()
+        );
+    }
+
+    // Clear cache setelah message dibaca
+    protected static function booted()
+    {
+        static::updated(function ($user) {
+            cache()->forget('user.'. $user->id .'.unread_count');
+        });
+    }
+
 }
