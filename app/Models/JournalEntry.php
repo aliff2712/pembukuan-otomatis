@@ -7,6 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class JournalEntry extends Model
 {
+    protected $casts = [
+    'journal_date' => 'datetime',
+];
+
     protected $fillable = [
         'journal_date',
         'description',

@@ -1,48 +1,135 @@
-<section>
-    <header>
-        <h2 class="text-lg font-medium text-gray-900">
-            {{ __('Update Password') }}
-        </h2>
+<form method="POST" action="{{ route('profile.password') }}" id="passwordForm">
+    @csrf
+    @method('PUT')
 
-        <p class="mt-1 text-sm text-gray-600">
-            {{ __('Ensure your account is using a long, random password to stay secure.') }}
-        </p>
-    </header>
-
-    <form method="post" action="{{ route('password.update') }}" class="mt-6 space-y-6">
-        @csrf
-        @method('put')
-
-        <div>
-            <x-input-label for="update_password_current_password" :value="__('Current Password')" />
-            <x-text-input id="update_password_current_password" name="current_password" type="password" class="mt-1 block w-full" autocomplete="current-password" />
-            <x-input-error :messages="$errors->updatePassword->get('current_password')" class="mt-2" />
+    <!-- Current Password -->
+    <div class="mb-3">
+        <label for="current_password" class="form-label fw-semibold">
+            <i class="fas fa-key text-muted me-1"></i> Password Saat Ini
+        </label>
+        <div class="input-group">
+            <input 
+                type="password" 
+                name="current_password" 
+                id="current_password" 
+                class="form-control @error('current_password', 'updatePassword') is-invalid @enderror" 
+                required
+                autocomplete="current-password"
+            >
+            <button type="button" class="btn btn-outline-secondary" id="toggleCurrentPassword" tabindex="-1">
+                <i class="fas fa-eye"></i>
+            </button>
         </div>
+        @error('current_password', 'updatePassword')
+            <div class="text-danger small mt-1">{{ $message }}</div>
+        @enderror
+    </div>
 
-        <div>
-            <x-input-label for="update_password_password" :value="__('New Password')" />
-            <x-text-input id="update_password_password" name="password" type="password" class="mt-1 block w-full" autocomplete="new-password" />
-            <x-input-error :messages="$errors->updatePassword->get('password')" class="mt-2" />
+    <!-- New Password -->
+    <div class="mb-3">
+        <label for="password" class="form-label fw-semibold">
+            <i class="fas fa-lock text-muted me-1"></i> Password Baru
+        </label>
+        <div class="input-group">
+            <input 
+                type="password" 
+                name="password" 
+                id="password" 
+                class="form-control @error('password', 'updatePassword') is-invalid @enderror" 
+                required
+                autocomplete="new-password"
+            >
+            <button type="button" class="btn btn-outline-secondary" id="togglePassword" tabindex="-1">
+                <i class="fas fa-eye"></i>
+            </button>
         </div>
+        @error('password', 'updatePassword')
+            <div class="text-danger small mt-1">{{ $message }}</div>
+        @enderror
+        <small class="text-muted">Minimal 8 karakter</small>
+    </div>
 
-        <div>
-            <x-input-label for="update_password_password_confirmation" :value="__('Confirm Password')" />
-            <x-text-input id="update_password_password_confirmation" name="password_confirmation" type="password" class="mt-1 block w-full" autocomplete="new-password" />
-            <x-input-error :messages="$errors->updatePassword->get('password_confirmation')" class="mt-2" />
+    <!-- Confirm Password -->
+    <div class="mb-3">
+        <label for="password_confirmation" class="form-label fw-semibold">
+            <i class="fas fa-lock text-muted me-1"></i> Konfirmasi Password Baru
+        </label>
+        <div class="input-group">
+            <input 
+                type="password" 
+                name="password_confirmation" 
+                id="password_confirmation" 
+                class="form-control" 
+                required
+                autocomplete="new-password"
+            >
+            <button type="button" class="btn btn-outline-secondary" id="togglePasswordConfirmation" tabindex="-1">
+                <i class="fas fa-eye"></i>
+            </button>
         </div>
+    </div>
 
-        <div class="flex items-center gap-4">
-            <x-primary-button>{{ __('Save') }}</x-primary-button>
+    <div class="d-grid gap-2">
+        <button type="submit" class="btn btn-warning text-white">
+            <i class="fas fa-key me-1"></i> Ubah Password
+        </button>
+    </div>
+</form>
 
-            @if (session('status') === 'password-updated')
-                <p
-                    x-data="{ show: true }"
-                    x-show="show"
-                    x-transition
-                    x-init="setTimeout(() => show = false, 2000)"
-                    class="text-sm text-gray-600"
-                >{{ __('Saved.') }}</p>
-            @endif
-        </div>
-    </form>
-</section>
+@push('scripts')
+<script>
+    // Toggle password visibility
+    function setupPasswordToggle(inputId, buttonId) {
+        const button = document.getElementById(buttonId);
+        if (!button) return;
+        
+        button.addEventListener('click', function() {
+            const input = document.getElementById(inputId);
+            const icon = this.querySelector('i');
+            
+            if (!input) return;
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        });
+    }
+
+    setupPasswordToggle('current_password', 'toggleCurrentPassword');
+    setupPasswordToggle('password', 'togglePassword');
+    setupPasswordToggle('password_confirmation', 'togglePasswordConfirmation');
+
+    // Password match validation
+    const passwordInput = document.getElementById('password');
+    const confirmPasswordInput = document.getElementById('password_confirmation');
+
+    if (passwordInput && confirmPasswordInput) {
+        confirmPasswordInput.addEventListener('input', function() {
+            const password = passwordInput.value;
+            const confirmation = this.value;
+            
+            if (confirmation && password !== confirmation) {
+                this.classList.add('is-invalid');
+                if (!this.nextElementSibling || !this.nextElementSibling.classList.contains('invalid-feedback')) {
+                    const feedback = document.createElement('div');
+                    feedback.className = 'text-danger small mt-1';
+                    feedback.textContent = 'Password tidak cocok';
+                    this.parentElement.parentElement.appendChild(feedback);
+                }
+            } else {
+                this.classList.remove('is-invalid');
+                const feedback = this.parentElement.parentElement.querySelector('.text-danger');
+                if (feedback && feedback.textContent === 'Password tidak cocok') {
+                    feedback.remove();
+                }
+            }
+        });
+    }
+</script>
+@endpush

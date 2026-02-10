@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ExpenseController;
+use App\Http\Controllers\MessageController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
@@ -45,6 +46,20 @@ Route::middleware(['auth', 'verified'])->group(function () {
     
     // API endpoint untuk data dashboard (AJAX refresh)
     Route::get('/api/dashboard/data', [DashboardController::class, 'apiData'])->name('dashboard.api');
+    // Tambahkan di dalam Route::middleware(['auth', 'verified'])->group(function () {
+    
+    // Messages
+    Route::prefix('messages')->name('messages.')->group(function () {
+        Route::get('/', [MessageController::class, 'index'])->name('index');
+        Route::get('/{user}', [MessageController::class, 'show'])->name('show');
+        Route::post('/', [MessageController::class, 'store'])->name('store');
+    });
+
+    // API for messages
+    Route::get('/api/messages/unread-count', [MessageController::class, 'unreadCount'])
+        ->name('messages.unread-count');
+    Route::get('/api/messages/{user}/new', [MessageController::class, 'getNewMessages'])
+        ->name('messages.new');
 
     // =====================================================================
     // CHART OF ACCOUNTS
@@ -140,6 +155,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // =====================================================================
     // PROFILE
     // =====================================================================
+    Route::post('/profile/password', [ProfileController::class, 'updatePassword'])
+    ->name('profile.password');
+
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
