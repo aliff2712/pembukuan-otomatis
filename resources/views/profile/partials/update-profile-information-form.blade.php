@@ -1,4 +1,4 @@
-<form method="POST" action="{{ route('profile.edit') }}" id="profileForm">
+<form method="POST" action="{{ route('profile.update') }}" id="profileForm">
     @csrf
     @method('PATCH')
 
