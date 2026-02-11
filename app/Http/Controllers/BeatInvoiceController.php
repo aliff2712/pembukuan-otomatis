@@ -7,11 +7,17 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
 
+
 class BeatInvoiceController extends Controller
 {
     public function index()
     {
-        $query = BeatInvoice::query();
+        // Filter berdasarkan status jika ada
+        if (request()->filled('status')) {
+            $query = BeatInvoice::byPaymentStatus(request('status'));
+        } else {
+            $query = BeatInvoice::query();
+        }
 
         // search by customer name or pppoe or package
         if (request()->filled('search')) {
@@ -23,20 +29,13 @@ class BeatInvoiceController extends Controller
             });
         }
 
-        if (request()->filled('status')) {
-            $query->where('status', request('status'));
-        }
-
         $invoices = $query->orderBy('period_year', 'desc')
             ->orderBy('period_month', 'desc')
             ->paginate(20)
             ->withQueryString();
 
-        $stats = [
-            'total' => BeatInvoice::count(),
-            'total_amount' => (int) BeatInvoice::sum('total_amount'),
-            'unpaid_count' => BeatInvoice::whereRaw('total_amount > COALESCE((select SUM(amount) from payments where payments.invoice_id = beat_invoices.id),0)')->count(),
-        ];
+        // Get stats
+        $stats = BeatInvoice::getStats();
 
         return view('beat-invoices.index', compact('invoices', 'stats'));
     }
@@ -47,21 +46,25 @@ class BeatInvoiceController extends Controller
 
         return view('beat-invoices.show', compact('invoice'));
     }
-
-    public function getUnpaid()
-    {
-        $unpaid = BeatInvoice::get()->map(function($inv) {
+public function getUnpaid()
+{
+    $unpaid = BeatInvoice::select('beat_invoices.*')
+        ->selectRaw('COALESCE(SUM(payments.amount),0) as paid_amount')
+        ->leftJoin('payments', 'payments.invoice_id', '=', 'beat_invoices.id')
+        ->groupBy('beat_invoices.id')
+        ->havingRaw('beat_invoices.total_amount > COALESCE(SUM(payments.amount),0)')
+        ->get()
+        ->map(function($inv){
             return [
                 'id' => $inv->id,
                 'customer_name' => $inv->customer_name,
                 'total_amount' => $inv->total_amount,
-                // 'paid_amount' => $inv->paid_amount ?? $inv->payments()->sum('amount'),
-                'outstanding' => $inv->outstanding_amount,
+                'paid_amount' => $inv->paid_amount,
+                'outstanding' => $inv->total_amount - $inv->paid_amount,
             ];
-        })->filter(function($i){
-            return $i['outstanding'] > 0;
-        })->values();
+        });
 
-        return response()->json($unpaid);
-    }
+    return response()->json($unpaid);
+}
+
 }
