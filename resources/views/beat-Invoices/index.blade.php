@@ -31,12 +31,21 @@
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card p-3">
-                <div class="text-xs text-muted">{{ __('Unpaid Invoices') }}</div>
-                <div class="h5">{{ number_format($stats['unpaid_count'] ?? 0) }}</div>
+            <div class="card p-3 border-danger">
+                <div class="text-xs text-muted">
+                    <i class="fas fa-times-circle text-danger"></i> {{ __('Unpaid') }}
+                </div>
+                <div class="h5 text-danger">{{ number_format($stats['unpaid_count'] ?? 0) }}</div>
             </div>
         </div>
-        
+        <div class="col-md-3">
+            <div class="card p-3 border-warning">
+                <div class="text-xs text-muted">
+                    <i class="fas fa-exclamation-circle text-warning"></i> {{ __('Partial') }}
+                </div>
+                <div class="h5 text-warning">{{ number_format($stats['partial_count'] ?? 0) }}</div>
+            </div>
+        </div>
     </div>
 
     <div class="card shadow">

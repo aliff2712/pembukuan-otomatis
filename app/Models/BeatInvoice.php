@@ -28,6 +28,14 @@ class BeatInvoice extends Model
     protected $casts = [
         'total_amount' => 'integer',
     ];
+    public function getComputedStatusAttribute()
+{
+    $paid = $this->payments()->sum('amount');
+
+    if ($paid == 0) return 'unpaid';
+    if ($paid < $this->total_amount) return 'partial';
+    return 'paid';
+}
 
     public function staging()
     {
@@ -43,10 +51,10 @@ class BeatInvoice extends Model
             return $this->hasOne(Journal::class, 'reference_id')->where('reference_type', 'BeatInvoice');
         }
 
-        public function payments()
-        {
-            return $this->hasMany(Payment::class, 'invoice_id');
-        }
+         public function payments()
+    {
+        return $this->hasMany(Payment::class, 'invoice_id');
+    }
 
         public function getPaidAmountAttribute(): int
         {
@@ -71,5 +79,44 @@ class BeatInvoice extends Model
             return 'paid';
         }
 
+    /**
+     * Scope untuk filter berdasarkan payment status
+     */
+    public function scopeByPaymentStatus($query, $status)
+    {
+        return $query->selectRaw(
+            'beat_invoices.*,'
+            .'COALESCE(SUM(payments.amount), 0) as paid_amount'
+        )
+        ->leftJoin('payments', 'payments.invoice_id', '=', 'beat_invoices.id')
+        ->groupBy('beat_invoices.id')
+        ->when($status === 'unpaid', function($q) {
+            return $q->havingRaw('COALESCE(SUM(payments.amount), 0) = 0');
+        })
+        ->when($status === 'partial', function($q) {
+            return $q->havingRaw(
+                'COALESCE(SUM(payments.amount), 0) > 0 AND '
+                .'COALESCE(SUM(payments.amount), 0) < beat_invoices.total_amount'
+            );
+        })
+        ->when($status === 'paid', function($q) {
+            return $q->havingRaw(
+                'COALESCE(SUM(payments.amount), 0) >= beat_invoices.total_amount'
+            );
+        });
+    }
 
+    /**
+     * Get stats untuk dashboard
+     */
+    public static function getStats()
+    {
+        return [
+            'total' => self::count(),
+            'total_amount' => (int) self::sum('total_amount'),
+            'paid_count' => self::byPaymentStatus('paid')->count(),
+            'partial_count' => self::byPaymentStatus('partial')->count(),
+            'unpaid_count' => self::byPaymentStatus('unpaid')->count(),
+        ];
+    }
 }
