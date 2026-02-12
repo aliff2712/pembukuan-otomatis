@@ -98,37 +98,37 @@
         Laporan
     </div>
 
-    <!-- Nav Item - Reports Collapse Menu -->
-    <li class="nav-item {{ request()->routeIs('reports*') ? 'active' : '' }}">
-        <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseReports"
-            aria-expanded="true" aria-controls="collapseReports">
-            <i class="fas fa-fw fa-chart-bar"></i>
-            <span>Reports</span>
+    <!-- Nav Item - Ledger -->
+    <li class="nav-item {{ request()->routeIs('reports.ledger') ? 'active' : '' }}">
+        <a class="nav-link" href="{{ route('reports.ledger') }}">
+            <i class="fas fa-fw fa-book-open"></i>
+            <span>Ledger</span>
         </a>
-        <div id="collapseReports" class="collapse {{ request()->routeIs('reports*') ? 'show' : '' }}" 
-            aria-labelledby="headingReports" data-bs-parent="#accordionSidebar">
-            <div class="bg-white py-2 collapse-inner rounded">
-                <h6 class="collapse-header">Financial Reports:</h6>
-                <a class="collapse-item {{ request()->routeIs('reports.ledger') ? 'active' : '' }}" 
-                    href="{{ route('reports.ledger') }}">
-                    <i class="fas fa-angle-right"></i> Ledger
-                </a>
-                <a class="collapse-item {{ request()->routeIs('reports.ar-aging') ? 'active' : '' }}" 
-                    href="{{ route('reports.ar-aging') }}">
-                    <i class="fas fa-angle-right"></i> AR Aging
-                </a>
-                <a class="collapse-item {{ request()->routeIs('reports.income-statement') ? 'active' : '' }}" 
-                    href="{{ route('reports.income-statement') }}">
-                    <i class="fas fa-angle-right"></i> Income Statement
-                </a>
-                <a class="collapse-item {{ request()->routeIs('reports.balance-sheet') ? 'active' : '' }}" 
-                    href="{{ route('reports.balance-sheet') }}">
-                    <i class="fas fa-angle-right"></i> Balance Sheet
-                </a>
-            </div>
-        </div>
     </li>
 
+    <!-- Nav Item - AR Aging -->
+    <li class="nav-item {{ request()->routeIs('reports.ar-aging') ? 'active' : '' }}">
+        <a class="nav-link" href="{{ route('reports.ar-aging') }}">
+            <i class="fas fa-fw fa-hourglass-end"></i>
+            <span>AR Aging</span>
+        </a>
+    </li>
+
+    <!-- Nav Item - Income Statement -->
+    <li class="nav-item {{ request()->routeIs('reports.income-statement') ? 'active' : '' }}">
+        <a class="nav-link" href="{{ route('reports.income-statement') }}">
+            <i class="fas fa-fw fa-chart-line"></i>
+            <span>Income Statement</span>
+        </a>
+    </li>
+
+    <!-- Nav Item - Balance Sheet -->
+    <li class="nav-item {{ request()->routeIs('reports.balance-sheet') ? 'active' : '' }}">
+        <a class="nav-link" href="{{ route('reports.balance-sheet') }}">
+            <i class="fas fa-fw fa-scale-balanced"></i>
+            <span>Balance Sheet</span>
+        </a>
+    </li>
     <!-- Divider -->
     <hr class="sidebar-divider d-none d-md-block">
 

@@ -7,7 +7,7 @@
     @if ($message = Session::get('success'))
         <div class="alert alert-success">{{ $message }}</div>
     @endif
-
+{{-- 
     <div class="row mb-4">
         <div class="col-md-6">
             <h1 class="h3">{{ __('Beat Invoices') }}</h1>
@@ -15,7 +15,7 @@
         <div class="col-md-6 text-end">
             <a href="{{ route('beat-invoices.export') }}" class="btn btn-secondary">{{ __('Export') }}</a>
         </div>
-    </div>
+    </div> --}}
 
     <div class="row mb-4">
         <div class="col-md-3">
