@@ -115,7 +115,7 @@ class BeatInvoice extends Model
             'total' => self::count(),
             'total_amount' => (int) self::sum('total_amount'),
             'paid_count' => self::byPaymentStatus('paid')->count(),
-            'partial_count' => self::byPaymentStatus('partial')->count(),
+            // 'partial_count' => self::byPaymentStatus('partial')->count(),
             'unpaid_count' => self::byPaymentStatus('unpaid')->count(),
         ];
     }

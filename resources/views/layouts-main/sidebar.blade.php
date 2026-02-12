@@ -122,13 +122,13 @@
         </a>
     </li>
 
-    <!-- Nav Item - Balance Sheet -->
+    {{-- <!-- Nav Item - Balance Sheet -->
     <li class="nav-item {{ request()->routeIs('reports.balance-sheet') ? 'active' : '' }}">
         <a class="nav-link" href="{{ route('reports.balance-sheet') }}">
             <i class="fas fa-fw fa-scale-balanced"></i>
             <span>Balance Sheet</span>
         </a>
-    </li>
+    </li> --}}
     <!-- Divider -->
     <hr class="sidebar-divider d-none d-md-block">
 

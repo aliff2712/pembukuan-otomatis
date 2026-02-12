@@ -38,7 +38,7 @@
                 <div class="h5 text-danger">{{ number_format($stats['unpaid_count'] ?? 0) }}</div>
             </div>
         </div>
-        <div class="col-md-3">
+        {{-- <div class="col-md-3">
             <div class="card p-3 border-warning">
                 <div class="text-xs text-muted">
                     <i class="fas fa-exclamation-circle text-warning"></i> {{ __('Partial') }}
@@ -46,7 +46,7 @@
                 <div class="h5 text-warning">{{ number_format($stats['partial_count'] ?? 0) }}</div>
             </div>
         </div>
-    </div>
+    </div> --}}
 
     <div class="card shadow">
         <div class="card-body">
@@ -58,7 +58,6 @@
                     <select name="status" class="form-select">
                         <option value="">All Status</option>
                         <option value="unpaid" @selected(request('status')=='unpaid')>Unpaid</option>
-                        <option value="partial" @selected(request('status')=='partial')>Partial</option>
                         <option value="paid" @selected(request('status')=='paid')>Paid</option>
                     </select>
                 </div>
