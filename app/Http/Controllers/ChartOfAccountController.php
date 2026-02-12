@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Controller;
 use App\Models\ChartOfAccount;
 use App\Models\JournalLine;
 use Illuminate\Http\Request;

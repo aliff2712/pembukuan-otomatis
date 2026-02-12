@@ -16,7 +16,7 @@ use App\Http\Controllers\ChartOfAccountController;
 | Web Routes - DHS FINANCE
 |--------------------------------------------------------------------------
 |
-| Route untuk aplikasi pembukuan ISP
+
 |
 */
 
@@ -148,16 +148,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
             // =====================================================================
             Route::resource('other-incomes', \App\Http\Controllers\OtherIncomeController::class);
 
-            // =====================================================================
-            // REPORTS
-            // =====================================================================
-        // =====================================================================
     // =====================================================================
     Route::prefix('reports')->name('reports.')->group(function () {
-        Route::get('/ledger', function() { return 'Ledger Report - Coming Soon'; })->name('ledger');
-        Route::get('/ar-aging', function() { return 'AR Aging Report - Coming Soon'; })->name('ar-aging');
-        Route::get('/income-statement', function() { return 'Income Statement - Coming Soon'; })->name('income-statement');
-        Route::get('/balance-sheet', function() { return 'Balance Sheet - Coming Soon'; })->name('balance-sheet');
+        Route::get('/ledger', [\App\Http\Controllers\ReportsController::class, 'ledger'])->name('ledger');
+        Route::get('/ar-aging', [\App\Http\Controllers\ARAgingController::class, 'index'])->name('ar-aging');
+        Route::get('/income-statement', [\App\Http\Controllers\ReportsController::class, 'incomeStatement'])->name('income-statement');
+        Route::get('/balance-sheet', [\App\Http\Controllers\ReportsController::class, 'balanceSheet'])->name('balance-sheet');
     });
 
     // =====================================================================
