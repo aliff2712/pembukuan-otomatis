@@ -68,10 +68,11 @@ class ChartOfAccountController extends Controller
         $stats = [
             'total' => ChartOfAccount::count(),
             'asset_count' => ChartOfAccount::where('account_type', 'asset')->count(),
-            // 'liability_count' => ChartOfAccount::where('account_type', 'liability')->count(),
+            'liability_count' => ChartOfAccount::where('account_type', 'liability')->count(),
             'equity_count' => ChartOfAccount::where('account_type', 'equity')->count(),
             'revenue_count' => ChartOfAccount::where('account_type', 'revenue')->count(),
             'expense_count' => ChartOfAccount::where('account_type', 'expense')->count(),
+
             'asset_balance' => $assetBalance,
             // 'liability_balance' => $liabilityBalance,
             'equity_balance' => $equityBalance,
