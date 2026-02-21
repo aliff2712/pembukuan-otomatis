@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 class BeatInvoice extends Model
 {
     protected $fillable = [
-        'import_batch_id',
+        // 'import_batch_id',
         'staging_id',
 
         'customer_name',
@@ -84,28 +84,45 @@ class BeatInvoice extends Model
      */
     public function scopeByPaymentStatus($query, $status)
     {
-        return $query->selectRaw(
-            'beat_invoices.*,'
-            .'COALESCE(SUM(payments.amount), 0) as paid_amount'
-        )
-        ->leftJoin('payments', 'payments.invoice_id', '=', 'beat_invoices.id')
-        ->groupBy('beat_invoices.id')
-        ->when($status === 'unpaid', function($q) {
-            return $q->havingRaw('COALESCE(SUM(payments.amount), 0) = 0');
-        })
-        ->when($status === 'partial', function($q) {
-            return $q->havingRaw(
-                'COALESCE(SUM(payments.amount), 0) > 0 AND '
-                .'COALESCE(SUM(payments.amount), 0) < beat_invoices.total_amount'
-            );
-        })
-        ->when($status === 'paid', function($q) {
-            return $q->havingRaw(
-                'COALESCE(SUM(payments.amount), 0) >= beat_invoices.total_amount'
-            );
-        });
+        return $query
+            ->leftJoin('payments', 'payments.invoice_id', '=', 'beat_invoices.id')
+            ->select(
+                'beat_invoices.id',
+                'beat_invoices.total_amount',
+                'beat_invoices.customer_name',
+                'beat_invoices.pppoe',
+                'beat_invoices.package_name',
+                'beat_invoices.billing_day',
+                'beat_invoices.period_month',
+                'beat_invoices.period_year'
+            )
+            ->selectRaw('COALESCE(SUM(payments.amount), 0) as paid_amount')
+            ->groupBy(
+                'beat_invoices.id',
+                'beat_invoices.total_amount',
+                'beat_invoices.customer_name',
+                'beat_invoices.pppoe',
+                'beat_invoices.package_name',
+                'beat_invoices.billing_day',
+                'beat_invoices.period_month',
+                'beat_invoices.period_year'
+            )
+            ->when($status === 'unpaid', function($q) {
+                return $q->havingRaw('COALESCE(SUM(payments.amount), 0) = 0');
+            })
+            ->when($status === 'partial', function($q) {
+                return $q->havingRaw(
+                    'COALESCE(SUM(payments.amount), 0) > 0 AND '
+                    .'COALESCE(SUM(payments.amount), 0) < beat_invoices.total_amount'
+                );
+            })
+            ->when($status === 'paid', function($q) {
+                return $q->havingRaw(
+                    'COALESCE(SUM(payments.amount), 0) >= beat_invoices.total_amount'
+                );
+            });
     }
-
+    
     /**
      * Get stats untuk dashboard
      */

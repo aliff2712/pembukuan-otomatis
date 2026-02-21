@@ -12,29 +12,13 @@
     </div>
 
     <!-- Topbar Navbar -->
-    <ul class="navbar-nav ms-auto">
-        <!-- Nav Item - Search Dropdown (Visible Only XS) -->
-        <li class="nav-item dropdown no-arrow d-sm-none">
-            <a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button"
-                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <i class="fas fa-search fa-fw"></i>
+    <ul class="navbar-nav ms-auto align-items-center">
+
+        <!-- Setting Jatuh Tempo -->
+        <li class="nav-item me-2">
+            <a class="nav-link" href="{{ route('finance.setting.edit') }}" title="Setting Jatuh Tempo">
+                <i class="fas fa-cog fa-lg"></i>
             </a>
-            <!-- Dropdown - Messages -->
-            <div class="dropdown-menu dropdown-menu-end p-3 shadow animated--grow-in"
-                aria-labelledby="searchDropdown">
-                <form class="form-inline me-auto w-100 navbar-search">
-                    <div class="input-group">
-                        <input type="text" class="form-control bg-light border-0 small"
-                            placeholder="Search for..." aria-label="Search"
-                            aria-describedby="basic-addon2">
-                        <div class="input-group-append">
-                            <button class="btn btn-primary" type="button">
-                                <i class="fas fa-search fa-sm"></i>
-                            </button>
-                        </div>
-                    </div>
-                </form>
-            </div>
         </li>
 
         <!-- Nav Item - Messages -->
@@ -42,7 +26,6 @@
             <a class="nav-link dropdown-toggle" href="#" id="messagesDropdown" role="button"
                 data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <i class="fas fa-envelope fa-fw"></i>
-                <!-- Counter - Messages -->
                 @php
                     $unreadCount = auth()->user()->unread_count ?? 0;
                 @endphp
@@ -53,10 +36,11 @@
                     </span>
                 @endif
             </a>
+
             <!-- Dropdown - Messages -->
             <div class="dropdown-menu dropdown-menu-end shadow animated--grow-in"
                 aria-labelledby="messagesDropdown" style="min-width: 20rem;">
-                <h6 class="dropdown-header" style="background-color: #4e73df; color: white; font-weight: 700;">
+                <h6 class="dropdown-header bg-primary text-white font-weight-bold">
                     Message Center
                 </h6>
                 
@@ -125,6 +109,7 @@
                     <div class="small text-muted">{{ auth()->user()->email }}</div>
                 </div>
                 <div class="dropdown-divider"></div>
+
                 <a class="dropdown-item" href="{{ route('profile.edit') }}">
                     <i class="fas fa-user fa-sm fa-fw me-2 text-gray-400"></i>
                     Profile
@@ -143,6 +128,7 @@
                 </a>
             </div>
         </li>
+
     </ul>
 </nav>
 
@@ -172,165 +158,13 @@
 </div>
 
 <style>
-    .topbar-silver {
-        background: linear-gradient(
-            180deg,
-            #f2f2f2 0%,
-            #e6e6e6 50%,
-            #d9d9d9 100%
-        );
-        border-bottom: 1px solid #cfcfcf;
-    }
-
-    .topbar-silver .nav-link,
-    .topbar-silver .text-gray-800,
-    .topbar-silver .text-gray-600 {
-        color: #5a5c69 !important;
-    }
-
-    .topbar-silver .nav-link:hover {
-        color: #ea6f0a !important;
-    }
-
-    .icon-circle {
-        height: 2.5rem;
-        width: 2.5rem;
-        border-radius: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .bg-primary {
-        background-color: #4e73df !important;
-    }
-
-    .bg-success {
-        background-color: #1cc88a !important;
-    }
-
-    .bg-warning {
-        background-color: #f6c23e !important;
-    }
-
-    .dropdown-list-image {
-        position: relative;
-    }
-
-    .dropdown-list-image .status-indicator {
-        background-color: #eaecf4;
-        height: 0.75rem;
-        width: 0.75rem;
-        border-radius: 100%;
-        position: absolute;
-        bottom: 0;
-        right: 0;
-        border: 0.125rem solid #fff;
-    }
-
-    .dropdown-list-image .status-indicator.bg-success {
-        background-color: #1cc88a !important;
-    }
-
-    .badge-counter {
-        animation: pulse 2s infinite;
-    }
-
-    @keyframes pulse {
-        0% {
-            transform: scale(1);
-        }
-        50% {
-            transform: scale(1.1);
-        }
-        100% {
-            transform: scale(1);
-        }
-    }
-
-    .dropdown-menu {
-        max-height: 400px;
-        overflow-y: auto;
-    }
-
-    .dropdown-item:hover {
-        background-color: #f8f9fc;
-    }
+.topbar-silver {
+    background: linear-gradient(180deg,#f2f2f2 0%,#e6e6e6 50%,#d9d9d9 100%);
+    border-bottom: 1px solid #cfcfcf;
+}
+.topbar-silver .nav-link, .topbar-silver .text-gray-800, .topbar-silver .text-gray-600 {
+    color: #5a5c69 !important;
+}
+.topbar-silver .nav-link:hover { color: #ea6f0a !important; }
+.img-profile { object-fit: cover; }
 </style>
-
-@push('scripts')
-<script>
-    // Auto-refresh unread message count every 30 seconds
-    setInterval(function() {
-        fetch('{{ route("messages.unread-count") }}')
-            .then(response => response.json())
-            .then(data => {
-                const counter = document.getElementById('messageCounter');
-                const userMenuBadge = document.querySelector('#userDropdown + .dropdown-menu .badge');
-                
-                if (data.count > 0) {
-                    const displayCount = data.count > 99 ? '99+' : data.count;
-                    
-                    // Update navbar counter
-                    if (counter) {
-                        counter.textContent = displayCount;
-                    } else {
-                        // Create counter if doesn't exist
-                        const badge = document.createElement('span');
-                        badge.id = 'messageCounter';
-                        badge.className = 'badge badge-danger badge-counter';
-                        badge.style.cssText = 'position: absolute; top: 0.5rem; right: 0.25rem; font-size: 0.7rem; padding: 0.25rem 0.4rem; background-color: #e74a3b;';
-                        badge.textContent = displayCount;
-                        document.querySelector('#messagesDropdown').appendChild(badge);
-                    }
-                    
-                    // Update user menu badge
-                    if (userMenuBadge) {
-                        userMenuBadge.textContent = data.count;
-                    }
-                } else {
-                    // Remove counters if no unread messages
-                    if (counter) {
-                        counter.remove();
-                    }
-                    if (userMenuBadge) {
-                        userMenuBadge.remove();
-                    }
-                }
-            })
-            .catch(error => console.error('Error fetching unread count:', error));
-    }, 30000); // 30 seconds
-
-    // Show notification sound/visual feedback when new message arrives
-    let lastUnreadCount = {{ $unreadCount }};
-    
-    setInterval(function() {
-        fetch('{{ route("messages.unread-count") }}')
-            .then(response => response.json())
-            .then(data => {
-                if (data.count > lastUnreadCount) {
-                    // New message arrived
-                    showNotification('Pesan Baru', 'Anda memiliki pesan baru!');
-                }
-                lastUnreadCount = data.count;
-            });
-    }, 10000); // Check every 10 seconds for new messages
-
-    function showNotification(title, message) {
-        // Check if browser supports notifications
-        if ("Notification" in window && Notification.permission === "granted") {
-            new Notification(title, {
-                body: message,
-                icon: '/assets/img/dhs-logo.png'
-            });
-        }
-    }
-
-    // Request notification permission on page load
-    document.addEventListener('DOMContentLoaded', function() {
-        if ("Notification" in window && Notification.permission === "default") {
-            Notification.requestPermission();
-        }
-    });
-</script>
-@endpush

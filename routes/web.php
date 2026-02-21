@@ -10,6 +10,8 @@ use App\Http\Controllers\BeatInvoiceController;
 use App\Http\Controllers\VoucherSaleController;
 use App\Http\Controllers\JournalEntryController;
 use App\Http\Controllers\ChartOfAccountController;
+use App\Http\Controllers\TransaksiController;
+use App\Http\Controllers\Finance\FinanceSettingController;
 
 /*
 |--------------------------------------------------------------------------
@@ -165,4 +167,65 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // =====================================================================
+// FINANCE - TRANSAKSI
+// =====================================================================
+Route::prefix('finance/transaksi')
+->name('finance.transaksi.')
+->group(function () {
+
+    // LIST
+    Route::get('/', [TransaksiController::class, 'index'])
+        ->name('index');
+
+    // IMPORT FORM
+    Route::get('/import', [TransaksiController::class, 'importForm'])
+        ->name('import.form');
+
+    // HANDLE IMPORT
+    Route::post('/import', [TransaksiController::class, 'import'])
+        ->name('import');
+
+    // PAYMENT FORM
+    Route::get('/{transaksi}/payment',
+        [TransaksiController::class, 'paymentForm']
+    )->name('payment.form');
+
+    // PROCESS PAYMENT
+    Route::patch('/{transaksi}/payment',
+        [TransaksiController::class, 'processPayment']
+    )->name('payment.process');
+
+    // DELETE
+    Route::delete('/{transaksi}',
+        [TransaksiController::class, 'destroy']
+    )->name('destroy');
+
+    // DETAIL (PALING BAWAH!)
+    Route::get('/{transaksi}',
+        [TransaksiController::class, 'show']
+    )->name('show');
+    Route::get('/{transaksi}/receipt',
+    [TransaksiController::class, 'receipt']
+)->name('receipt');
+
+});
+
+// =====================================================================
+// FINANCE SETTING
+// =====================================================================
+    Route::prefix('finance/setting')
+        ->name('finance.setting.')
+        ->group(function () {
+
+            Route::get('/', [FinanceSettingController::class, 'edit'])
+                ->name('edit');
+
+            Route::post('/', [FinanceSettingController::class, 'update'])
+                ->name('update');
+
+    });
+
+
 });
