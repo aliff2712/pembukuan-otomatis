@@ -98,7 +98,7 @@
         Laporan
     </div>
 
-    <!-- Nav Item - Ledger -->
+    {{-- <!-- Nav Item - Ledger -->
     <li class="nav-item {{ request()->routeIs('reports.ledger') ? 'active' : '' }}">
         <a class="nav-link" href="{{ route('reports.ledger') }}">
             <i class="fas fa-fw fa-book-open"></i>
@@ -120,7 +120,7 @@
             <i class="fas fa-fw fa-chart-line"></i>
             <span>Income Statement</span>
         </a>
-    </li>
+    </li> --}}
 
     {{-- <!-- Nav Item - Balance Sheet -->
     <li class="nav-item {{ request()->routeIs('reports.balance-sheet') ? 'active' : '' }}">
