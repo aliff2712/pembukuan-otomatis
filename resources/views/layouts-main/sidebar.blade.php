@@ -98,7 +98,7 @@
         Laporan
     </div>
 
-    <!-- Nav Item - Ledger -->
+    {{-- <!-- Nav Item - Ledger -->
     <li class="nav-item {{ request()->routeIs('reports.ledger') ? 'active' : '' }}">
         <a class="nav-link" href="{{ route('reports.ledger') }}">
             <i class="fas fa-fw fa-book-open"></i>
@@ -120,7 +120,7 @@
             <i class="fas fa-fw fa-chart-line"></i>
             <span>Income Statement</span>
         </a>
-    </li>
+    </li> --}}
 
     {{-- <!-- Nav Item - Balance Sheet -->
     <li class="nav-item {{ request()->routeIs('reports.balance-sheet') ? 'active' : '' }}">
@@ -129,7 +129,7 @@
             <span>Balance Sheet</span>
         </a>
     </li> --}}
-    <!-- Divider -->
+    {{-- <!-- Divider -->
     <hr class="sidebar-divider d-none d-md-block">
 
     <!-- Sidebar Toggler (Sidebar) -->
@@ -138,7 +138,7 @@
             style="background-color: rgba(255, 255, 255, 0.2); width: 2.5rem; height: 2.5rem;">
             <i class="fas fa-angle-left text-white"></i>
         </button>
-    </div>
+    </div> --}}
 </ul>
 
 @push('scripts')

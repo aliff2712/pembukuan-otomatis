@@ -107,8 +107,7 @@
         <button 
             type="submit" 
             class="btn btn-primary" 
-            id="loginBtn"
-        >
+            id="loginBtn">
             <span class="btn-text">
                 <i class="fas fa-sign-in-alt me-2"></i>Masuk
             </span>
@@ -124,7 +123,7 @@
             <p class="text-muted small mb-0">
                 Belum punya akun? 
                 <a href="{{ route('register') }}" class="fw-semibold">
-                    Hubungi Administrator
+                 Register
                 </a>
             </p>
         </div>
