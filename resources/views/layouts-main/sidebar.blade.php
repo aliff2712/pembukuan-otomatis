@@ -129,7 +129,7 @@
             <span>Balance Sheet</span>
         </a>
     </li> --}}
-    <!-- Divider -->
+    {{-- <!-- Divider -->
     <hr class="sidebar-divider d-none d-md-block">
 
     <!-- Sidebar Toggler (Sidebar) -->
@@ -138,7 +138,7 @@
             style="background-color: rgba(255, 255, 255, 0.2); width: 2.5rem; height: 2.5rem;">
             <i class="fas fa-angle-left text-white"></i>
         </button>
-    </div>
+    </div> --}}
 </ul>
 
 @push('scripts')

@@ -128,12 +128,12 @@ class ChartOfAccountController extends Controller
         $account = ChartOfAccount::findOrFail($id);
 
         // Get usage count in journal lines
-        $usageCount = JournalLine::where('account_code', $account->account_code)->count();
+        $usageCount = JournalLine::where('coa_id', $account->account_code)->count();
 
         // Get recent transactions
         $recentTransactions = DB::table('journal_lines')
             ->join('journal_entries', 'journal_entries.id', '=', 'journal_lines.journal_entry_id')
-            ->where('journal_lines.account_code', $account->account_code)
+            ->where('journal_lines.coa_id', $account->account_code)
             ->select(
                 'journal_entries.journal_date',
                 'journal_entries.description',
@@ -145,7 +145,7 @@ class ChartOfAccountController extends Controller
             ->get();
 
         // Calculate balance
-        $balance = JournalLine::where('account_code', $account->account_code)
+        $balance = JournalLine::where('coa_id', $account->account_code)
             ->selectRaw('SUM(debit) - SUM(credit) as balance')
             ->value('balance') ?? 0;
 

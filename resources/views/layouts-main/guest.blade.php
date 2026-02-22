@@ -69,9 +69,10 @@
         }
 
         .brand img {
-            max-height: 70px;
+            max-height: 150px;
             width: auto;
             margin-bottom: 0.5rem;
+            border-radius: 80px;
         }
 
         .form-label {
@@ -118,7 +119,7 @@
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #667eea;
             border: none;
             border-radius: 8px;
             padding: 0.875rem 1.5rem;
