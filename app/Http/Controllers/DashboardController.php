@@ -8,8 +8,7 @@ use App\Models\Expense;
 use App\Models\Payment;
 use App\Models\JournalLine;
 use App\Models\OtherIncome;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use App\Models\Transaksi;
 use Carbon\Carbon;
 use App\Models\Transaksi;
 class DashboardController extends Controller
@@ -23,6 +22,7 @@ class DashboardController extends Controller
         $bankBalance = $this->calculateBalance('1102');
 
         // 3. PIUTANG USAHA (Accounts Receivable)
+<<<<<<< HEAD
         $arBalance = BeatInvoice::whereNotIn('status', ['paid', 'void'])
              ->sum('total_amount') - 
              Payment::whereHas('invoice', function($q) {
@@ -32,6 +32,20 @@ class DashboardController extends Controller
         $arBalance = Transaksi::where('status', 'unpaid')->sum('total');
 
 
+=======
+        // $arBalance = BeatInvoice::whereNotIn('status', ['paid', 'void'])
+        //     ->sum('total_amount') - 
+        //     Payment::whereHas('invoice', function($q) {
+        //         $q->whereNotIn('status', ['paid', 'void']);
+        //     })->sum('amount');
+        //statistik Transaksi
+        $arBalance = Transaksi::where('status', 'unpaid')->sum('total');
+         $paid= Transaksi::where('status', 'paid')
+            ->whereMonth('tanggal', now()->month)
+            ->whereYear('tanggal', now()->year)
+            ->sum('total');
+        
+>>>>>>> 79db817 (penyesuaian method dashboard)
         // 4. PENDAPATAN BULAN INI
         $revenueThisMonth = $this->getRevenueThisMonth();
 
@@ -53,7 +67,8 @@ class DashboardController extends Controller
             'revenueThisMonth',
             'otherIncomeThisMonth',
             'expenseThisMonth',
-            'monthlyStats'
+            'monthlyStats',
+            'paid'
         ));
     }
 
@@ -90,9 +105,10 @@ class DashboardController extends Controller
         $currentYear = now()->year;
 
         // Pendapatan dari pembayaran invoice
-        $paymentRevenue = Payment::whereMonth('payment_date', $currentMonth)
-            ->whereYear('payment_date', $currentYear)
-            ->sum('amount');
+        $paymentRevenue = Transaksi::whereMonth('tanggal', $currentMonth)
+            ->whereYear('tanggal', $currentYear)
+            ->where('status', 'paid')
+            ->sum('total');
 
         // Pendapatan dari penjualan voucher
         $voucherRevenue = DailyVoucherSale::whereMonth('sale_date', $currentMonth)

@@ -16,6 +16,7 @@ return new class extends Migration
         $table->string('kode_transaksi')->unique();
         $table->string('nama_customer');
         $table->date('tanggal');
+        $table->date('jatuh_tempo');
         $table->bigInteger('total')->default(0);
         $table->string('status')->default('paid');
         $table->text('deskripsi')->nullable();

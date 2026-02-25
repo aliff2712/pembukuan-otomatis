@@ -55,6 +55,7 @@
     </a>
 </div>
 
+<<<<<<< HEAD
 <!-- PIUTANG USAHA -->
 <div class="col-xl-4 col-md-6 mb-4">
     <a href="#" class="text-decoration-none">
@@ -64,6 +65,20 @@
                     <div>
                         <div class="text-uppercase small fw-semibold text-info mb-1">
                             Piutang Usaha
+=======
+        <!-- Card Piutang Usaha -->
+        <div class="col-xl-4 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                Belum bayar (Piutang Usaha - 1103)
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                Rp {{ number_format($arBalance, 0, ',', '.') }}
+                            </div>
+>>>>>>> 79db817 (penyesuaian method dashboard)
                         </div>
                         <div class="fs-4 fw-bold text-primary">
                             Rp {{ number_format($arBalance, 0, ',', '.') }}
@@ -75,8 +90,33 @@
                 </div>
             </div>
         </div>
+<<<<<<< HEAD
     </a>
 </div>
+=======
+    </div>
+     <!-- Card Piutang Usaha -->
+        <div class="col-xl-4 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                             Pembayaran Bulan ini
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                Rp {{ number_format($paid, 0, ',', '.') }}
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-file-invoice-dollar fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+>>>>>>> 79db817 (penyesuaian method dashboard)
 
 </div>
     <!-- Baris Kartu Ringkasan Bulanan & Grafik -->
@@ -240,7 +280,7 @@
                 </div>
                 <div class="card-body">
                     <div class="list-group list-group-flush">
-                        <a href="{{ route('beat-invoices.index') }}" class="list-group-item list-group-item-action">
+                        <a href="{{ route('finance.index') }}" class="list-group-item list-group-item-action">
                             <i class="fas fa-file-invoice text-primary"></i> Kelola Invoice Beat
                         </a>
                         <a href="{{ route('payments.create') }}" class="list-group-item list-group-item-action">

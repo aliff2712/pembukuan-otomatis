@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\Transaksi;
+use App\Http\Controllers\Controller;
 use App\Imports\TransaksiImport;
-use Maatwebsite\Excel\Facades\Excel;
+use App\Models\Transaksi;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
 class TransaksiController extends Controller
 {
