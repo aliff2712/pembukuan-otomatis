@@ -4,102 +4,179 @@
 @section('page-title', 'Detail Transaksi DHS Dipanet Hotspot Solution')
 
 @section('content')
-<div class="container py-4">
 
-    {{-- NOTIF --}}
-    @if(session('success'))
-        <div class="position-fixed top-0 start-50 translate-middle-x mt-4"
-             style="z-index:9999; min-width:320px;">
-            <div id="successAlert" class="alert alert-success shadow text-center">
-                <i class="fas fa-check-circle me-1"></i>
-                {{ session('success') }}
-            </div>
-        </div>
+<style>
+    :root {
+        --navy-dark: #0f172a;
+        --navy-main: #1e293b;
+        --navy-soft: #334155;
+        --navy-light: #243449;
+        --blue-accent: #3b82f6;
+        --soft-white: #f8fafc;
+    }
 
-        <script>
-            setTimeout(function(){
-                let alert = document.getElementById('successAlert');
-                if(alert){
-                    alert.style.transition = "opacity 0.5s";
-                    alert.style.opacity = "0";
-                    setTimeout(() => alert.remove(), 500);
-                }
-            }, 3000);
-        </script>
-    @endif
+    body {
+        background-color: #0f172a;
+    }
 
+    .modern-card {
+        background: var(--navy-main);
+        border: none;
+        border-radius: 20px;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+        color: #e2e8f0;
+    }
 
-    @php
-        $jatuhTempo = $transaksi->jatuh_tempo;
-        $isOverdue = $transaksi->isOverdue();
-        $canPay = $transaksi->status === 'unpaid';
-    @endphp
+    .modern-light-box {
+        background: var(--navy-light);
+        border-radius: 16px;
+        padding: 25px;
+        transition: 0.3s ease;
+        height: 100%;
+    }
 
-    {{-- HEADER --}}
+    .modern-light-box:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    }
+
+    .section-title {
+        color: #f8fafc;
+        font-weight: 600;
+    }
+
+    .label-soft {
+        color: #94a3b8;
+        font-size: 0.9rem;
+    }
+
+    .total-highlight {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #4ade80;
+    }
+
+    .btn-modern-primary {
+        background: var(--blue-accent);
+        border: none;
+        border-radius: 30px;
+        padding: 10px 30px;
+        font-weight: 600;
+    }
+
+    .btn-modern-primary:hover {
+        background: #2563eb;
+    }
+
+    .btn-modern-outline {
+        border: 1px solid var(--blue-accent);
+        color: var(--blue-accent);
+        border-radius: 30px;
+        padding: 10px 30px;
+        font-weight: 600;
+    }
+
+    .btn-modern-outline:hover {
+        background: var(--blue-accent);
+        color: #fff;
+    }
+
+    .badge-modern {
+        padding: 8px 18px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+
+    .badge-paid {
+        background: #16a34a;
+    }
+
+    .badge-unpaid {
+        background: #dc2626;
+    }
+
+    .info-row {
+        border-bottom: 1px solid #334155;
+        padding: 10px 0;
+    }
+
+    .info-row:last-child {
+        border-bottom: none;
+    }
+</style>
+
+<div class="container py-5">
+
+@php
+    $jatuhTempo = $transaksi->jatuh_tempo;
+    $isOverdue = $transaksi->isOverdue();
+    $canPay = $transaksi->status === 'unpaid';
+@endphp
+
+    <!-- HEADER -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <a href="{{ route('finance.transaksi.index') }}"
-           class="btn btn-outline-secondary rounded-pill px-3">
+           class="btn btn-modern-outline">
             <i class="fas fa-arrow-left me-1"></i> Kembali
         </a>
 
-        <span class="badge {{ $transaksi->status_color }} fs-6 px-4 py-2 rounded-pill">
+        <span class="badge-modern {{ $transaksi->status == 'paid' ? 'badge-paid' : 'badge-unpaid' }}">
             {{ strtoupper($transaksi->status) }}
         </span>
     </div>
 
-
-    <div class="card shadow-lg border-0 rounded-4">
+    <!-- MAIN CARD -->
+    <div class="card modern-card">
         <div class="card-body p-5">
 
-            {{-- HEADER CUSTOMER --}}
-            <div class="mb-4 text-center">
-                <h3 class="fw-bold mb-1">{{ $transaksi->nama_customer }}</h3>
-                <small class="text-muted">
+            <!-- CUSTOMER HEADER -->
+            <div class="text-center mb-5">
+                <h2 class="fw-bold text-white">{{ $transaksi->nama_customer }}</h2>
+                <div class="label-soft">
                     Kode Transaksi: {{ $transaksi->kode_transaksi }}
-                </small>
+                </div>
             </div>
 
-            <hr class="mb-4">
-
-            {{-- INFORMASI UTAMA --}}
-            <div class="row g-4 mb-4">
+            <!-- INFO GRID -->
+            <div class="row g-4 mb-5">
 
                 <div class="col-md-4">
-                    <div class="bg-light p-4 rounded-4 text-center h-100 shadow-sm">
-                        <small class="text-muted d-block mb-1">
+                    <div class="modern-light-box text-center">
+                        <div class="label-soft mb-2">
                             <i class="fas fa-calendar-alt me-1"></i>
                             Tanggal Transaksi
-                        </small>
-                        <div class="fw-semibold fs-5">
+                        </div>
+                        <div class="fw-semibold fs-5 text-white">
                             {{ $transaksi->tanggal->format('d M Y') }}
                         </div>
                     </div>
                 </div>
 
                 <div class="col-md-4">
-                    <div class="bg-light p-4 rounded-4 text-center h-100 shadow-sm">
-                        <small class="text-muted d-block mb-1">
+                    <div class="modern-light-box text-center">
+                        <div class="label-soft mb-2">
                             <i class="fas fa-clock me-1"></i>
                             Jatuh Tempo
-                        </small>
-                        <div class="fw-semibold fs-5 {{ $isOverdue ? 'text-danger' : '' }}">
+                        </div>
+                        <div class="fw-semibold fs-5 {{ $isOverdue ? 'text-danger' : 'text-white' }}">
                             {{ $jatuhTempo->format('d M Y') }}
                         </div>
                         @if($isOverdue)
-                            <span class="badge bg-danger mt-2">
-                                OVERDUE
-                            </span>
+                            <div class="mt-2">
+                                <span class="badge badge-unpaid">OVERDUE</span>
+                            </div>
                         @endif
                     </div>
                 </div>
 
                 <div class="col-md-4">
-                    <div class="bg-light p-4 rounded-4 text-center h-100 shadow-sm">
-                        <small class="text-muted d-block mb-1">
+                    <div class="modern-light-box text-center">
+                        <div class="label-soft mb-2">
                             <i class="fas fa-money-bill-wave me-1"></i>
                             Total Pembayaran
-                        </small>
-                        <div class="fw-bold fs-4 text-success">
+                        </div>
+                        <div class="total-highlight">
                             Rp {{ number_format($transaksi->total,0,',','.') }}
                         </div>
                     </div>
@@ -107,41 +184,35 @@
 
             </div>
 
-
-            {{-- DESKRIPSI CUSTOMER --}}
+            <!-- DETAIL CUSTOMER -->
             @if($transaksi->deskripsi)
-                <div class="mb-4">
-                    <h5 class="fw-semibold mb-3 text-center">
+                <div class="mb-5">
+                    <h5 class="section-title text-center mb-4">
                         <i class="fas fa-user-circle me-2"></i>
                         Detail Informasi Customer
                     </h5>
 
-                    <div class="card border-0 bg-light rounded-4 shadow-sm">
-                        <div class="card-body px-4 py-3">
-
-                            @foreach($transaksi->deskripsi as $key => $value)
-                                <div class="row border-bottom py-2">
-                                    <div class="col-md-6 text-muted text-capitalize">
-                                        {{ str_replace('_', ' ', $key) }}
-                                    </div>
-                                    <div class="col-md-6 fw-semibold text-md-end">
-                                        {{ $value }}
-                                    </div>
+                    <div class="modern-light-box">
+                        @foreach($transaksi->deskripsi as $key => $value)
+                            <div class="row info-row">
+                                <div class="col-md-6 label-soft text-capitalize">
+                                    {{ str_replace('_', ' ', $key) }}
                                 </div>
-                            @endforeach
-
-                        </div>
+                                <div class="col-md-6 fw-semibold text-md-end text-white">
+                                    {{ $value }}
+                                </div>
+                            </div>
+                        @endforeach
                     </div>
                 </div>
             @endif
 
-
-            {{-- ACTION BUTTON --}}
+            <!-- ACTION -->
             <div class="text-center mt-4">
 
                 @if($canPay)
                     <a href="{{ route('finance.transaksi.payment.form', $transaksi->id) }}"
-                       class="btn btn-success btn-lg rounded-pill px-4 me-2">
+                       class="btn btn-modern-primary me-2">
                         <i class="fas fa-credit-card me-1"></i>
                         Proses Pembayaran
                     </a>
@@ -149,7 +220,7 @@
 
                 @if($transaksi->status === 'paid')
                     <a href="{{ route('finance.transaksi.receipt', $transaksi->id) }}"
-                       class="btn btn-outline-primary btn-lg rounded-pill px-4"
+                       class="btn btn-modern-outline"
                        target="_blank">
                         <i class="fas fa-print me-1"></i>
                         Print / Download Receipt
@@ -162,4 +233,5 @@
     </div>
 
 </div>
+
 @endsection
