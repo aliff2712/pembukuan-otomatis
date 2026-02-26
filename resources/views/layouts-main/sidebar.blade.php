@@ -27,7 +27,7 @@
     <li class="nav-item {{ request()->routeIs('finance*') ? 'active' : '' }}">
         <a class="nav-link" href="{{ route('finance.transaksi.index') }}">
             <i class="fas fa-ticket-alt"></i>
-            <span>Transaksi Membershipgit</span>
+            <span>Transaksi Membership</span>
         </a>
     </li>
 

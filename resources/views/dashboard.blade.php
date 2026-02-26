@@ -188,6 +188,7 @@
 
                 <!-- Kartu Other Income Bulan Ini -->
                 <div class="col-12">
+                <a href="{{ route('other-incomes.index') }}" class="text-decoration-none">
                     <div class="card border-left-primary shadow mb-4">
                         <div class="card-body">
                             <div class="row no-gutters align-items-center">
@@ -212,12 +213,13 @@
 
                 <!-- Kartu Beban Bulan Ini -->
                 <div class="col-12">
+                        <a href="{{ route('expenses.index') }}" class="text-decoration-none">
                     <div class="card border-left-danger shadow mb-4">
                         <div class="card-body">
                             <div class="row no-gutters align-items-center">
                                 <div class="col mr-2">
                                     <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
-                                        Beban (Bulan Ini)
+                                        Pengeluaran (Bulan Ini)
                                     </div>
                                     <div class="h5 mb-0 font-weight-bold text-gray-800">
                                         Rp {{ number_format($expenseThisMonth, 0, ',', '.') }}
