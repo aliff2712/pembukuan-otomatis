@@ -21,13 +21,13 @@
     <hr class="sidebar-divider">
 
     <div class="sidebar-heading">
-        Transaksi
+        Transaksi 
     </div>
 
     <li class="nav-item {{ request()->routeIs('finance*') ? 'active' : '' }}">
         <a class="nav-link" href="{{ route('finance.transaksi.index') }}">
             <i class="fas fa-ticket-alt"></i>
-            <span>Transaksi</span>
+            <span>Transaksi Membershipgit</span>
         </a>
     </li>
 

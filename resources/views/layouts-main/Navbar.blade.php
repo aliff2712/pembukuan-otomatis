@@ -8,7 +8,7 @@
     <!-- Page Title -->
     <div class="me-auto">
         <h5 class="mb-0 page-title">
-            Dashboard
+            DHS Finance 
         </h5>
     </div>
 

@@ -11,7 +11,7 @@ class ChartOfAccount extends Model
         'account_code',
         'account_name',
         'account_type',
-        'is_cash', // ← INI YANG HILANG
+        'is_cash',
     ];
 
     protected $casts = [
