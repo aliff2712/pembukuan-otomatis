@@ -12,104 +12,193 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
 
     <style>
-        body {
-            margin: 0;
-            font-family: 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #4e73df, #1cc88a);
+
+        :root{
+            --navy-dark:#020617;
+            --navy-main:#0f172a;
+            --navy-soft:#1e293b;
+            --navy-light:#334155;
+            --blue-accent:#3b82f6;
         }
 
-        .login-wrapper {
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+        /* BODY BACKGROUND */
+        body{
+            margin:0;
+            font-family:'Segoe UI',sans-serif;
+            background: linear-gradient(
+                135deg,
+                var(--navy-dark),
+                var(--navy-main),
+                var(--navy-soft),
+                var(--navy-light)
+            );
+            overflow-x:hidden;
         }
 
-        .login-card {
-            width: 100%;
-            max-width: 420px;
-            border-radius: 20px;
-            backdrop-filter: blur(10px);
+        /* LOGIN WRAPPER */
+        .login-wrapper{
+            min-height:100vh;
+            display:flex;
+            justify-content:center;
+            align-items:center;
         }
 
-        .btn-primary {
-            transition: all 0.3s ease;
+        /* LOGIN CARD */
+        .login-card{
+            width:100%;
+            max-width:420px;
+            border-radius:20px;
+            background: rgba(255,255,255,0.04);
+            backdrop-filter: blur(18px);
+            box-shadow: 0 25px 60px rgba(0,0,0,.35);
+            border:none;
         }
 
-        .btn-primary:hover {
+        /* BUTTON PRIMARY */
+        .btn-primary{
+            background: linear-gradient(135deg,#3b82f6,#2563eb);
+            border:none;
+        }
+
+        .btn-primary:hover{
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            box-shadow:0 10px 20px rgba(59,130,246,.3);
         }
 
-        /* ===== PAGE LOADER ===== */
-        #pageLoader {
-            position: fixed;
-            inset: 0;
-            background: linear-gradient(135deg, #4e73df, #1cc88a);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 99999;
-            transition: opacity 0.5s ease, visibility 0.5s ease;
+        /* ===== PAGE LOADER NAVY ===== */
+
+        #pageLoader{
+            position:fixed;
+            inset:0;
+            background: linear-gradient(
+                135deg,
+                var(--navy-dark),
+                var(--navy-main),
+                var(--navy-soft)
+            );
+            display:flex;
+            flex-direction:column;
+            justify-content:center;
+            align-items:center;
+            z-index:99999;
+            transition: opacity .5s ease, visibility .5s ease;
         }
 
-        .loader-spinner {
-            width: 50px;
-            height: 50px;
-            border: 5px solid rgba(255,255,255,0.3);
-            border-top: 5px solid #ffffff;
-            border-radius: 50%;
+        .loader-logo{
+            width:70px;
+            height:70px;
+            border-radius:16px;
+            background: linear-gradient(135deg,#3b82f6,#2563eb);
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            color:white;
+            font-size:28px;
+            margin-bottom:20px;
+            box-shadow:0 0 25px rgba(59,130,246,.4);
+            animation: glow 1.5s infinite alternate;
+        }
+
+        @keyframes glow{
+            from{
+                box-shadow:0 0 10px rgba(59,130,246,.3);
+            }
+            to{
+                box-shadow:0 0 30px rgba(59,130,246,.8);
+            }
+        }
+
+        .loader-spinner{
+            width:45px;
+            height:45px;
+            border-radius:50%;
+            border:4px solid rgba(255,255,255,.2);
+            border-top:4px solid var(--blue-accent);
             animation: spin 1s linear infinite;
         }
 
-        @keyframes spin {
-            100% { transform: rotate(360deg); }
+        @keyframes spin{
+            100%{
+                transform:rotate(360deg);
+            }
         }
 
-        /* Fade Content */
-        .fade-in {
-            opacity: 0;
-            animation: fadeInPage 0.6s ease forwards;
+        .loader-text{
+            color:#cbd5e1;
+            font-size:14px;
+            margin-top:15px;
+            letter-spacing:1px;
         }
 
-        @keyframes fadeInPage {
-            to { opacity: 1; }
+        /* FADE PAGE */
+        .fade-in{
+            opacity:0;
+            animation: fadeInPage .6s ease forwards;
         }
+
+        @keyframes fadeInPage{
+            to{
+                opacity:1;
+            }
+        }
+
     </style>
 
     @stack('styles')
+
 </head>
 <body>
 
-    <!-- Page Loader -->
+    <!-- NAVY LOADER -->
     <div id="pageLoader">
+
+        <div class="loader-logo">
+            <i class="fas fa-chart-line"></i>
+        </div>
+
         <div class="loader-spinner"></div>
+
+        <div class="loader-text">
+            Memuat DHS Finance...
+        </div>
+
     </div>
 
+
+    <!-- CONTENT -->
     <div class="fade-in">
         @yield('content')
     </div>
+
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
     @stack('scripts')
 
-    <!-- Loader Script FIX -->
+
+    <!-- LOADER SCRIPT -->
     <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const loader = document.getElementById("pageLoader");
 
-        if (loader) {
-            loader.style.opacity = "0";
-            loader.style.visibility = "hidden";
+    window.addEventListener("load", function(){
 
-            setTimeout(() => {
+        const loader=document.getElementById("pageLoader");
+
+        if(loader){
+
+            loader.style.opacity="0";
+            loader.style.visibility="hidden";
+
+            setTimeout(()=>{
                 loader.remove();
-            }, 500);
+            },500);
+
         }
+
     });
+
     </script>
+
 
 </body>
 </html>
