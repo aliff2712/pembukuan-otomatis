@@ -8,7 +8,6 @@ use App\Models\Expense;
 use App\Models\Payment;
 use App\Models\JournalLine;
 use App\Models\OtherIncome;
-use App\Models\Transaksi;
 use Carbon\Carbon;
 use App\Models\Transaksi;
 class DashboardController extends Controller
@@ -22,17 +21,6 @@ class DashboardController extends Controller
         $bankBalance = $this->calculateBalance('1102');
 
         // 3. PIUTANG USAHA (Accounts Receivable)
-<<<<<<< HEAD
-        $arBalance = BeatInvoice::whereNotIn('status', ['paid', 'void'])
-             ->sum('total_amount') - 
-             Payment::whereHas('invoice', function($q) {
-                 $q->whereNotIn('status', ['paid', 'void']);
-             })->sum('amount');
-        //statistik Transaksi
-        $arBalance = Transaksi::where('status', 'unpaid')->sum('total');
-
-
-=======
         // $arBalance = BeatInvoice::whereNotIn('status', ['paid', 'void'])
         //     ->sum('total_amount') - 
         //     Payment::whereHas('invoice', function($q) {
@@ -45,7 +33,6 @@ class DashboardController extends Controller
             ->whereYear('tanggal', now()->year)
             ->sum('total');
         
->>>>>>> 79db817 (penyesuaian method dashboard)
         // 4. PENDAPATAN BULAN INI
         $revenueThisMonth = $this->getRevenueThisMonth();
 

@@ -85,13 +85,12 @@
                 </li>
 
                 <li>
-                    <a class="dropdown-item modern-item text-danger"
-                       href="#"
-                       data-bs-toggle="modal"
-                       data-bs-target="#logoutModal">
-                        <i class="fas fa-sign-out-alt me-2"></i>
-                        Logout
-                    </a>
+        <form method="POST" action="{{ route('logout') }}">
+            @csrf
+            <button type="submit" class="dropdown-item text-danger">
+                <i class="fas fa-sign-out-alt me-2"></i> Logout
+            </button>
+        </form>
                 </li>
             </ul>
         </li>
