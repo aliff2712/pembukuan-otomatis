@@ -36,9 +36,18 @@
     <li class="nav-item {{ request()->routeIs('voucher-sales*') ? 'active' : '' }}">
         <a class="nav-link" href="{{ route('voucher-sales.index') }}">
             <i class="fas fa-receipt"></i>
+<<<<<<< HEAD
+            <span>Transaksi Voucher</span>
             <span>Penjualan Voucher</span>
         </a>
     </li>
+
+    {{-- <li class="nav-item {{ request()->routeIs('payments*') ? 'active' : '' }}">
+        <a class="nav-link" href="{{ route('payments.index') }}">
+            <i class="fas fa-money-bill-wave"></i>
+            <span>Payments</span>
+        </a>
+    </li> --}}
 
     <li class="nav-item {{ request()->routeIs('expenses*') ? 'active' : '' }}">
         <a class="nav-link" href="{{ route('expenses.index') }}">
@@ -51,6 +60,11 @@
         <a class="nav-link" href="{{ route('other-incomes.index') }}">
             <i class="fas fa-coins"></i>
             <span>Pendapatan Lain</span>
+<<<<<<< HEAD
+            <span>Pemasukan lain</span>
+=======
+            <span>Pendapatan lain</span>
+>>>>>>> c140d34 (ui 26ffeb)
         </a>
     </li>
 
@@ -70,7 +84,7 @@
     <li class="nav-item {{ request()->routeIs('journal-entries*') ? 'active' : '' }}">
         <a class="nav-link" href="{{ route('journal-entries.index') }}">
             <i class="fas fa-book"></i>
-            <span>Journal Entries</span>
+            <span>Journal Entries </span>
         </a>
     </li>
      <div class="sidebar-heading">
@@ -82,6 +96,16 @@
             <span>Laporan</span>
         </a>
     </li>
+     <div class="sidebar-heading">
+        Akuntansi
+    </div>
+     <li class="nav-item {{ request()->routeIs('finance.laporan*') ? 'active' : '' }}">
+        <a class="nav-link" href="{{ route('finance.laporan.index') }}">
+            <i class="fas fa-book"></i>
+            <span>Laporan</span>
+        </a>
+    </li>
+
 
 
 </ul>
