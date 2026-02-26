@@ -8,16 +8,19 @@
 
     {{-- SUCCESS MESSAGE --}}
     @if(session('success'))
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        var toastEl = document.getElementById('successToast');
-        var toast = new bootstrap.Toast(toastEl, {
-            delay: 3000
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var toastEl = document.getElementById('successToast');
+            if (toastEl) {
+                var toast = new bootstrap.Toast(toastEl, {
+                    delay: 3000
+                });
+                toast.show();
+            }
         });
-        toast.show();
-    });
-</script>
-@endif
+    </script>
+    @endif
+
     {{-- ERROR MESSAGE --}}
     @if($errors->any())
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -26,7 +29,10 @@
         </div>
     @endif
 
-    <div class="card shadow-sm border-0 rounded-4">
+    {{-- ========================= --}}
+    {{-- CARD SETTING JATUH TEMPO --}}
+    {{-- ========================= --}}
+    <div class="card shadow-sm border-0 rounded-4 mb-4">
         <div class="card-header bg-primary text-white rounded-top-4">
             <h5 class="mb-0">
                 <i class="fas fa-calendar-alt me-2"></i>
@@ -67,6 +73,35 @@
                 </div>
 
             </form>
+
+        </div>
+    </div>
+
+
+    {{-- ========================= --}}
+    {{-- CARD FILE CONVERTER --}}
+    {{-- ========================= --}}
+    <div class="card shadow-sm border-0 rounded-4">
+        <div class="card-header bg-success text-white rounded-top-4">
+            <h5 class="mb-0">
+                <i class="fas fa-file-excel me-2"></i>
+                Tools: File Converter
+            </h5>
+        </div>
+
+        <div class="card-body p-4 d-flex justify-content-between align-items-center">
+
+            <div>
+                <h6 class="fw-semibold mb-1">Konversi File XLS / CSV ke XLSX</h6>
+                <small class="text-muted">
+                    Gunakan fitur ini untuk mengubah file spreadsheet ke format Excel terbaru.
+                </small>
+            </div>
+
+            <a href="{{ route('converter.index') }}" class="btn btn-success px-4">
+                <i class="fas fa-external-link-alt me-1"></i>
+                Buka Converter
+            </a>
 
         </div>
     </div>

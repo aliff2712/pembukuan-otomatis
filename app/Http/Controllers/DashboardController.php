@@ -11,7 +11,7 @@ use App\Models\OtherIncome;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
-
+use App\Models\Transaksi;
 class DashboardController extends Controller
 {
     public function index()
@@ -24,10 +24,13 @@ class DashboardController extends Controller
 
         // 3. PIUTANG USAHA (Accounts Receivable)
         $arBalance = BeatInvoice::whereNotIn('status', ['paid', 'void'])
-            ->sum('total_amount') - 
-            Payment::whereHas('invoice', function($q) {
-                $q->whereNotIn('status', ['paid', 'void']);
-            })->sum('amount');
+             ->sum('total_amount') - 
+             Payment::whereHas('invoice', function($q) {
+                 $q->whereNotIn('status', ['paid', 'void']);
+             })->sum('amount');
+        //statistik Transaksi
+        $arBalance = Transaksi::where('status', 'unpaid')->sum('total');
+
 
         // 4. PENDAPATAN BULAN INI
         $revenueThisMonth = $this->getRevenueThisMonth();

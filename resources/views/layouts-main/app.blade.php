@@ -73,7 +73,6 @@ body {
     content: "";
     position: absolute;
     inset: 0;
-    background-image: url('/assets/img/dhs-logo.png');
     background-repeat: no-repeat;
     background-position: center 25%;
     background-size: 100%;

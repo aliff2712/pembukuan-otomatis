@@ -7,70 +7,78 @@
 
     <!-- Baris Kartu Ringkasan Saldo -->
     <div class="row">
-        <!-- Card Saldo Kas -->
-        <div class="col-xl-4 col-md-6 mb-4">
-            <div class="card border-left-primary shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                Saldo Kas (1101)
-                            </div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                Rp {{ number_format($cashBalance, 0, ',', '.') }}
-                            </div>
+    <div class="row">
+
+<!-- SALDO KAS -->
+<div class="col-xl-4 col-md-6 mb-4">
+    <a href="#" class="text-decoration-none">
+        <div class="card border-0 shadow-sm h-100 dashboard-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="text-uppercase small fw-semibold text-primary mb-1">
+                            Saldo Kas (1101)
                         </div>
-                        <div class="col-auto">
-                            <i class="fas fa-money-bill-wave fa-2x text-gray-300"></i>
+                        <div class="fs-4 fw-bold text-primary">
+                            Rp {{ number_format($cashBalance, 0, ',', '.') }}
                         </div>
+                    </div>
+                    <div class="icon-circle bg-primary-soft">
+                        <i class="fas fa-money-bill-wave text-primary"></i>
                     </div>
                 </div>
             </div>
         </div>
+    </a>
+</div>
 
-        <!-- Kartu Saldo Bank -->
-        <div class="col-xl-4 col-md-6 mb-4">
-            <div class="card border-left-success shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                Saldo Bank (1102)
-                            </div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                Rp {{ number_format($bankBalance, 0, ',', '.') }}
-                            </div>
+<!-- SALDO BANK -->
+<div class="col-xl-4 col-md-6 mb-4">
+    <a href="#" class="text-decoration-none">
+        <div class="card border-0 shadow-sm h-100 dashboard-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="text-uppercase small fw-semibold text-success mb-1">
+                            Saldo Bank (1102)
                         </div>
-                        <div class="col-auto">
-                            <i class="fas fa-university fa-2x text-gray-300"></i>
+                        <div class="fs-4 fw-bold text-primary">
+                            Rp {{ number_format($bankBalance, 0, ',', '.') }}
                         </div>
+                    </div>
+                    <div class="icon-circle bg-success-soft">
+                        <i class="fas fa-university text-success"></i>
                     </div>
                 </div>
             </div>
         </div>
+    </a>
+</div>
 
-        <!-- Card Piutang Usaha -->
-        <div class="col-xl-4 col-md-6 mb-4">
-            <div class="card border-left-info shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                                Piutang Usaha
-                            </div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                Rp {{ number_format($arBalance, 0, ',', '.') }}
-                            </div>
+<!-- PIUTANG USAHA -->
+<div class="col-xl-4 col-md-6 mb-4">
+    <a href="#" class="text-decoration-none">
+        <div class="card border-0 shadow-sm h-100 dashboard-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="text-uppercase small fw-semibold text-info mb-1">
+                            Piutang Usaha
                         </div>
-                        <div class="col-auto">
-                            <i class="fas fa-file-invoice-dollar fa-2x text-gray-300"></i>
+                        <div class="fs-4 fw-bold text-primary">
+                            Rp {{ number_format($arBalance, 0, ',', '.') }}
                         </div>
+                    </div>
+                    <div class="icon-circle bg-info-soft">
+                        <i class="fas fa-file-invoice-dollar text-info"></i>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    </a>
+</div>
 
+</div>
     <!-- Baris Kartu Ringkasan Bulanan & Grafik -->
     <div class="row">
         <!-- Kolom Grafik -->

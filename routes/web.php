@@ -12,7 +12,7 @@ use App\Http\Controllers\JournalEntryController;
 use App\Http\Controllers\ChartOfAccountController;
 use App\Http\Controllers\TransaksiController;
 use App\Http\Controllers\Finance\FinanceSettingController;
-
+use App\Http\Controllers\FileConvertController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes - DHS FINANCE
@@ -225,6 +225,10 @@ Route::prefix('finance/transaksi')
             Route::post('/', [FinanceSettingController::class, 'update'])
                 ->name('update');
 
+    });
+    Route::middleware(['auth'])->group(function () {
+        Route::get('/converter', [FileConvertController::class, 'index'])->name('converter.index');
+        Route::post('/converter', [FileConvertController::class, 'convert'])->name('converter.convert');
     });
 
 

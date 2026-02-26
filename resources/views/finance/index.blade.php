@@ -5,130 +5,227 @@
 @section('content')
 
 <style>
-    :root {
-        --navy-dark: #0f172a;
-        --navy-main: #1e293b;
-        --navy-soft: #334155;
-        --navy-hover: #1d4ed8;
-        --soft-white: #f8fafc;
-    }
 
-    body {
-        background-color: #f1f5f9;
-    }
+/* ===============================
+   TABLE NAVY FULL THEME
+=================================*/
 
-    .page-title {
-        color: var(--navy-dark);
-        font-weight: 700;
-    }
-
-    .modern-card {
-        background: #ffffff;
-        border: none;
-        border-radius: 16px;
-        box-shadow: 0 8px 25px rgba(15, 23, 42, 0.08);
-    }
-
-    .summary-card {
-        background: var(--navy-main);
-        color: white;
-        border-radius: 18px;
-        padding: 20px;
-        transition: 0.3s ease;
-    }
-
-    .summary-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 10px 30px rgba(15, 23, 42, 0.2);
-    }
-
-    .summary-card small {
-        color: #cbd5e1;
-    }
-
-    .summary-number {
-        font-size: 1.8rem;
-        font-weight: 700;
-        color: #ffffff;
-    }
-
-    .summary-amount {
-        font-size: 0.9rem;
-        font-weight: 600;
-        color: #93c5fd;
-    }
-
-    .btn-navy {
-        background: var(--navy-main);
-        color: #fff;
-        border-radius: 10px;
-    }
-
-    .btn-navy:hover {
-        background: var(--navy-hover);
-        color: #fff;
-    }
-
-    .table thead {
-        background-color: var(--navy-main);
-        color: white;
-    }
-
-    .table-hover tbody tr:hover {
-        background-color: #f1f5f9;
-    }
-
-    .badge-paid {
-        background-color: #16a34a;
-    }
-
-    .badge-unpaid {
-        background-color: #dc2626;
-    }
-
-    .filter-card {
-    background: #1e293b; /* navy */
-    border-radius: 18px;
-    border: none;
-    box-shadow: 0 8px 25px rgba(15, 23, 42, 0.25);
+.table {
+    margin-bottom: 0;
 }
 
+/* HEADER */
+.table thead th {
+    background: var(--navy-main);
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    border: none;
+    padding: 14px 16px;
+}
+
+/* BODY */
+.table tbody td {
+    padding: 14px 16px;
+    font-size: 14px;
+    color: var(--navy-dark);
+    border-color: #e2e8f0;
+}
+
+/* HOVER */
+.table-hover tbody tr {
+    transition: all .2s ease-in-out;
+}
+
+.table-hover tbody tr:hover {
+    background: rgba(59, 130, 246, 0.06);
+    transform: scale(1.002);
+}
+
+/* OVERDUE ROW */
+.table tbody tr.overdue {
+    background: rgba(220, 38, 38, 0.05);
+}
+
+/* TOTAL COLUMN */
+.table .text-primary {
+    color: black !important;
+    font-weight: 700;
+}
+
+/* BADGE */
+.badge-paid {
+    background: rgba(22,163,74,.12);
+    color: #16a34a;
+    font-weight: 600;
+    padding: 6px 14px;
+    border-radius: 30px;
+    font-size: 12px;
+}
+
+.badge-unpaid {
+    background: rgba(220,38,38,.12);
+    color: #dc2626;
+    font-weight: 600;
+    padding: 6px 14px;
+    border-radius: 30px;
+    font-size: 12px;
+}
+
+/* ACTION BUTTONS */
+.btn-outline-primary {
+    border-color: #3b82f6;
+    color: #3b82f6;
+    border-radius: 8px;
+}
+
+.btn-outline-primary:hover {
+    background: #3b82f6;
+    color: #fff;
+}
+
+.btn-success {
+    border-radius: 8px;
+}
+
+.btn-outline-danger {
+    border-radius: 8px;
+}
+/* FORCE TABLE TEXT COLOR */
+.modern-card .table,
+.modern-card .table tbody,
+.modern-card .table tbody td,
+.modern-card .table tbody tr {
+    color: #000 !important;
+}
+
+/* Pastikan header tetap putih */
+.modern-card .table thead th {
+    color: #fff !important;
+}
+
+/* Pastikan link dalam table juga hitam */
+.modern-card .table a {
+    color: #000 !important;
+}
+
+/* Icon dalam table */
+.modern-card .table i {
+    color: inherit !important;
+}
+/* ===============================
+   BACKGROUND NAVY SOFT
+=================================*/
+
+body {
+    background: #0f172a; /* navy dark */
+}
+
+/* ===============================
+   SUMMARY CARD (TIMBUL)
+=================================*/
+
+.summary-card {
+    background: #1e293b; /* beda dikit dari bg */
+    border-radius: 18px;
+    padding: 24px;
+    border: 1px solid rgba(255,255,255,0.06);
+
+    box-shadow:
+        0 10px 25px rgba(0,0,0,0.35),   /* drop shadow bawah */
+        0 2px 6px rgba(0,0,0,0.25),    /* depth kecil */
+        inset 0 1px 0 rgba(255,255,255,0.05); /* highlight atas */
+
+    transition: all .25s ease;
+}
+
+.summary-card:hover {
+    transform: translateY(-4px);
+    box-shadow:
+        0 18px 35px rgba(0,0,0,0.45),
+        0 4px 10px rgba(0,0,0,0.35),
+        inset 0 1px 0 rgba(255,255,255,0.08);
+}
+
+/* TEXT */
+.summary-card small {
+    color: #94a3b8;
+    font-size: 13px;
+}
+
+.summary-number {
+    font-size: 30px;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.summary-amount {
+    margin-top: 4px;
+    font-weight: 600;
+    font-size: 15px;
+    color: #60a5fa;
+}
+
+/* ===============================
+   FILTER CARD (TIMBUL JUGA)
+=================================*/
+
+.filter-card {
+    background: #1e293b;
+    border-radius: 18px;
+    border: 1px solid rgba(255,255,255,0.06);
+
+    box-shadow:
+        0 10px 25px rgba(0,0,0,0.35),
+        inset 0 1px 0 rgba(255,255,255,0.05);
+}
+
+/* LABEL */
 .filter-card .form-label {
     color: #cbd5e1;
-    font-weight: 600;
+    font-size: 13px;
+    font-weight: 500;
 }
 
+/* INPUT */
+/* INPUT PUTIH CLEAN */
 .filter-card .form-control {
-    background: #0f172a;
-    border: 1px solid #334155;
-    color: #f8fafc;
-    border-radius: 10px;
-}
-
-.filter-card .form-control:focus {
-    background: #0f172a;
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 0.15rem rgba(59,130,246,.25);
-    color: #fff;
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    color: #0f172a;
+    border-radius: 12px;
+    padding: 9px 14px;
+    transition: all .2s ease;
 }
 
 .filter-card .form-control::placeholder {
     color: #94a3b8;
 }
 
+.filter-card .form-control:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59,130,246,0.2);
+}
+
+.filter-card .form-control:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59,130,246,0.25);
+}
+
+/* BUTTON */
 .btn-navy {
-    background: #3b82f6;
-    color: #fff;
-    border-radius: 10px;
+    background: #2563eb;
     border: none;
+    border-radius: 12px;
+    color: #fff;
+    font-weight: 600;
 }
 
 .btn-navy:hover {
-    background: #2563eb;
-    color: #fff;
-    
+    background: #1d4ed8;
 }
-    
 </style>
 
 <div class="container-fluid">
@@ -261,7 +358,7 @@ $canPay = $trx->status === 'unpaid' && (!$jatuhTempo || now()->lessThanOrEqualTo
                                     -
                                 @endif
                             </td>
-                            <td class="text-end fw-bold text-primary">
+                            <td class="text-end fw-bold text-dark">
                                 Rp {{ number_format($trx->total,0,',','.') }}
                             </td>
                             <td>
