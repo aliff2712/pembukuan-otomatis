@@ -33,10 +33,24 @@ class TransaksiImport implements ToModel, WithStartRow
             $jatuhTempo = Carbon::parse($tanggal)->addDays(7);
         }
 
+        $namaCustomer = $row[2] ?? '-';
+        $periode      = $row[17] ?? null;
+
+        // Cek duplikat berdasarkan nama_customer + periode
+        // Jika sudah ada → skip, tidak menimpa data apapun
+        $existing = Transaksi::where('nama_customer', $namaCustomer)
+            ->where('deskripsi->periode', $periode)
+            ->first();
+
+        if ($existing) {
+            return null;
+        }
+
+        // Belum ada → insert baru dengan status unpaid
         return new Transaksi([
-            'nama_customer' => $row[2] ?? '-',
+            'nama_customer' => $namaCustomer,
             'tanggal'       => $tanggal,
-            'jatuh_tempo'   => $jatuhTempo, // ← SEKARANG DIPAKSA DIISI
+            'jatuh_tempo'   => $jatuhTempo,
             'total'         => $total,
             'status'        => 'unpaid',
             'deskripsi'     => [
@@ -46,7 +60,7 @@ class TransaksiImport implements ToModel, WithStartRow
                 'alamat'    => $row[7] ?? null,
                 'internet'  => $row[8] ?? null,
                 'tv'        => $row[11] ?? null,
-                'periode'   => $row[17] ?? null,
+                'periode'   => $periode,
                 'koordinat' => $row[18] ?? null,
                 'sales'     => $row[21] ?? null,
             ],

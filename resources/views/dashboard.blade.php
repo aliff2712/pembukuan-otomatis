@@ -68,6 +68,7 @@
 =======
         <!-- Card Piutang Usaha -->
         <div class="col-xl-4 col-md-6 mb-4">
+            <a href="{{ route('finance.transaksi.index', ['status' => 'unpaid']) }}" class="text-decoration-none">
             <div class="card border-left-info shadow h-100 py-2">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
@@ -280,7 +281,7 @@
                 </div>
                 <div class="card-body">
                     <div class="list-group list-group-flush">
-                        <a href="{{ route('finance.index') }}" class="list-group-item list-group-item-action">
+                        <a href="{{ route('finance.transaksi.index') }}" class="list-group-item list-group-item-action">
                             <i class="fas fa-file-invoice text-primary"></i> Kelola Invoice Beat
                         </a>
                         <a href="{{ route('payments.create') }}" class="list-group-item list-group-item-action">

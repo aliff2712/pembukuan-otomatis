@@ -219,7 +219,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="8" class="text-center text-muted py-4">
+                            <td colspan="8" class="text-center py-4">
                                 <i class="fas fa-inbox fa-3x mb-3"></i>
                                 <p>No voucher sales data found.</p>
                                 <a href="{{ route('voucher-sales.reimport-form') }}" class="btn btn-primary btn-sm">
@@ -270,14 +270,14 @@
         <div class="row">
             <div class="col-md-6">
                 <h6 class="font-weight-bold">About Voucher Sales</h6>
-                <p class="text-muted small">
+                <p class="">
                     Data penjualan voucher diimpor otomatis dari sistem Mikhmon. 
                     Setiap hari akan ada 1 record yang merangkum total transaksi dan total penjualan.
                 </p>
             </div>
             <div class="col-md-6">
                 <h6 class="font-weight-bold">Last Import</h6>
-                <p class="text-muted small">
+                <p class="">
                     <i class="far fa-clock"></i> 
                     {{ $stats['last_import'] ? \Carbon\Carbon::parse($stats['last_import'])->diffForHumans() : 'Never' }}
                 </p>

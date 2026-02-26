@@ -34,28 +34,28 @@
     <li class="nav-item {{ request()->routeIs('voucher-sales*') ? 'active' : '' }}">
         <a class="nav-link" href="{{ route('voucher-sales.index') }}">
             <i class="fas fa-receipt"></i>
-            <span>Voucher Sales</span>
+            <span>Transaksi Voucher</span>
         </a>
     </li>
 
-    <li class="nav-item {{ request()->routeIs('payments*') ? 'active' : '' }}">
+    {{-- <li class="nav-item {{ request()->routeIs('payments*') ? 'active' : '' }}">
         <a class="nav-link" href="{{ route('payments.index') }}">
             <i class="fas fa-money-bill-wave"></i>
             <span>Payments</span>
         </a>
-    </li>
+    </li> --}}
 
     <li class="nav-item {{ request()->routeIs('expenses*') ? 'active' : '' }}">
         <a class="nav-link" href="{{ route('expenses.index') }}">
             <i class="fas fa-wallet"></i>
-            <span>Expenses</span>
+            <span>Pengeluaran</span>
         </a>
     </li>
 
     <li class="nav-item {{ request()->routeIs('other-incomes*') ? 'active' : '' }}">
         <a class="nav-link" href="{{ route('other-incomes.index') }}">
             <i class="fas fa-coins"></i>
-            <span>Other Income</span>
+            <span>Pemasukan lain</span>
         </a>
     </li>
 

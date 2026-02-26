@@ -15,34 +15,7 @@
     <!-- Right Menu -->
     <ul class="navbar-nav align-items-center gap-2">
 
-        <!-- Notifications -->
-        <li class="nav-item dropdown">
-            <a class="nav-link icon-button position-relative"
-               href="#"
-               data-bs-toggle="dropdown">
-
-                <i class="fas fa-bell"></i>
-                <span class="notification-badge">3</span>
-            </a>
-
-            <ul class="dropdown-menu dropdown-menu-end modern-dropdown">
-                <li class="dropdown-header-modern">
-                    Notifications
-                </li>
-
-                <li>
-                    <a class="dropdown-item modern-item" href="#">
-                        <small>New order received</small>
-                    </a>
-                </li>
-
-                <li>
-                    <a class="dropdown-item modern-item" href="#">
-                        <small>Server backup completed</small>
-                    </a>
-                </li>
-            </ul>
-        </li>
+     
 
         <!-- Messages -->
         <li class="nav-item dropdown">

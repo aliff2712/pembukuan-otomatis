@@ -9,7 +9,7 @@
             <h1 class="h3 mb-0">
                 <i class="fas fa-plus-circle text-success me-2"></i>Income / Pendapatan Lain
             </h1>
-            <small class="text-muted">Kelola pendapatan dari sumber lain selain voucher dan BEAT</small>
+            <span class="first-letter:">Kelola semua pendapatan lain yang tidak terkait dengan penjualan produk atau jasa utama.</span>
         </div>
         <a href="{{ route('other-incomes.create') }}" class="btn btn-success">
             <i class="fas fa-plus me-2"></i>Tambah Income
@@ -119,8 +119,8 @@
                 </div>
             @else
                 <div class="text-center py-5">
-                    <i class="fas fa-inbox text-muted" style="font-size: 3rem;"></i>
-                    <p class="text-muted mt-3">Belum ada data income</p>
+                    <i class="fas fa-inbox" style="font-size: 3rem;"></i>
+                    <p class="mt-3">Belum ada data income</p>
                     <a href="{{ route('other-incomes.create') }}" class="btn btn-success">
                         <i class="fas fa-plus me-2"></i>Buat Income Pertama
                     </a>
