@@ -106,76 +106,51 @@
     border-radius:12px;
 }
 </style>
-
-
 <div class="login-wrapper">
-
     <div class="login-card">
-
         <div class="text-center mb-4">
-
             <div class="login-logo">
-                <i class="fas fa-chart-line"></i>
+               <img src="{{ asset('assets/img/dhs-logo.png') }}" alt="Logo" style="width: 100%; height: 100%; object-fit:contain; border-radius: 35%;">
             </div>
-
             <h4 class="fw-bold mb-1">
                 DHS Finance
             </h4>
-
             <small class="text-light opacity-75">
                 Login ke dashboard keuangan
             </small>
-
         </div>
-
-
         {{-- SUCCESS --}}
         @if(session('status'))
             <div class="alert alert-success">
                 {{ session('status') }}
             </div>
         @endif
-
-
         {{-- ERROR --}}
         @if($errors->any())
             <div class="alert alert-danger">
                 {{ $errors->first() }}
             </div>
         @endif
-
-
         <form method="POST" action="{{ route('login') }}" id="loginForm">
-
             @csrf
-
-
             <!-- EMAIL -->
             <div class="mb-3">
-
                 <label class="form-label small opacity-75">
                     Email
                 </label>
-
                 <input
                     type="email"
                     name="email"
                     class="form-control"
                     placeholder="admin@dhsfinance.com"
                     required>
-
             </div>
-
-
             <!-- PASSWORD -->
             <div class="mb-3">
-
                 <label class="form-label small opacity-75">
                     Password
                 </label>
-
                 <div class="input-group">
-
                     <input
                         type="password"
                         name="password"
@@ -183,94 +158,59 @@
                         class="form-control"
                         placeholder="Masukkan password"
                         required>
-
                     <button
                         class="input-group-text"
                         type="button"
                         id="togglePassword">
 
                         <i class="fas fa-eye"></i>
-
                     </button>
-
                 </div>
-
             </div>
-
-
             <!-- REMEMBER -->
             <div class="d-flex justify-content-between mb-4">
-
                 <div class="form-check">
-
                     <input
                         class="form-check-input"
                         type="checkbox"
                         name="remember">
-
                     <label class="form-check-label small">
                         Ingat saya
                     </label>
-
                 </div>
-
-
-              
-
             </div>
-
-
             <!-- BUTTON -->
             <button
                 class="btn btn-login w-100 text-white"
                 id="loginBtn">
-
                 <span class="btn-text">
-
                     <i class="fas fa-sign-in-alt me-2"></i>
                     Masuk
-
                 </span>
-
                 <span class="spinner-border spinner-border-sm d-none"></span>
-
             </button>
-
         </form>
-
         <div class="text-center mt-4">
-
 <div class="d-flex align-items-center mb-3 opacity-50">
     <div class="flex-grow-1 border-top"></div>
     <small class="mx-3">atau</small>
     <div class="flex-grow-1 border-top"></div>
 </div>
-
 <small class="opacity-75">
     Belum punya akun?
 </small>
-
 <a href="{{ route('register') }}"
    class="fw-semibold ms-1">
     Daftar sekarang
 </a>
-
 </div>
     </div>
-
 </div>
-
-
-
 <script>
-
 document.getElementById('togglePassword').onclick=function(){
-
     let input=document.getElementById('password');
     let icon=this.querySelector('i');
-
     if(input.type==='password'){
-
         input.type='text';
         icon.classList.replace('fa-eye','fa-eye-slash');
 
@@ -296,8 +236,5 @@ document.getElementById('loginForm').onsubmit=function(){
     btn.querySelector('.spinner-border').classList.remove('d-none');
 
 };
-
 </script>
-
-
 @endsection
