@@ -55,17 +55,6 @@
     </a>
 </div>
 
-<<<<<<< HEAD
-<!-- PIUTANG USAHA -->
-<div class="col-xl-4 col-md-6 mb-4">
-    <a href="#" class="text-decoration-none">
-        <div class="card border-0 shadow-sm h-100 dashboard-card">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <div class="text-uppercase small fw-semibold text-info mb-1">
-                            Piutang Usaha
-=======
         <!-- Card Piutang Usaha -->
         <div class="col-xl-4 col-md-6 mb-4">
             <a href="{{ route('finance.transaksi.index', ['status' => 'unpaid']) }}" class="text-decoration-none">
@@ -76,11 +65,6 @@
                             <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
                                 Belum bayar (Piutang Usaha - 1103)
                             </div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                Rp {{ number_format($arBalance, 0, ',', '.') }}
-                            </div>
->>>>>>> 79db817 (penyesuaian method dashboard)
-                        </div>
                         <div class="fs-4 fw-bold text-primary">
                             Rp {{ number_format($arBalance, 0, ',', '.') }}
                         </div>
@@ -91,10 +75,6 @@
                 </div>
             </div>
         </div>
-<<<<<<< HEAD
-    </a>
-</div>
-=======
     </div>
      <!-- Card Piutang Usaha -->
         <div class="col-xl-4 col-md-6 mb-4">
@@ -117,7 +97,6 @@
             </div>
         </div>
     </div>
->>>>>>> 79db817 (penyesuaian method dashboard)
 
 </div>
     <!-- Baris Kartu Ringkasan Bulanan & Grafik -->

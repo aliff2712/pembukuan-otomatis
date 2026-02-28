@@ -10,7 +10,7 @@ use Maatwebsite\Excel\Concerns\WithStartRow;
 
 class TransaksiImport implements ToModel, WithStartRow
 {
-    public function startRow(): int
+    public function startRow(): int 
     {
         return 4;
     }
