@@ -21,20 +21,20 @@
         <div class="col-lg-8">
             <div class="card shadow-sm mb-4">
                 <div class="card-header bg-light py-3">
-                    <h5 class="mb-0">
+                    <h5 class="mb-0 text-black">
                         <i class="fas fa-info-circle text-info me-2"></i>Informasi Income
                     </h5>
                 </div>
                 <div class="card-body">
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label class="form-label text-muted">Tanggal</label>
+                            <label class="form-label">Tanggal</label>
                             <p class="h6 mb-0">
                                 <i class="fas fa-calendar text-info me-2"></i>{{ $income->income_date->format('d F Y') }}
                             </p>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label text-muted">Status</label>
+                            <label class="form-label">Status</label>
                             <p class="mb-0">
                                 @if ($income->isPosted())
                                     <span class="badge bg-success">
@@ -50,12 +50,12 @@
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label text-muted">Deskripsi</label>
+                        <label class="form-label">Deskripsi</label>
                         <p class="h6 mb-0">{{ $income->description }}</p>
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label text-muted">Jumlah</label>
+                        <label class="form-label">Jumlah</label>
                         <p class="h5 mb-0 text-success fw-bold">
                             <i class="fas fa-money-bill-wave me-2"></i>Rp{{ number_format($income->amount, 0, ',', '.') }}
                         </p>
@@ -63,8 +63,8 @@
 
                     @if ($income->notes)
                         <div class="mb-3">
-                            <label class="form-label text-muted">Catatan</label>
-                            <p class="mb-0 text-muted">{{ $income->notes }}</p>
+                            <label class="form-label">Catatan</label>
+                            <p class="mb-0">{{ $income->notes }}</p>
                         </div>
                     @endif
 
@@ -72,11 +72,11 @@
 
                     <div class="row text-sm">
                         <div class="col-md-6">
-                            <label class="form-label text-muted">Dibuat Oleh</label>
+                            <label class="form-label">Dibuat Oleh</label>
                             <p class="small mb-0">{{ $income->createdBy->name ?? 'Unknown' }}</p>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label text-muted">Waktu Dibuat</label>
+                            <label class="form-label ">Waktu Dibuat</label>
                             <p class="small mb-0">{{ $income->created_at->format('d M Y H:i') }}</p>
                         </div>
                     </div>
@@ -84,7 +84,7 @@
                     @if ($income->updated_at != $income->created_at)
                         <div class="row text-sm mt-3">
                             <div class="col-md-6">
-                                <label class="form-label text-muted">Diubah Pada</label>
+                                <label class="form-label ">Diubah Pada</label>
                                 <p class="small mb-0">{{ $income->updated_at->format('d M Y H:i') }}</p>
                             </div>
                         </div>
@@ -97,7 +97,7 @@
         <div class="col-lg-4">
             <div class="card shadow-sm">
                 <div class="card-header bg-light py-3">
-                    <h5 class="mb-0">
+                    <h5 class="mb-0 text-primary">
                         <i class="fas fa-cog text-secondary me-2"></i>Aksi
                     </h5>
                 </div>

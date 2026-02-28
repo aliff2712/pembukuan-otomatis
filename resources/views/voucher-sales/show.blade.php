@@ -78,13 +78,13 @@
         <!-- Timestamps -->
         <div class="row">
             <div class="col-md-6">
-                <small class="text-muted">
+                <small class="">
                     <i class="far fa-clock"></i> Created: 
                     {{ \Carbon\Carbon::parse($sale->created_at)->format('d M Y H:i:s') }}
                 </small>
             </div>
             <div class="col-md-6">
-                <small class="text-muted">
+                <small class="">
                     <i class="far fa-clock"></i> Last Updated: 
                     {{ \Carbon\Carbon::parse($sale->updated_at)->format('d M Y H:i:s') }}
                     ({{ \Carbon\Carbon::parse($sale->updated_at)->diffForHumans() }})
@@ -161,7 +161,7 @@
 </div>
 @else
 <div class="card shadow mb-4">
-    <div class="card-body text-center text-muted">
+    <div class="card-body text-center ">
         <i class="fas fa-info-circle fa-3x mb-3"></i>
         <p>No journal entry found for this voucher sale.</p>
         <small>Journal entries are created automatically during import process.</small>

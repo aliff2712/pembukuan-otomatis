@@ -1,121 +1,250 @@
 @extends('layouts-main.app')
-@section('title', __('Tambah Income Baru'))
-@section('page-title', __('Jumlah Pendapatan Lain Baru'))
+@section('title', __('Tambah Income'))
+@section('page-title', __('Tambah Pendapatan Lain'))
 @section('content')
 <div class="container-fluid py-4">
-    <!-- Page Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h1 class="h3 mb-0">
-                <i class="fas fa-plus-circle text-success me-2"></i>Tambah Income Baru
-            </h1>
-        </div>
+    <!-- Back Button -->
+    <div class="mb-3">
         <a href="{{ route('other-incomes.index') }}" class="btn btn-secondary btn-sm">
-            <i class="fas fa-arrow-left me-2"></i>Kembali
+            <i class="fas fa-arrow-left"></i> Kembali ke Daftar
         </a>
     </div>
 
-    <!-- Form Card -->
-    <div class="card shadow-sm">
-        <div class="card-body p-4">
-            <form method="POST" action="{{ route('other-incomes.store') }}" id="incomeForm">
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-success">
+                <i class="fas fa-plus-circle"></i> Tambah Pendapatan Lain
+            </h6>
+        </div>
+        <div class="card-body">
+            @if($errors->any())
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <strong>Validation Error!</strong>
+                    <ul class="mb-0 mt-2">
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            @endif
+
+            <form method="POST" action="{{ route('other-incomes.store') }}">
                 @csrf
 
-                <!-- Tanggal Income -->
-                <div class="mb-3">
-                    <label for="income_date" class="form-label fw-semibold">
-                        <i class="fas fa-calendar text-info me-1"></i>Tanggal
-                    </label>
-                    <input 
-                        type="date" 
-                        name="income_date" 
-                        id="income_date" 
-                        class="form-control @error('income_date') is-invalid @enderror"
-                        value="{{ old('income_date', date('Y-m-d')) }}"
-                        required
-                    >
-                    @error('income_date')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
+                <div class="row">
+                    <!-- Income Date -->
+                    <div class="col-md-6 mb-3">
+                        <label for="income_date" class="form-label">
+                            <i class="far fa-calendar"></i> Tanggal <span class="text-danger">*</span>
+                        </label>
+                        <input type="date"
+                            class="form-control @error('income_date') is-invalid @enderror"
+                            id="income_date"
+                            name="income_date"
+                            value="{{ old('income_date', date('Y-m-d')) }}"
+                            required>
+                        @error('income_date')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
 
-                <!-- Deskripsi -->
-                <div class="mb-3">
-                    <label for="description" class="form-label fw-semibold">
-                        <i class="fas fa-align-left text-info me-1"></i>Deskripsi
-                    </label>
-                    <input 
-                        type="text" 
-                        name="description" 
-                        id="description" 
-                        class="form-control @error('description') is-invalid @enderror" 
-                        placeholder="Contoh: Jasa Konsultasi, Sewa Ruangan, etc."
-                        value="{{ old('description') }}"
-                        required
-                    >
-                    @error('description')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
+                    <!-- Amount -->
+                    <div class="col-md-6 mb-3">
+                        <label for="amount" class="form-label">
+                            <i class="fas fa-money-bill-wave"></i> Jumlah <span class="text-danger">*</span>
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text">Rp</span>
+                            <input type="number"
+                                class="form-control @error('amount') is-invalid @enderror"
+                                id="amount"
+                                name="amount"
+                                value="{{ old('amount') }}"
+                                placeholder="0"
+                                min="1"
+                                step="1"
+                                required>
+                            @error('amount')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="form-text">
+                            <span id="amountText" class="text-muted"></span>
+                        </div>
+                    </div>
 
-                <!-- Jumlah -->
-                <div class="mb-3">
-                    <label for="amount" class="form-label fw-semibold">
-                        <i class="fas fa-money-bill-wave text-success me-1"></i>Jumlah
-                    </label>
-                    <div class="input-group">
-                        <span class="input-group-text">Rp</span>
-                        <input 
-                            type="number" 
-                            name="amount" 
-                            id="amount" 
-                            class="form-control @error('amount') is-invalid @enderror"
-                            placeholder="0"
-                            value="{{ old('amount') }}"
-                            min="1"
-                            required
-                        >
-                        @error('amount')
+                    <!-- Income Account (Revenue COA) -->
+                    <div class="col-md-6 mb-3">
+                        <label for="income_coa_id" class="form-label">
+                            <i class="fas fa-tags"></i> Akun Pendapatan <span class="text-danger">*</span>
+                        </label>
+                        <select class="form-control @error('income_coa_id') is-invalid @enderror"
+                            id="income_coa_id"
+                            name="income_coa_id"
+                            required>
+                            <option value="">-- Pilih Akun Pendapatan --</option>
+                            @foreach($incomeAccounts as $account)
+                                <option value="{{ $account->id }}"
+                                    {{ old('income_coa_id') == $account->id ? 'selected' : '' }}>
+                                    {{ $account->account_code }} - {{ $account->account_name }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('income_coa_id')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                        <div class="form-text">Akun kategori pendapatan lain (4xxx - Revenue)</div>
+                    </div>
+
+                    <!-- Cash/Bank Account -->
+                    <div class="col-md-6 mb-3">
+                        <label for="cash_coa_id" class="form-label">
+                            <i class="fas fa-university"></i> Diterima Di (Kas/Bank) <span class="text-danger">*</span>
+                        </label>
+                        <select class="form-control @error('cash_coa_id') is-invalid @enderror"
+                            id="cash_coa_id"
+                            name="cash_coa_id"
+                            required>
+                            <option value="">-- Pilih Akun Kas/Bank --</option>
+                            @foreach($cashAccounts as $account)
+                                <option value="{{ $account->id }}"
+                                    {{ old('cash_coa_id') == $account->id ? 'selected' : '' }}>
+                                    {{ $account->account_code }} - {{ $account->account_name }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('cash_coa_id')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                        <div class="form-text">Akun kas atau bank tempat pendapatan diterima</div>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="col-md-12 mb-3">
+                        <label for="description" class="form-label">
+                            <i class="fas fa-align-left"></i> Deskripsi <span class="text-danger">*</span>
+                        </label>
+                        <input type="text"
+                            class="form-control @error('description') is-invalid @enderror"
+                            id="description"
+                            name="description"
+                            value="{{ old('description') }}"
+                            placeholder="Contoh: Pendapatan bunga bank, Pendapatan sewa gedung"
+                            maxlength="255"
+                            required>
+                        @error('description')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <!-- Notes -->
+                    <div class="col-12 mb-3">
+                        <label for="notes" class="form-label">
+                            <i class="fas fa-sticky-note"></i> Catatan <span class="text-muted">(Opsional)</span>
+                        </label>
+                        <textarea class="form-control @error('notes') is-invalid @enderror"
+                            id="notes"
+                            name="notes"
+                            rows="3"
+                            placeholder="Catatan tambahan (opsional)">{{ old('notes') }}</textarea>
+                        @error('notes')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
                 </div>
 
-                <!-- Catatan -->
-                <div class="mb-4">
-                    <label for="notes" class="form-label fw-semibold">
-                        <i class="fas fa-sticky-note text-info me-1"></i>Catatan (Opsional)
-                    </label>
-                    <textarea 
-                        name="notes" 
-                        id="notes" 
-                        class="form-control @error('notes') is-invalid @enderror"
-                        rows="3"
-                        placeholder="Tambahkan catatan atau keterangan tambahan..."
-                    >{{ old('notes') }}</textarea>
-                    @error('notes')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
+                <hr>
+
+                <!-- Journal Preview -->
+                <div id="journalPreview" class="alert alert-light border d-none mb-3">
+                    <h6 class="mb-2">
+                        <i class="fas fa-book"></i> Preview Jurnal Otomatis
+                    </h6>
+                    <table class="table table-sm table-bordered mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Akun</th>
+                                <th class="text-end">Debit</th>
+                                <th class="text-end">Kredit</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span id="previewCashAccount">-</span></td>
+                                <td class="text-end text-success fw-semibold"><span id="previewDebit">Rp 0</span></td>
+                                <td class="text-end">-</td>
+                            </tr>
+                            <tr>
+                                <td><span id="previewIncomeAccount">-</span></td>
+                                <td class="text-end">-</td>
+                                <td class="text-end text-primary fw-semibold"><span id="previewCredit">Rp 0</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Info -->
+                <div class="alert alert-info" role="alert">
+                    <h6 class="alert-heading">
+                        <i class="fas fa-info-circle"></i> Informasi
+                    </h6>
+                    <p class="mb-0 small">
+                        Setelah disimpan, jurnal akuntansi akan <strong>otomatis dibuat</strong> dengan entri:
+                        <br>Debit <strong>Kas/Bank</strong> dan Kredit <strong>Akun Pendapatan</strong> sejumlah yang diinput.
+                    </p>
                 </div>
 
                 <!-- Buttons -->
-                <div class="d-flex gap-2">
-                    <button type="submit" class="btn btn-success">
-                        <i class="fas fa-save me-2"></i>Simpan
-                    </button>
-                    <a href="{{ route('other-incomes.index') }}" class="btn btn-outline-secondary">
-                        <i class="fas fa-times me-2"></i>Batal
+                <div class="d-flex justify-content-between">
+                    <a href="{{ route('other-incomes.index') }}" class="btn btn-secondary">
+                        <i class="fas fa-times"></i> Batal
                     </a>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-save"></i> Simpan Income
+                    </button>
                 </div>
             </form>
         </div>
     </div>
 </div>
-
-<script>
-// Format angka dengan pemisah ribuan
-document.getElementById('amount').addEventListener('input', function() {
-    this.value = this.value.replace(/[^0-9]/g, '');
-});
-</script>
 @endsection
+
+@push('scripts')
+<script>
+function formatRupiah(value) {
+    return 'Rp ' + new Intl.NumberFormat('id-ID').format(value || 0);
+}
+
+function updatePreview() {
+    const amount = parseFloat(document.getElementById('amount').value) || 0;
+    const cashSelect = document.getElementById('cash_coa_id');
+    const incomeSelect = document.getElementById('income_coa_id');
+    const preview = document.getElementById('journalPreview');
+
+    const cashText = cashSelect.options[cashSelect.selectedIndex]?.text || '-';
+    const incomeText = incomeSelect.options[incomeSelect.selectedIndex]?.text || '-';
+
+    document.getElementById('amountText').textContent = amount > 0 ? formatRupiah(amount) : '';
+    document.getElementById('previewDebit').textContent = formatRupiah(amount);
+    document.getElementById('previewCredit').textContent = formatRupiah(amount);
+    document.getElementById('previewCashAccount').textContent = cashSelect.value ? cashText : '-';
+    document.getElementById('previewIncomeAccount').textContent = incomeSelect.value ? incomeText : '-';
+
+    // Tampilkan preview jika semua sudah diisi
+    if (amount > 0 && cashSelect.value && incomeSelect.value) {
+        preview.classList.remove('d-none');
+    } else {
+        preview.classList.add('d-none');
+    }
+}
+
+document.getElementById('amount').addEventListener('input', updatePreview);
+document.getElementById('cash_coa_id').addEventListener('change', updatePreview);
+document.getElementById('income_coa_id').addEventListener('change', updatePreview);
+
+// Trigger on load
+window.addEventListener('load', updatePreview);
+</script>
+@endpush

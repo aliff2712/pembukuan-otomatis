@@ -61,6 +61,7 @@ class ChartOfAccountsSeeder extends Seeder
                 'account_name' => 'Beban Upah Kerja',
                 'account_type' => 'expense',
             ],
+            
             [
                 'account_code' => '5109',
                 'account_name' => 'Beban Lain-lain',

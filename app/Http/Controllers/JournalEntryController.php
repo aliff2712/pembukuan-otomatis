@@ -213,4 +213,6 @@ class JournalEntryController extends Controller
 
         return response()->json($entries);
     }
+
+    
 }

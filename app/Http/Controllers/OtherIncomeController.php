@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ChartOfAccount;
 use App\Models\OtherIncome;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -15,7 +16,7 @@ class OtherIncomeController extends Controller
      */
     public function index()
     {
-        $incomes = OtherIncome::with('createdBy')
+        $incomes = OtherIncome::with(['createdBy', 'incomeCoa', 'cashCoa'])
             ->orderBy('income_date', 'desc')
             ->paginate(15);
 
@@ -29,7 +30,18 @@ class OtherIncomeController extends Controller
      */
     public function create()
     {
-        return view('other-incomes.create');
+        // Akun pendapatan lain (revenue)
+        $incomeAccounts = ChartOfAccount::where('account_type', 'revenue')
+            ->orderBy('account_code')
+            ->get();
+
+        // Akun kas / bank (asset yang ditandai is_cash)
+        $cashAccounts = ChartOfAccount::where('account_type', 'asset')
+            ->where('is_cash', true)
+            ->orderBy('account_code')
+            ->get();
+
+        return view('other-incomes.create', compact('incomeAccounts', 'cashAccounts'));
     }
 
     /**
@@ -38,22 +50,27 @@ class OtherIncomeController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'income_date' => 'required|date',
-            'description' => 'required|string|max:255',
-            'notes' => 'nullable|string',
-            'amount' => 'required|numeric|min:1',
+            'income_date'   => 'required|date',
+            'description'   => 'required|string|max:255',
+            'notes'         => 'nullable|string',
+            'amount'        => 'required|numeric|min:1',
+            'income_coa_id' => 'required|exists:chart_of_accounts,id',
+            'cash_coa_id'   => 'required|exists:chart_of_accounts,id',
         ], [
-            'income_date.required' => 'Tanggal harus diisi',
-            'description.required' => 'Deskripsi harus diisi',
-            'amount.required' => 'Jumlah harus diisi',
+            'income_date.required'   => 'Tanggal harus diisi',
+            'description.required'   => 'Deskripsi harus diisi',
+            'amount.required'        => 'Jumlah harus diisi',
+            'income_coa_id.required' => 'Akun pendapatan harus dipilih',
+            'cash_coa_id.required'   => 'Akun kas/bank harus dipilih',
         ]);
 
         $validated['created_by'] = Auth::id();
 
+        // Model event `created` di OtherIncome akan otomatis membuat JournalEntry
         OtherIncome::create($validated);
 
         return Redirect::route('other-incomes.index')
-            ->with('success', 'Income berhasil ditambahkan!');
+            ->with('success', 'Income berhasil ditambahkan dan jurnal otomatis telah dibuat!');
     }
 
     /**
@@ -61,7 +78,9 @@ class OtherIncomeController extends Controller
      */
     public function show(string $id)
     {
-        $income = OtherIncome::findOrFail($id);
+        $income = OtherIncome::with(['createdBy', 'incomeCoa', 'cashCoa', 'postedJournal.lines'])
+            ->findOrFail($id);
+
         return view('other-incomes.show', ['income' => $income]);
     }
 
@@ -71,7 +90,22 @@ class OtherIncomeController extends Controller
     public function edit(string $id)
     {
         $income = OtherIncome::findOrFail($id);
-        return view('other-incomes.edit', ['income' => $income]);
+
+        if ($income->isPosted()) {
+            return Redirect::route('other-incomes.show', $income)
+                ->with('error', 'Tidak bisa mengedit income yang sudah di-posting!');
+        }
+
+        $incomeAccounts = ChartOfAccount::where('account_type', 'revenue')
+            ->orderBy('account_code')
+            ->get();
+
+        $cashAccounts = ChartOfAccount::where('account_type', 'asset')
+            ->where('is_cash', true)
+            ->orderBy('account_code')
+            ->get();
+
+        return view('other-incomes.edit', compact('income', 'incomeAccounts', 'cashAccounts'));
     }
 
     /**
@@ -87,16 +121,22 @@ class OtherIncomeController extends Controller
         }
 
         $validated = $request->validate([
-            'income_date' => 'required|date',
-            'description' => 'required|string|max:255',
-            'notes' => 'nullable|string',
-            'amount' => 'required|numeric|min:1',
+            'income_date'   => 'required|date',
+            'description'   => 'required|string|max:255',
+            'notes'         => 'nullable|string',
+            'amount'        => 'required|numeric|min:1',
+            'income_coa_id' => 'required|exists:chart_of_accounts,id',
+            'cash_coa_id'   => 'required|exists:chart_of_accounts,id',
+        ], [
+            'income_coa_id.required' => 'Akun pendapatan harus dipilih',
+            'cash_coa_id.required'   => 'Akun kas/bank harus dipilih',
         ]);
 
+        // Model event `updated` akan otomatis menghapus jurnal lama dan membuat yang baru
         $income->update($validated);
 
         return Redirect::route('other-incomes.show', $income)
-            ->with('success', 'Income berhasil diubah!');
+            ->with('success', 'Income berhasil diubah dan jurnal otomatis telah diperbarui!');
     }
 
     /**
@@ -111,9 +151,10 @@ class OtherIncomeController extends Controller
                 ->with('error', 'Tidak bisa menghapus income yang sudah di-posting!');
         }
 
+        // Model event `deleting` akan otomatis menghapus jurnal terkait
         $income->delete();
 
         return Redirect::route('other-incomes.index')
-            ->with('success', 'Income berhasil dihapus!');
+            ->with('success', 'Income dan jurnal terkait berhasil dihapus!');
     }
 }

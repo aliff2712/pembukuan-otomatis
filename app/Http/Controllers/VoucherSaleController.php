@@ -28,10 +28,13 @@ class VoucherSaleController extends Controller
             $query->where('sale_date', '<=', $request->date_to);
         }
 
-        // Filter by month & year (quick filter)
-        if ($request->filled('month') && $request->filled('year')) {
-            $query->whereMonth('sale_date', $request->month)
-                  ->whereYear('sale_date', $request->year);
+        // FIX: Filter month & year bisa dipakai sendiri-sendiri (tidak harus keduanya)
+        if ($request->filled('month')) {
+            $query->whereMonth('sale_date', $request->month);
+        }
+
+        if ($request->filled('year')) {
+            $query->whereYear('sale_date', $request->year);
         }
 
         // Search by source
@@ -39,7 +42,8 @@ class VoucherSaleController extends Controller
             $query->where('source', $request->source);
         }
 
-        $sales = $query->orderBy('sale_date', 'desc')->paginate(20);
+        // FIX: Tambahkan withQueryString() agar filter tetap terbawa saat ganti halaman
+        $sales = $query->orderBy('sale_date', 'desc')->paginate(20)->withQueryString();
 
         // Summary statistics
         $stats = $this->getStatistics($request);
@@ -50,9 +54,8 @@ class VoucherSaleController extends Controller
     /**
      * Display the specified voucher sale
      */
-     public function show($id)
-        {    
-
+    public function show($id)
+    {
         $sale = DailyVoucherSale::findOrFail($id);
 
         // Get journal entry related to this sale (if any)
@@ -78,11 +81,11 @@ class VoucherSaleController extends Controller
 
             // Build command parameters
             $params = [];
-            
+
             if ($request->filled('date_from')) {
                 $params['--date-from'] = $request->date_from;
             }
-            
+
             if ($request->filled('date_to')) {
                 $params['--date-to'] = $request->date_to;
             }
@@ -107,7 +110,7 @@ class VoucherSaleController extends Controller
 
         } catch (\Exception $e) {
             Log::error('Voucher reimport failed: ' . $e->getMessage());
-            
+
             return redirect()
                 ->back()
                 ->withErrors(['import' => 'Terjadi kesalahan: ' . $e->getMessage()]);
@@ -137,11 +140,6 @@ class VoucherSaleController extends Controller
                     ->withErrors(['void' => 'Voucher sale sudah di-void sebelumnya.']);
             }
 
-            // Soft delete or mark as voided (depending on your preference)
-            // Option 1: Add voided_at column
-            // $sale->update(['voided_at' => now()]);
-
-            // Option 2: Delete record (since you asked for delete/void)
             $sale->delete();
 
             return redirect()
@@ -150,7 +148,7 @@ class VoucherSaleController extends Controller
 
         } catch (\Exception $e) {
             Log::error('Voucher void failed: ' . $e->getMessage());
-            
+
             return redirect()
                 ->back()
                 ->withErrors(['void' => 'Gagal void voucher: ' . $e->getMessage()]);
@@ -173,20 +171,24 @@ class VoucherSaleController extends Controller
             $query->where('sale_date', '<=', $request->date_to);
         }
 
-        if ($request->filled('month') && $request->filled('year')) {
-            $query->whereMonth('sale_date', $request->month)
-                  ->whereYear('sale_date', $request->year);
+        // FIX: Konsisten dengan filter di index()
+        if ($request->filled('month')) {
+            $query->whereMonth('sale_date', $request->month);
+        }
+
+        if ($request->filled('year')) {
+            $query->whereYear('sale_date', $request->year);
         }
 
         return [
-            'total_days' => $query->count(),
+            'total_days'         => $query->count(),
             'total_transactions' => $query->sum('total_transactions'),
-            'total_amount' => $query->sum('total_amount'),
-            'average_per_day' => $query->avg('total_amount'),
-            'this_month_total' => DailyVoucherSale::whereMonth('sale_date', now()->month)
+            'total_amount'       => $query->sum('total_amount'),
+            'average_per_day'    => $query->avg('total_amount'),
+            'this_month_total'   => DailyVoucherSale::whereMonth('sale_date', now()->month)
                 ->whereYear('sale_date', now()->year)
                 ->sum('total_amount'),
-            'last_import' => DailyVoucherSale::max('updated_at'),
+            'last_import'        => DailyVoucherSale::max('updated_at'),
         ];
     }
 
@@ -209,7 +211,7 @@ class VoucherSaleController extends Controller
         $sales = $query->orderBy('sale_date')->get();
 
         // Prepare CSV
-        $csvData = [];
+        $csvData   = [];
         $csvData[] = ['Date', 'Total Transactions', 'Total Amount', 'Source', 'Import Batch', 'Created At'];
 
         foreach ($sales as $sale) {
@@ -225,7 +227,7 @@ class VoucherSaleController extends Controller
 
         // Generate CSV
         $filename = 'voucher_sales_' . now()->format('Y-m-d_His') . '.csv';
-        
+
         $handle = fopen('php://temp', 'r+');
         foreach ($csvData as $row) {
             fputcsv($handle, $row);
@@ -235,7 +237,7 @@ class VoucherSaleController extends Controller
         fclose($handle);
 
         return response($csv, 200, [
-            'Content-Type' => 'text/csv',
+            'Content-Type'        => 'text/csv',
             'Content-Disposition' => 'attachment; filename="' . $filename . '"',
         ]);
     }
@@ -245,13 +247,13 @@ class VoucherSaleController extends Controller
      */
     public function chartData(Request $request)
     {
-        $months = $request->get('months', 6); // Default 6 months
+        $months = $request->get('months', 6);
 
         $data = [];
-        
+
         for ($i = $months - 1; $i >= 0; $i--) {
             $date = now()->subMonths($i);
-            
+
             $monthData = DailyVoucherSale::whereMonth('sale_date', $date->month)
                 ->whereYear('sale_date', $date->year)
                 ->selectRaw('
@@ -261,9 +263,9 @@ class VoucherSaleController extends Controller
                 ->first();
 
             $data[] = [
-                'month' => $date->format('M Y'),
+                'month'        => $date->format('M Y'),
                 'transactions' => $monthData->transactions ?? 0,
-                'amount' => $monthData->amount ?? 0,
+                'amount'       => $monthData->amount ?? 0,
             ];
         }
 

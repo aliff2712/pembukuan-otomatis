@@ -201,7 +201,6 @@
                             <td>
                                 <span class="badge bg-secondary">{{ $sale->source }}</span>
                             </td>
-                           
                             <td>
                                 <small>{{ \Carbon\Carbon::parse($sale->updated_at)->format('d/m/Y H:i') }}</small>
                             </td>
@@ -219,7 +218,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="8" class="text-center py-4">
+                            <td colspan="7" class="text-center py-4">
                                 <i class="fas fa-inbox fa-3x mb-3"></i>
                                 <p>No voucher sales data found.</p>
                                 <a href="{{ route('voucher-sales.reimport-form') }}" class="btn btn-primary btn-sm">
@@ -232,6 +231,7 @@
                 @if($sales->count() > 0)
                     <tfoot class="table-light">
                         <tr>
+                            {{-- FIX: colspan disesuaikan dengan jumlah kolom yang benar --}}
                             <th colspan="2" class="text-end">Total (This Page):</th>
                             <th class="text-center">
                                 {{ number_format($sales->sum('total_transactions')) }}
@@ -239,7 +239,7 @@
                             <th class="text-end">
                                 Rp {{ number_format($sales->sum('total_amount'), 0, ',', '.') }}
                             </th>
-                            <th colspan="4"></th>
+                            <th colspan="3"></th>
                         </tr>
                     </tfoot>
                 @endif
@@ -247,6 +247,7 @@
         </div>
 
         <!-- Pagination -->
+        {{-- FIX: withQueryString() sudah di-handle di controller, links() otomatis membawa filter --}}
         <div class="d-flex justify-content-between align-items-center mt-3">
             <div>
                 Showing {{ $sales->firstItem() ?? 0 }} to {{ $sales->lastItem() ?? 0 }} 
@@ -308,7 +309,6 @@ function voidSale(id, date) {
         cancelButtonText: 'Cancel'
     }).then((result) => {
         if (result.isConfirmed) {
-            // Create form and submit
             const form = document.createElement('form');
             form.method = 'POST';
             form.action = `/voucher-sales/${id}`;

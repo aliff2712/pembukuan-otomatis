@@ -11,7 +11,6 @@
 
 <!-- SALDO KAS -->
 <div class="col-xl-4 col-md-6 mb-4">
-    <a href="#" class="text-decoration-none">
         <div class="card border-0 shadow-sm h-100 dashboard-card">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center">
@@ -34,16 +33,16 @@
 
 <!-- SALDO BANK -->
 <div class="col-xl-4 col-md-6 mb-4">
-    <a href="#" class="text-decoration-none">
+     <a href="{{ route('voucher-sales.index') }}" class="text-decoration-none"> 
         <div class="card border-0 shadow-sm h-100 dashboard-card">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
                         <div class="text-uppercase small fw-semibold text-success mb-1">
-                            Saldo Bank (1102)
+                            Penjualan Voucher Bulan kemarin
                         </div>
                         <div class="fs-4 fw-bold text-primary">
-                            Rp {{ number_format($bankBalance, 0, ',', '.') }}
+                            Rp {{ number_format($voucherBalance['last_month_total'], 0, ',', '.') }}
                         </div>
                     </div>
                     <div class="icon-circle bg-success-soft">

@@ -168,7 +168,7 @@ class ChartOfAccountController extends Controller
         ];
 
         // Check if account has transactions
-        $hasTransactions = JournalLine::where('account_code', $account->account_code)->exists();
+        $hasTransactions = JournalLine::where('coa_id', $account->account_code)->exists();
 
         return view('chart-of-accounts.edit', compact('account', 'accountTypes', 'hasTransactions'));
     }
