@@ -1,18 +1,19 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\BeatInvoiceController;
+use App\Http\Controllers\ChartOfAccountController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ExpenseController;
+use App\Http\Controllers\FileConvertController;
+use App\Http\Controllers\Finance\FinanceSettingController;
+use App\Http\Controllers\JournalEntryController;
 use App\Http\Controllers\MessageController;
+use App\Http\Controllers\MikhmonImportController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\BeatInvoiceController;
-use App\Http\Controllers\VoucherSaleController;
-use App\Http\Controllers\JournalEntryController;
-use App\Http\Controllers\ChartOfAccountController;
 use App\Http\Controllers\TransaksiController;
-use App\Http\Controllers\Finance\FinanceSettingController;
-use App\Http\Controllers\FileConvertController;
+use App\Http\Controllers\VoucherSaleController;
+use Illuminate\Support\Facades\Route;
 /*
 |--------------------------------------------------------------------------
 | Web Routes - DHS FINANCE
@@ -94,6 +95,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // =====================================================================
     Route::prefix('voucher-sales')->name('voucher-sales.')->group(function () {
         Route::get('/', [VoucherSaleController::class, 'index'])->name('index');
+        Route::get('/import', [MikhmonImportController::class, 'importForm'])->name('import');
+        Route::post('/import', [MikhmonImportController::class, 'import'])->name('import.store');
         Route::get('/reimport/form', [VoucherSaleController::class, 'reimportForm'])->name('reimport-form');
         Route::post('/reimport', [VoucherSaleController::class, 'reimport'])->name('reimport');
         Route::get('/export', [VoucherSaleController::class, 'export'])->name('export');
@@ -230,6 +233,6 @@ Route::prefix('finance/transaksi')
         Route::get('/converter', [FileConvertController::class, 'index'])->name('converter.index');
         Route::post('/converter', [FileConvertController::class, 'convert'])->name('converter.convert');
     });
-
+  
 
 });

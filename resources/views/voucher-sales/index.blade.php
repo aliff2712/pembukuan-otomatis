@@ -92,6 +92,9 @@
     <div class="card-header py-3 d-flex justify-content-between align-items-center">
         <h6 class="m-0 font-weight-bold text-primary">Filter & Actions</h6>
         <div>
+             <a href="{{ route('voucher-sales.import') }}" class="btn btn-warning btn-sm">
+                <i class="fas fa-download"></i> Import CSV
+            </a>
             <a href="{{ route('voucher-sales.reimport-form') }}" class="btn btn-warning btn-sm">
                 <i class="fas fa-sync-alt"></i> Re-import
             </a>

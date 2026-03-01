@@ -13,7 +13,7 @@
         <h1 class="h3 text-gray-800 font-weight-bold">
             Import Transaksi
         </h1>
-        <p class="text-muted">
+        <p class="mb-0">
             Upload data transaksi dari file Excel (xlsx) untuk mempercepat proses input data.
         </p>
     </div>
@@ -74,7 +74,7 @@
                         </label>
                     </div>
 
-                    <small class="form-text text-muted">
+                    <small class="form-text">
                         Format yang didukung: .xlsx, .xls, .csv
                     </small>
                 </div>
