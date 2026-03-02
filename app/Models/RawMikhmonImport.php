@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class RawMikhmonImport extends Model
 {
-   protected $table = 'raw_mikhmon_imports';
+    protected $table = 'raw_mikhmon_imports';
 
     protected $fillable = [
         'import_batch_id',
@@ -18,18 +18,18 @@ class RawMikhmonImport extends Model
         'comment',
         'price_raw',
         'raw_payload',
+        'content_hash',  
         'imported_at',
     ];
 
     public $timestamps = false;
+
     public function staging()
     {
         return $this->hasOne(
             MikhmonSalesStaging::class,
-            'raw_id', // FK di staging
-            'id'      // PK di raw
+            'raw_id',
+            'id'
         );
     }
 }
-
-//YED

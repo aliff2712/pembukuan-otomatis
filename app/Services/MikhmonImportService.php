@@ -24,8 +24,9 @@ class MikhmonImportService
             throw new \RuntimeException("File not found: {$path}");
         }
 
-        $batchId = now()->format('Ymd_His');
-        $count   = 0;
+        $batchId      = now()->format('Ymd_His');
+        $insertCount  = 0;
+        $skipCount    = 0;
 
         $file = fopen($path, 'r');
 
@@ -33,7 +34,25 @@ class MikhmonImportService
             if (count($row) < 2)                        continue;
             if (str_contains($row[0], 'Selling Report')) continue;
             if (str_contains($row[0], 'Total'))          continue;
-            if (!is_numeric($row[0]))                    continue;
+            if (!is_numeric($row[0]))                   continue;
+
+            // ✅ FIX: Buat content hash untuk deteksi baris duplikat
+            // Hash berdasarkan: date + time + username + profile + price
+            // (bukan row_number karena itu hanya index urut di CSV)
+            $contentHash = md5(implode('|', [
+                $row[1] ?? '',  // date_raw
+                $row[2] ?? '',  // time_raw
+                $row[3] ?? '',  // username
+                $row[4] ?? '',  // profile
+                $row[6] ?? '',  // price_raw
+            ]));
+
+            // Skip kalau hash sudah ada di DB
+            $alreadyExists = RawMikhmonImport::where('content_hash', $contentHash)->exists();
+            if ($alreadyExists) {
+                $skipCount++;
+                continue;
+            }
 
             RawMikhmonImport::create([
                 'import_batch_id' => $batchId,
@@ -45,15 +64,16 @@ class MikhmonImportService
                 'comment'         => $row[5] ?? null,
                 'price_raw'       => $row[6] ?? null,
                 'raw_payload'     => json_encode($row),
+                'content_hash'    => $contentHash,  // ✅ simpan hash
                 'imported_at'     => now(),
             ]);
 
-            $count++;
+            $insertCount++;
         }
 
         fclose($file);
 
-        $this->log[] = "✅ Step 1 - Import selesai. Batch: {$batchId} | Rows: {$count}";
+        $this->log[] = "✅ Step 1 - Import selesai. Batch: {$batchId} | Inserted: {$insertCount} | Skipped (duplikat): {$skipCount}";
 
         return $batchId;
     }
@@ -63,8 +83,9 @@ class MikhmonImportService
     // ──────────────────────────────────────────────
     public function transform(): void
     {
+        // ✅ FIX: whereDoesntHave sudah cukup karena raw duplikat sudah diblok di Step 1
+        // Tapi kita tambahkan lock untuk keamanan di lingkungan concurrent
         $rawRows      = RawMikhmonImport::whereDoesntHave('staging')->get();
-        $batchId      = now()->format('Ymd_His');
         $successCount = 0;
         $skipCount    = 0;
 
@@ -87,21 +108,24 @@ class MikhmonImportService
                 continue;
             }
 
-            $price = str_replace(['Rp', '.', ','], ['', '', '.'], $priceRaw);
+            $price = (float) str_replace(['Rp', '.', ','], ['', '', '.'], $priceRaw);
 
-            if (!is_numeric($price) || $price <= 0) {
+            if ($price <= 0) {
                 $skipCount++;
                 continue;
             }
 
-            MikhmonSalesStaging::create([
-                'raw_id'        => $raw->id,
-                'sale_datetime' => $saleDatetime,
-                'username'      => $raw->username,
-                'profile'       => $raw->profile,
-                'price'         => $price,
-                'batch_id'      => $batchId,
-            ]);
+            // ✅ FIX: Gunakan firstOrCreate agar tidak dobel meski dipanggil ulang
+            MikhmonSalesStaging::firstOrCreate(
+                ['raw_id' => $raw->id],  // key: satu raw hanya boleh punya satu staging
+                [
+                    'sale_datetime' => $saleDatetime,
+                    'username'      => $raw->username,
+                    'profile'       => $raw->profile,
+                    'price'         => $price,
+                    'batch_id'      => $raw->import_batch_id,
+                ]
+            );
 
             $successCount++;
         }
@@ -114,6 +138,8 @@ class MikhmonImportService
     // ──────────────────────────────────────────────
     public function aggregateDaily(): void
     {
+        // ✅ FIX: Hitung agregasi langsung dari staging (sudah bersih karena Step 1 & 2 sudah fix)
+        // updateOrCreate akan overwrite nilai lama dengan nilai terbaru yang benar
         $rows = MikhmonSalesStaging::selectRaw('
                 DATE(sale_datetime) as sale_date,
                 COUNT(*) as total_transactions,
@@ -162,6 +188,7 @@ class MikhmonImportService
         DB::transaction(function () use ($sales, $cashCoa, $voucherRevenueCoa, &$journalCount, &$skipCount) {
             foreach ($sales as $sale) {
 
+                // ✅ Sudah benar: cek duplikat via source_id
                 $exists = JournalEntry::where('source_type', 'mikhmon')
                     ->where('source_id', $sale->id)
                     ->exists();

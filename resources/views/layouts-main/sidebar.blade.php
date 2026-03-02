@@ -38,12 +38,6 @@
         </a>
     </li>
 
-    {{-- <li class="nav-item {{ request()->routeIs('payments*') ? 'active' : '' }}">
-        <a class="nav-link" href="{{ route('payments.index') }}">
-            <i class="fas fa-money-bill-wave"></i>
-            <span>Payments</span>
-        </a>
-    </li> --}}
 
     <li class="nav-item {{ request()->routeIs('expenses*') ? 'active' : '' }}">
         <a class="nav-link" href="{{ route('expenses.index') }}">

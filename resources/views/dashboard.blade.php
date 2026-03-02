@@ -16,7 +16,7 @@
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
                         <div class="text-uppercase small fw-semibold text-primary mb-1">
-                            Saldo Kas (1101)
+                          Total pendapatan
                         </div>
                         <div class="fs-4 fw-bold text-primary">
                             Rp {{ number_format($cashBalance, 0, ',', '.') }}
