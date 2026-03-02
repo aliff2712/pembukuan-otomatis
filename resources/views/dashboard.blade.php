@@ -172,7 +172,7 @@
                             <div class="row no-gutters align-items-center">
                                 <div class="col mr-2">
                                     <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                        Other Income (Bulan Ini)
+                                      Pendapatan Lainnya (Bulan Ini)
                                     </div>
                                     <div class="h5 mb-0 font-weight-bold text-gray-800">
                                         Rp {{ number_format($otherIncomeThisMonth ?? 0, 0, ',', '.') }}

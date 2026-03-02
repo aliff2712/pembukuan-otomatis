@@ -43,7 +43,7 @@ class VoucherSaleController extends Controller
         }
 
         // FIX: Tambahkan withQueryString() agar filter tetap terbawa saat ganti halaman
-        $sales = $query->orderBy('sale_date', 'desc')->paginate(20)->withQueryString();
+        $sales = $query->orderBy('sale_date', 'asc')->paginate(20)->withQueryString();
 
         // Summary statistics
         $stats = $this->getStatistics($request);

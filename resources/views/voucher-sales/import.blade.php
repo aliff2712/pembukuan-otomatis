@@ -7,7 +7,7 @@
 
             <div class="card shadow-sm border-0">
                 <div class="card-header bg-white border-bottom">
-                    <h5 class="mb-0 fw-bold">Import Mikhmon CSV</h5>
+                    <h5 class="mb-0 fw-bold text-primary">Import Mikhmon CSV</h5>
                     <small class="text-muted">Pipeline akan berjalan otomatis: Import → Transform → Aggregate → Journalize</small>
                 </div>
 
@@ -56,7 +56,12 @@
                             @enderror
                         </div>
 
-                        <div class="d-grid">
+                      
+                          <div class="d-flex justify-content-between align-items-center">
+                                   <a href="{{ route('dashboard') }}" class="btn btn-outline-secondary">
+                                        <i class="fas fa-arrow-left me-1"></i>
+                                        Kembali
+                                    </a>
                             <button type="submit" class="btn btn-primary" id="btn-submit">
                                 <i class="bi bi-rocket-takeoff me-2"></i>Jalankan Pipeline
                             </button>
