@@ -12,7 +12,7 @@
                 <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
                         <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                            Total Days
+                            Total Hari penjualan
                         </div>
                         <div class="h5 mb-0 font-weight-bold text-gray-800">
                             {{ number_format($stats['total_days'], 0) }}
@@ -32,7 +32,7 @@
                 <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
                         <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                            Total Transactions
+                            Total Transaksi
                         </div>
                         <div class="h5 mb-0 font-weight-bold text-gray-800">
                             {{ number_format($stats['total_transactions'], 0) }}
@@ -52,7 +52,7 @@
                 <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
                         <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                            Total Amount
+                            Total pendapatan (keseluruhan)
                         </div>
                         <div class="h5 mb-0 font-weight-bold text-gray-800">
                             Rp {{ number_format($stats['total_amount'], 0, ',', '.') }}
@@ -72,7 +72,7 @@
                 <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
                         <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                            Average/Day
+                            Rata-rata Pendapatan/Hari
                         </div>
                         <div class="h5 mb-0 font-weight-bold text-gray-800">
                             Rp {{ number_format($stats['average_per_day'] ?? 0, 0, ',', '.') }}
