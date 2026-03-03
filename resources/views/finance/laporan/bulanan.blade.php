@@ -64,11 +64,6 @@
            class="btn btn-outline-success btn-sm">
             Export Excel
         </a>
-
-        <a href="{{ route('finance.laporan.export.pdf.bulanan', ['bulan'=>$bulan,'tahun'=>$tahun]) }}"
-           class="btn btn-outline-danger btn-sm">
-            Export PDF
-        </a>
     </div>
 
     {{-- DETAIL TABLE --}}
