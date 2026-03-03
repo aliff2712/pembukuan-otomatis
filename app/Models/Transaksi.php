@@ -8,23 +8,24 @@ use Carbon\Carbon;
 
 class Transaksi extends Model
 {
-    protected $fillable = [
-        'kode_transaksi',
-        'nama_customer',
-        'tanggal',
-        'jatuh_tempo',
-        'total',
-        'status',
-        'deskripsi',
-    ];
+        protected $fillable = [
+            'kode_transaksi',
+            'nama_customer',
+            'tanggal',
+            'jatuh_tempo',
+            'total',
+            'status',
+            'deskripsi',
+            'paid_at',  
+        ];
 
-    protected $casts = [
-        'tanggal' => 'date',
-        'jatuh_tempo' => 'date',
-        'total' => 'integer',
-        'deskripsi' => 'array',
-    ];
-
+        protected $casts = [
+            'tanggal'    => 'date',
+            'jatuh_tempo' => 'date',
+            'paid_at'    => 'datetime',  
+            'total'      => 'integer',
+            'deskripsi'  => 'array',
+        ];
     protected static function booted()
     {
         static::creating(function ($transaksi) {

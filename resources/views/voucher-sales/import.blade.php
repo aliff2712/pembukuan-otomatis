@@ -58,7 +58,7 @@
 
                       
                           <div class="d-flex justify-content-between align-items-center">
-                                   <a href="{{ route('dashboard') }}" class="btn btn-outline-secondary">
+                                   <a href="{{ route('voucher-sales.index') }}" class="btn btn-outline-secondary">
                                         <i class="fas fa-arrow-left me-1"></i>
                                         Kembali
                                     </a>

@@ -136,23 +136,23 @@ class TransaksiController extends Controller
 
     /**
      * PROSES PEMBAYARAN
-     */
-    public function processPayment(Request $request, Transaksi $transaksi)
-    {
-        if ($transaksi->status === 'paid') {
-            return redirect()
-                ->route('finance.transaksi.show', $transaksi->id)
-                ->with('error', 'Transaksi sudah dibayar sebelumnya.');
-        }
-
-        $transaksi->update([
-            'status' => 'paid'
-        ]);
-
+     */public function processPayment(Request $request, Transaksi $transaksi)
+{
+    if ($transaksi->status === 'paid') {
         return redirect()
             ->route('finance.transaksi.show', $transaksi->id)
-            ->with('success', 'Pembayaran berhasil diproses 🔥');
+            ->with('error', 'Transaksi sudah dibayar sebelumnya.');
     }
+
+    $transaksi->update([
+        'status'  => 'paid',
+        'paid_at' => now(),  // ← tambah ini
+    ]);
+
+    return redirect()
+        ->route('finance.transaksi.show', $transaksi->id)
+        ->with('success', 'Pembayaran berhasil diproses 🔥');
+}
 
 
     /**
