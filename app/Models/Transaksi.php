@@ -6,6 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
 
+/**
+ * @property \Carbon\Carbon $tanggal
+ * @property \Carbon\Carbon $jatuh_tempo
+ * @property \Carbon\Carbon|null $paid_at
+ */
 class Transaksi extends Model
 {
         protected $fillable = [

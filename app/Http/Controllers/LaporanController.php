@@ -11,50 +11,31 @@ use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use Barryvdh\DomPDF\Facade\Pdf;
 
+
 class LaporanController extends Controller
 {
     // =========================================================
-    // HELPER: Build Summary dari 3 sumber
+    // HELPER: Hitung summary dari collection (0 query tambahan)
     // =========================================================
 
-    private function buildSummary($bulan = null, $tahun = null): array
+    private function summarize($transaksis, $vouchers, $others): array
     {
-        // === TRANSAKSI (MEMBER) ===
-        $qTransaksi = Transaksi::query();
-        if ($bulan) $qTransaksi->whereMonth('tanggal', $bulan);
-        if ($tahun) $qTransaksi->whereYear('tanggal', $tahun);
+        $memberPaid   = $transaksis->where('status', 'paid')->sum('total');
+        $memberUnpaid = $transaksis->where('status', 'unpaid')->sum('total');
+        $voucherTotal = $vouchers->sum('total_amount');
+        $otherTotal   = $others->sum('amount');
 
-        $memberPaid   = (clone $qTransaksi)->where('status', 'paid')->sum('total');
-        $memberUnpaid = (clone $qTransaksi)->where('status', 'unpaid')->sum('total');
-        $memberPaidCount   = (clone $qTransaksi)->where('status', 'paid')->count();
-        $memberUnpaidCount = (clone $qTransaksi)->where('status', 'unpaid')->count();
-
-        // === VOUCHER ===
-        $qVoucher = DailyVoucherSale::query();
-        if ($bulan) $qVoucher->whereMonth('sale_date', $bulan);
-        if ($tahun) $qVoucher->whereYear('sale_date', $tahun);
-
-        $voucherTotal      = (clone $qVoucher)->sum('total_amount');
-        $voucherTransaksi  = (clone $qVoucher)->sum('total_transactions');
-
-        // === OTHER INCOME ===
-        $qOther = OtherIncome::query();
-        if ($bulan) $qOther->whereMonth('income_date', $bulan);
-        if ($tahun) $qOther->whereYear('income_date', $tahun);
-
-        $otherTotal = (clone $qOther)->sum('amount');
-        $otherCount = (clone $qOther)->count();
-
-        // === TOTAL PENDAPATAN (hanya paid + voucher + other) ===
-        $totalPendapatan = $memberPaid + $voucherTotal + $otherTotal;
-
-        return compact(
-            'memberPaid', 'memberUnpaid',
-            'memberPaidCount', 'memberUnpaidCount',
-            'voucherTotal', 'voucherTransaksi',
-            'otherTotal', 'otherCount',
-            'totalPendapatan'
-        );
+        return [
+            'memberPaid'        => $memberPaid,
+            'memberUnpaid'      => $memberUnpaid,
+            'memberPaidCount'   => $transaksis->where('status', 'paid')->count(),
+            'memberUnpaidCount' => $transaksis->where('status', 'unpaid')->count(),
+            'voucherTotal'      => $voucherTotal,
+            'voucherTransaksi'  => $vouchers->sum('total_transactions'),
+            'otherTotal'        => $otherTotal,
+            'otherCount'        => $others->count(),
+            'totalPendapatan'   => $memberPaid + $voucherTotal + $otherTotal,
+        ];
     }
 
 
@@ -74,12 +55,10 @@ class LaporanController extends Controller
 
     public function bulanan(Request $request)
     {
-        $bulan = $request->bulan ?? now()->month;
-        $tahun = $request->tahun ?? now()->year;
+        $bulan = (int) ($request->bulan ?? now()->month);
+        $tahun = (int) ($request->tahun ?? now()->year);
 
-        $summary = $this->buildSummary($bulan, $tahun);
-
-        // Data tabel
+        // 3 query saja
         $transaksis = Transaksi::whereMonth('tanggal', $bulan)
             ->whereYear('tanggal', $tahun)
             ->latest()
@@ -95,7 +74,8 @@ class LaporanController extends Controller
             ->orderBy('income_date', 'desc')
             ->get();
 
-        $label = Carbon::create($tahun, $bulan)->translatedFormat('F Y');
+        $summary = $this->summarize($transaksis, $vouchers, $otherIncomes);
+        $label   = Carbon::create($tahun, $bulan)->translatedFormat('F Y');
 
         return view('finance.laporan.bulanan', compact(
             'summary', 'transaksis', 'vouchers', 'otherIncomes',
@@ -108,32 +88,116 @@ class LaporanController extends Controller
     // LAPORAN TAHUNAN
     // =========================================================
 
-    public function tahunan(Request $request)
-    {
-        $tahun = $request->tahun ?? now()->year;
+            public function tahunan(Request $request)
+            {
+            $tahun = (int) ($request->tahun ?? now()->year);
 
-        $summary = $this->buildSummary(null, $tahun);
+            /*
+            |--------------------------------------------------------------------------
+            | AGGREGATION DI DATABASE
+            |--------------------------------------------------------------------------
+            */
 
-        // Data per bulan
-        $perBulan = [];
-        for ($i = 1; $i <= 12; $i++) {
-            $s = $this->buildSummary($i, $tahun);
+            // MEMBER PAID
+            $memberPaid = Transaksi::selectRaw("
+            MONTH(tanggal) as bulan,
+            SUM(total) as total,
+            COUNT(*) as jumlah
+            ")
+            ->whereYear('tanggal', $tahun)
+            ->where('status', 'paid')
+            ->groupByRaw("MONTH(tanggal)")
+            ->get()
+            ->keyBy('bulan');
+
+            // MEMBER UNPAID
+            $memberUnpaid = Transaksi::selectRaw("
+            MONTH(tanggal) as bulan,
+            SUM(total) as total,
+            COUNT(*) as jumlah
+            ")
+            ->whereYear('tanggal', $tahun)
+            ->where('status', 'unpaid')
+            ->groupByRaw("MONTH(tanggal)")
+            ->get()
+            ->keyBy('bulan');
+
+            // VOUCHER
+            $voucher = DailyVoucherSale::selectRaw("
+            MONTH(sale_date) as bulan,
+            SUM(total_amount) as total,
+            SUM(total_transactions) as transaksi
+            ")
+            ->whereYear('sale_date', $tahun)
+            ->groupByRaw("MONTH(sale_date)")
+            ->get()
+            ->keyBy('bulan');
+
+            // OTHER INCOME
+            $other = OtherIncome::selectRaw("
+            MONTH(income_date) as bulan,
+            SUM(amount) as total,
+            COUNT(*) as jumlah
+            ")
+            ->whereYear('income_date', $tahun)
+            ->groupByRaw("MONTH(income_date)")
+            ->get()
+            ->keyBy('bulan');
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | BUILD RESULT PER BULAN (12 ROW )
+            |--------------------------------------------------------------------------
+            */
+
+            $perBulan = [];
+
+            for ($i = 1; $i <= 12; $i++) {
+
+            $paid   = $memberPaid[$i]->total   ?? 0;
+            $unpaid = $memberUnpaid[$i]->total ?? 0;
+            $v      = $voucher[$i]->total      ?? 0;
+            $o      = $other[$i]->total        ?? 0;
+
             $perBulan[] = [
-                'bulan'           => Carbon::create($tahun, $i)->translatedFormat('F'),
-                'bulan_num'       => $i,
-                'member_paid'     => $s['memberPaid'],
-                'member_unpaid'   => $s['memberUnpaid'],
-                'voucher'         => $s['voucherTotal'],
-                'other'           => $s['otherTotal'],
-                'total'           => $s['totalPendapatan'],
+            'bulan'         => Carbon::create($tahun, $i)->translatedFormat('F'),
+            'bulan_num'     => $i,
+            'member_paid'   => $paid,
+            'member_unpaid' => $unpaid,
+            'voucher'       => $v,
+            'other'         => $o,
+            'total'         => $paid + $v + $o,
             ];
-        }
+            }
 
-        return view('finance.laporan.tahunan', compact(
-            'summary', 'perBulan', 'tahun'
-        ));
-    }
+            /*
+            |--------------------------------------------------------------------------
+            | SUMMARY TAHUNAN (TANPA LOAD DATA BESAR)
+            |--------------------------------------------------------------------------
+            */
 
+            $summary = [
+            'memberPaid'        => $memberPaid->sum('total'),
+            'memberUnpaid'      => $memberUnpaid->sum('total'),
+            'memberPaidCount'   => $memberPaid->sum('jumlah'),
+            'memberUnpaidCount' => $memberUnpaid->sum('jumlah'),
+            'voucherTotal'      => $voucher->sum('total'),
+            'voucherTransaksi'  => $voucher->sum('transaksi'),
+            'otherTotal'        => $other->sum('total'),
+            'otherCount'        => $other->sum('jumlah'),
+            'totalPendapatan'   =>
+            $memberPaid->sum('total') +
+            $voucher->sum('total') +
+            $other->sum('total'),
+            ];
+
+            return view('finance.laporan.tahunan', compact(
+            'summary',
+            'perBulan',
+            'tahun'
+            ));
+            }
 
     // =========================================================
     // EXPORT EXCEL
@@ -141,8 +205,8 @@ class LaporanController extends Controller
 
     public function exportExcelBulanan(Request $request)
     {
-        $bulan = $request->bulan ?? now()->month;
-        $tahun = $request->tahun ?? now()->year;
+        $bulan = (int) ($request->bulan ?? now()->month);
+        $tahun = (int) ($request->tahun ?? now()->year);
         $label = Carbon::create($tahun, $bulan)->translatedFormat('F_Y');
 
         return Excel::download(
@@ -153,7 +217,7 @@ class LaporanController extends Controller
 
     public function exportExcelTahunan(Request $request)
     {
-        $tahun = $request->tahun ?? now()->year;
+        $tahun = (int) ($request->tahun ?? now()->year);
 
         return Excel::download(
             new LaporanExport('tahunan', null, $tahun),
@@ -168,52 +232,69 @@ class LaporanController extends Controller
 
     public function exportPdfBulanan(Request $request)
     {
-        $bulan = $request->bulan ?? now()->month;
-        $tahun = $request->tahun ?? now()->year;
+        try {
+            $bulan = (int) ($request->bulan ?? now()->month);
+            $tahun = (int) ($request->tahun ?? now()->year);
 
-        $summary = $this->buildSummary($bulan, $tahun);
+            $transaksis = Transaksi::whereMonth('tanggal', $bulan)
+                ->whereYear('tanggal', $tahun)->latest()->get();
 
-        $transaksis = Transaksi::whereMonth('tanggal', $bulan)
-            ->whereYear('tanggal', $tahun)->latest()->get();
+            $vouchers = DailyVoucherSale::whereMonth('sale_date', $bulan)
+                ->whereYear('sale_date', $tahun)->orderBy('sale_date', 'desc')->get();
 
-        $vouchers = DailyVoucherSale::whereMonth('sale_date', $bulan)
-            ->whereYear('sale_date', $tahun)->orderBy('sale_date', 'desc')->get();
+            $otherIncomes = OtherIncome::whereMonth('income_date', $bulan)
+                ->whereYear('income_date', $tahun)->orderBy('income_date', 'desc')->get();
 
-        $otherIncomes = OtherIncome::whereMonth('income_date', $bulan)
-            ->whereYear('income_date', $tahun)->orderBy('income_date', 'desc')->get();
+            $summary = $this->summarize($transaksis, $vouchers, $otherIncomes);
+            $label   = Carbon::create($tahun, $bulan)->translatedFormat('F Y');
 
-        $label = Carbon::create($tahun, $bulan)->translatedFormat('F Y');
+            $pdf = Pdf::loadView('finance.laporan.pdf.bulanan', compact(
+                'summary', 'transaksis', 'vouchers', 'otherIncomes', 'label'
+            ))->setPaper('a4', 'landscape');
 
-        $pdf = Pdf::loadView('finance.laporan.pdf.bulanan', compact(
-            'summary', 'transaksis', 'vouchers', 'otherIncomes', 'label'
-        ))->setPaper('a4', 'landscape');
+            return $pdf->download("laporan_bulanan_{$label}.pdf");
 
-        return $pdf->download("laporan_bulanan_{$label}.pdf");
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Gagal export PDF: ' . $e->getMessage());
+        }
     }
 
     public function exportPdfTahunan(Request $request)
     {
-        $tahun = $request->tahun ?? now()->year;
+        try {
+            $tahun = (int) ($request->tahun ?? now()->year);
 
-        $summary = $this->buildSummary(null, $tahun);
+            $allTransaksi = Transaksi::whereYear('tanggal', $tahun)->get();
+            $allVoucher   = DailyVoucherSale::whereYear('sale_date', $tahun)->get();
+            $allOther     = OtherIncome::whereYear('income_date', $tahun)->get();
 
-        $perBulan = [];
-        for ($i = 1; $i <= 12; $i++) {
-            $s = $this->buildSummary($i, $tahun);
-            $perBulan[] = [
-                'bulan'         => Carbon::create($tahun, $i)->translatedFormat('F'),
-                'member_paid'   => $s['memberPaid'],
-                'member_unpaid' => $s['memberUnpaid'],
-                'voucher'       => $s['voucherTotal'],
-                'other'         => $s['otherTotal'],
-                'total'         => $s['totalPendapatan'],
-            ];
+            $summary = $this->summarize($allTransaksi, $allVoucher, $allOther);
+
+            $perBulan = [];
+            for ($i = 1; $i <= 12; $i++) {
+                $s = $this->summarize(
+                    $allTransaksi->filter(fn($x) => $x->tanggal->month === $i),
+                    $allVoucher->filter(fn($x) => $x->sale_date->month === $i),
+                    $allOther->filter(fn($x) => $x->income_date->month === $i)
+                );
+                $perBulan[] = [
+                    'bulan'         => Carbon::create($tahun, $i)->translatedFormat('F'),
+                    'member_paid'   => $s['memberPaid'],
+                    'member_unpaid' => $s['memberUnpaid'],
+                    'voucher'       => $s['voucherTotal'],
+                    'other'         => $s['otherTotal'],
+                    'total'         => $s['totalPendapatan'],
+                ];
+            }
+
+            $pdf = Pdf::loadView('finance.laporan.pdf.tahunan', compact(
+                'summary', 'perBulan', 'tahun'
+            ))->setPaper('a4', 'portrait');
+
+            return $pdf->download("laporan_tahunan_{$tahun}.pdf");
+
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Gagal export PDF: ' . $e->getMessage());
         }
-
-        $pdf = Pdf::loadView('finance.laporan.pdf.tahunan', compact(
-            'summary', 'perBulan', 'tahun'
-        ))->setPaper('a4', 'portrait');
-
-        return $pdf->download("laporan_tahunan_{$tahun}.pdf");
     }
 }

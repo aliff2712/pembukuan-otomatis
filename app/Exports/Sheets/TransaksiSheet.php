@@ -1,7 +1,8 @@
 <?php
+
 namespace App\Exports\Sheets;
 
-use App\Models\Transaksi;
+use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithTitle;
@@ -10,22 +11,19 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 class TransaksiSheet implements FromCollection, WithHeadings, WithTitle, WithStyles
 {
-    public function __construct(protected ?int $bulan, protected int $tahun) {}
+    public function __construct(protected Collection $transaksis) {}
 
-    public function collection()
+    public function collection(): Collection
     {
-        $q = Transaksi::whereYear('tanggal', $this->tahun);
-        if ($this->bulan) $q->whereMonth('tanggal', $this->bulan);
-
-        return $q->latest()->get()->map(fn($t, $i) => [
-            'No'             => $i + 1,
-            'Kode'           => $t->kode_transaksi,
-            'Customer'       => $t->nama_customer,
-            'Tanggal'        => $t->tanggal->format('d/m/Y'),
-            'Jatuh Tempo'    => $t->jatuh_tempo?->format('d/m/Y') ?? '-',
-            'Total'          => $t->total,
-            'Status'         => strtoupper($t->status),
-            'Dibayar Pada'   => $t->paid_at?->format('d/m/Y H:i') ?? '-',
+        return $this->transaksis->values()->map(fn($t, $i) => [
+            'No'           => $i + 1,
+            'Kode'         => $t->kode_transaksi,
+            'Customer'     => $t->nama_customer,
+            'Tanggal'      => $t->tanggal->format('d/m/Y'),
+            'Jatuh Tempo'  => $t->jatuh_tempo?->format('d/m/Y') ?? '-',
+            'Total'        => $t->total,
+            'Status'       => strtoupper($t->status),
+            'Dibayar Pada' => $t->paid_at?->format('d/m/Y H:i') ?? '-',
         ]);
     }
 

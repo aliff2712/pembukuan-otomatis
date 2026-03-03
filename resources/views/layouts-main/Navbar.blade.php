@@ -15,31 +15,7 @@
     <!-- Right Menu -->
     <ul class="navbar-nav align-items-center gap-2">
 
-     
-
-        <!-- Messages -->
-        <li class="nav-item dropdown">
-    <a class="nav-link icon-button position-relative"
-       href="#"
-       id="messagesDropdown"
-       role="button"
-       data-bs-toggle="dropdown"
-       aria-expanded="false">
-
-        <i class="fas fa-envelope"></i>
-
-        @php $unreadCount = auth()->user()->unread_count ?? 0; @endphp
-        @if($unreadCount > 0)
-            <span class="notification-badge">
-                {{ $unreadCount > 99 ? '99+' : $unreadCount }}
-            </span>
-        @endif
-    </a>
-
-    <div class="dropdown-menu dropdown-menu-end modern-dropdown"
-         aria-labelledby="messagesDropdown"
-         style="min-width: 20rem;"> <h6 class="dropdown-header bg-primary text-white font-weight-bold"> Message Center </h6> @php $recentMessages = auth()->user() ->receivedMessages() ->with('sender') ->latest() ->take(3) ->get(); @endphp @forelse($recentMessages as $msg) <a class="dropdown-item d-flex align-items-center" href="{{ route('messages.show', $msg->sender_id) }}"> <div class="dropdown-list-image me-3"> <img class="rounded-circle" src="https://ui-avatars.com/api/?name={{ urlencode($msg->sender->name) }}&background=4e73df&color=fff" alt="{{ $msg->sender->name }}" style="width: 3rem; height: 3rem;"> @if(!$msg->is_read) <div class="status-indicator bg-success"></div> @endif </div> <div class="font-weight-bold"> <div class="text-truncate" style="max-width: 200px;"> {{ Str::limit($msg->message, 50) }} </div> <div class="small text-gray-500"> {{ $msg->sender->name }} · {{ $msg->created_at->diffForHumans() }} </div> </div> </a> @empty <div class="text-center py-4 text-muted"> <i class="fas fa-inbox fa-2x mb-2"></i> <p class="mb-0 small">Tidak ada pesan</p> </div> @endforelse <a class="dropdown-item text-center small text-gray-500" href="{{ route('messages.index') }}"> <i class="fas fa-arrow-right me-1"></i> Lihat Semua Pesan </a> </div> </li>
-
+    
         <!-- Settings -->
         <li class="nav-item">
             <a class="nav-link icon-button"

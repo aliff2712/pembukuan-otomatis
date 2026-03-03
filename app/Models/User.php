@@ -41,40 +41,7 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
-    // Tambahkan di dalam class User
-// Tambahkan di app/Models/User.php
-
-    public function sentMessages()
-    {
-        return $this->hasMany(Message::class, 'sender_id')
-            ->latest();
-    }
-
-    public function receivedMessages()
-    {
-        return $this->hasMany(Message::class, 'receiver_id')
-            ->latest();
-    }
-
-    public function unreadMessages()
-    {
-        return $this->receivedMessages()
-            ->unread();
-    }
-
-    // Optimized accessor dengan caching
-    public function getUnreadCountAttribute()
-    {
-        // Cache untuk 30 detik
-        return cache()->remember(
-            'user.'. $this->id .'.unread_count',
-            30,
-            fn() => $this->unreadMessages()->count()
-        );
-    }
-
-    // Clear cache setelah message dibaca
-    protected static function booted()
+      protected static function booted()
     {
         static::updated(function ($user) {
             cache()->forget('user.'. $user->id .'.unread_count');

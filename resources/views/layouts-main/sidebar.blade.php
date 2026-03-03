@@ -72,8 +72,19 @@
             <span>Journal Entries</span>
         </a>
     </li>
+    <div class="sidebar-heading">
+        Laporan
+    </div>
+    <li class="nav-item {{ request()->routeIs('laporan*') ? 'active' : '' }}">
+        <a class="nav-link" href="{{ route('finance.laporan.index') }}">
+            <i class="fas fa-file-alt"></i>
+            <span>Laporan Keuangan</span>
+        </a>
+    </li>
 
 </ul>
+    
+
 <style>
 
 /* ================================

@@ -5,7 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-
+/**
+ * @property \Carbon\Carbon $income_date
+ */
 class OtherIncome extends Model
 {
     protected $fillable = [

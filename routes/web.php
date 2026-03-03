@@ -7,7 +7,7 @@ use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\FileConvertController;
 use App\Http\Controllers\Finance\FinanceSettingController;
 use App\Http\Controllers\JournalEntryController;
-use App\Http\Controllers\MessageController;
+use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\MikhmonImportController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProfileController;
@@ -51,18 +51,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/api/dashboard/data', [DashboardController::class, 'apiData'])->name('dashboard.api');
     // Tambahkan di dalam Route::middleware(['auth', 'verified'])->group(function () {
     
-    // Messages
-    Route::prefix('messages')->name('messages.')->group(function () {
-        Route::get('/', [MessageController::class, 'index'])->name('index');
-        Route::get('/{user}', [MessageController::class, 'show'])->name('show');
-        Route::post('/', [MessageController::class, 'store'])->name('store');
-    });
-
-    // API for messages
-    Route::get('/api/messages/unread-count', [MessageController::class, 'unreadCount'])
-        ->name('messages.unread-count');
-    Route::get('/api/messages/{user}/new', [MessageController::class, 'getNewMessages'])
-        ->name('messages.new');
 
     // =====================================================================
     // CHART OF ACCOUNTS
@@ -154,13 +142,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::resource('other-incomes', \App\Http\Controllers\OtherIncomeController::class);
 
     // =====================================================================
-    Route::prefix('reports')->name('reports.')->group(function () {
-        Route::get('/ledger', [\App\Http\Controllers\ReportsController::class, 'ledger'])->name('ledger');
-        Route::get('/ar-aging', [\App\Http\Controllers\ARAgingController::class, 'index'])->name('ar-aging');
-        Route::get('/income-statement', [\App\Http\Controllers\ReportsController::class, 'incomeStatement'])->name('income-statement');
-        Route::get('/balance-sheet', [\App\Http\Controllers\ReportsController::class, 'balanceSheet'])->name('balance-sheet');
-    });
-
+   
     // =====================================================================
     // PROFILE
     // =====================================================================
@@ -212,6 +194,25 @@ Route::prefix('finance/transaksi')
     Route::get('/{transaksi}/receipt',
     [TransaksiController::class, 'receipt']
 )->name('receipt');
+
+});
+
+// 
+Route::prefix('finance/laporan')->name('finance.laporan.')->group(function () {
+
+    // Halaman pilih laporan
+    Route::get('/', [LaporanController::class, 'index'])->name('index');
+    // Laporan bulanan & tahunan
+    Route::get('/bulanan', [LaporanController::class, 'bulanan'])->name('bulanan');
+    Route::get('/tahunan', [LaporanController::class, 'tahunan'])->name('tahunan');
+
+    // Export Excel
+    Route::get('/export/excel/bulanan', [LaporanController::class, 'exportExcelBulanan'])->name('export.excel.bulanan');
+    Route::get('/export/excel/tahunan', [LaporanController::class, 'exportExcelTahunan'])->name('export.excel.tahunan');
+
+    // Export PDF
+    Route::get('/export/pdf/bulanan', [LaporanController::class, 'exportPdfBulanan'])->name('export.pdf.bulanan');
+    Route::get('/export/pdf/tahunan', [LaporanController::class, 'exportPdfTahunan'])->name('export.pdf.tahunan');
 
 });
 
