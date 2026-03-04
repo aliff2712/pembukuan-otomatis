@@ -2,61 +2,40 @@
 
 namespace App\Exports\Sheets;
 
-use Carbon\Carbon;
-use Illuminate\Support\Collection;
-use Maatwebsite\Excel\Concerns\FromArray;
+use App\Models\Transaksi;
+use Illuminate\Database\Eloquent\Builder;
+use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\WithHeadings;
-use Maatwebsite\Excel\Concerns\WithTitle;
-use Maatwebsite\Excel\Concerns\WithStyles;
-use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+use Maatwebsite\Excel\Concerns\WithChunkReading;
 
-class PerBulanSheet implements FromArray, WithHeadings, WithTitle, WithStyles
+class PerBulanSheet implements FromQuery, WithHeadings, WithChunkReading
 {
-    public function __construct(
-        protected Collection $allTransaksi,
-        protected Collection $allVoucher,
-        protected Collection $allOther,
-        protected int        $tahun
-    ) {}
+    protected int $tahun;
 
-    public function array(): array
+    public function __construct(int $tahun)
     {
-        $rows = [];
+        $this->tahun = $tahun;
+    }
 
-        for ($i = 1; $i <= 12; $i++) {
-            // Filter dari collection — no query
-            $tBulan = $this->allTransaksi->filter(fn($t) => $t->tanggal->month === $i);
-            $vBulan = $this->allVoucher->filter(fn($v) => $v->sale_date->month === $i);
-            $oBulan = $this->allOther->filter(fn($o) => $o->income_date->month === $i);
-
-            $paid   = $tBulan->where('status', 'paid')->sum('total');
-            $unpaid = $tBulan->where('status', 'unpaid')->sum('total');
-            $voucher= $vBulan->sum('total_amount');
-            $other  = $oBulan->sum('amount');
-            $total  = $paid + $voucher + $other;
-
-            $rows[] = [
-                Carbon::create($this->tahun, $i)->translatedFormat('F'),
-                $paid,
-                $unpaid,
-                $voucher,
-                $other,
-                $total,
-            ];
-        }
-
-        return $rows;
+    public function query(): Builder
+    {
+        return Transaksi::query()
+            ->whereYear('tanggal', $this->tahun)
+            ->selectRaw('MONTH(tanggal) as bulan, SUM(total) as total')
+            ->groupByRaw('MONTH(tanggal)')
+            ->orderByRaw('MONTH(tanggal)');
     }
 
     public function headings(): array
     {
-        return ['Bulan', 'Member Paid', 'Member Unpaid', 'Voucher', 'Other Income', 'Total Pendapatan'];
+        return [
+            'Bulan',
+            'Total Transaksi',
+        ];
     }
 
-    public function title(): string { return 'Per Bulan - ' . $this->tahun; }
-
-    public function styles(Worksheet $sheet): array
+    public function chunkSize(): int
     {
-        return [1 => ['font' => ['bold' => true]]];
+        return 1000;
     }
 }

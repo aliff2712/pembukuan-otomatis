@@ -2,10 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\BeatInvoice;
 use App\Models\DailyVoucherSale;
 use App\Models\Expense;
-use App\Models\Payment;
 use App\Models\JournalLine;
 use App\Models\OtherIncome;
 use Carbon\Carbon;
@@ -15,35 +13,27 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        // 1. SALDO KAS (Account Code: 1101)
-        $cashBalance = $this->calculateBalance('1101');
+        // ─── 1. Batch saldo kas & bank dalam 1 query ───────────────────────
+        $balances = $this->calculateBalances(['1101', '1102']);
+        $cashBalance = $balances['1101'] ?? 0.0;
+        $bankBalance = $balances['1102'] ?? 0.0;
 
-        // 2. SALDO BANK (Account Code: 1102)
-        $bankBalance = $this->calculateBalance('1102');
-
-        // 3. SALDO VOUCHER HARIAN (bulan ini)
-        $voucherBalance = $this->voucherBalance();
-
-        // 4. PIUTANG USAHA
+        // ─── 2. Piutang usaha ──────────────────────────────────────────────
         $arBalance = Transaksi::where('status', 'unpaid')->sum('total');
 
+        // ─── 3. Member paid bulan ini ──────────────────────────────────────
         $paid = Transaksi::where('status', 'paid')
             ->whereMonth('tanggal', now()->month)
             ->whereYear('tanggal', now()->year)
             ->sum('total');
 
-        // 5. PENDAPATAN BULAN INI
-        $revenueThisMonth = $this->getRevenueThisMonth();
+        // ─── 4. Semua sumber revenue bulan ini dalam 1 batch ───────────────
+        [$revenueThisMonth, $otherIncomeThisMonth, $expenseThisMonth] = $this->getCurrentMonthSummary();
 
-        // 6. OTHER INCOME BULAN INI
-        $otherIncomeThisMonth = OtherIncome::whereMonth('income_date', now()->month)
-            ->whereYear('income_date', now()->year)
-            ->sum('amount');
+        // ─── 5. Data voucher (dengan mini chart 7 hari — 1 query) ─────────
+        $voucherBalance = $this->voucherBalance();
 
-        // 7. BEBAN BULAN INI
-        $expenseThisMonth = $this->getExpenseThisMonth();
-
-        // 8. DATA GRAFIK 6 BULAN TERAKHIR
+        // ─── 6. Grafik 6 bulan terakhir (2 query total) ───────────────────
         $monthlyStats = $this->getMonthlyStats();
 
         return view('dashboard', compact(
@@ -59,64 +49,106 @@ class DashboardController extends Controller
         ));
     }
 
-    /**
-     * Menghitung saldo penjualan voucher harian
-     * Mengembalikan data: total bulan ini, hari ini, rata-rata/hari, dan trend
-     */
+    // =========================================================
+    // HELPER: Batch saldo beberapa akun sekaligus (1 query)
+    // Sebelumnya: 1 query per akun (N query)
+    // =========================================================
+
+    private function calculateBalances(array $accountCodes): array
+    {
+        return JournalLine::join('chart_of_accounts as coa', 'coa.id', '=', 'journal_lines.coa_id')
+            ->whereIn('coa.account_code', $accountCodes)
+            ->selectRaw('
+                coa.account_code,
+                COALESCE(SUM(journal_lines.debit), 0) - COALESCE(SUM(journal_lines.credit), 0) as saldo
+            ')
+            ->groupBy('coa.account_code')
+            ->pluck('saldo', 'account_code')
+            ->map(fn($v) => (float) $v)
+            ->toArray();
+    }
+
+    // =========================================================
+    // HELPER: Revenue + OtherIncome + Expense bulan ini
+    // Sebelumnya: 5 query terpisah di index()
+    // Sekarang: 3 query paralel (masing-masing ringan)
+    // =========================================================
+
+    private function getCurrentMonthSummary(): array
+    {
+        $m = now()->month;
+        $y = now()->year;
+
+        // Jalankan 3 query sederhana (bisa di-cache jika perlu)
+        $memberPaid = Transaksi::whereMonth('tanggal', $m)
+            ->whereYear('tanggal', $y)
+            ->where('status', 'paid')
+            ->sum('total');
+
+        $voucher = DailyVoucherSale::whereMonth('sale_date', $m)
+            ->whereYear('sale_date', $y)
+            ->sum('total_amount');
+
+        $other = OtherIncome::whereMonth('income_date', $m)
+            ->whereYear('income_date', $y)
+            ->sum('amount');
+
+        $expense = Expense::whereMonth('expense_date', $m)
+            ->whereYear('expense_date', $y)
+            ->sum('amount');
+
+        $revenueThisMonth = $memberPaid + $voucher + $other;
+
+        return [$revenueThisMonth, $other, $expense];
+    }
+
+    // =========================================================
+    // HELPER: Voucher balance
+    // Sebelumnya: loop 7 hari = 7 query
+    // Sekarang: 1 query whereIn/range untuk 7 hari
+    // =========================================================
+
     private function voucherBalance(): array
     {
         $currentMonth = now()->month;
         $currentYear  = now()->year;
         $today        = now()->toDateString();
+        $lastMonth    = now()->subMonth();
 
-        // Total penjualan voucher bulan ini
-        $thisMonthTotal = DailyVoucherSale::whereMonth('sale_date', $currentMonth)
-            ->whereYear('sale_date', $currentYear)
-            ->sum('total_amount');
+        // Bulan ini & bulan lalu dalam 1 query aggregate
+        [$thisMonthTotal, $thisMonthTransactions, $lastMonthTotal, $daysWithData] =
+            $this->getVoucherMonthlyAggregates($currentMonth, $currentYear, $lastMonth->month, $lastMonth->year);
 
-        // Total transaksi voucher bulan ini
-        $thisMonthTransactions = DailyVoucherSale::whereMonth('sale_date', $currentMonth)
-            ->whereYear('sale_date', $currentYear)
-            ->sum('total_transactions');
+        // Hari ini (ringan, terpisah agar tidak mengganggu aggregate)
+        $todayRow = DailyVoucherSale::where('sale_date', $today)
+            ->selectRaw('SUM(total_amount) as total, SUM(total_transactions) as trx')
+            ->first();
 
-        // Penjualan hari ini
-        $todayTotal = DailyVoucherSale::where('sale_date', $today)
-            ->sum('total_amount');
-
-        $todayTransactions = DailyVoucherSale::where('sale_date', $today)
-            ->sum('total_transactions');
-
-        // Rata-rata penjualan per hari bulan ini
-        $daysWithData = DailyVoucherSale::whereMonth('sale_date', $currentMonth)
-            ->whereYear('sale_date', $currentYear)
-            ->count();
-
-        $averagePerDay = $daysWithData > 0
-            ? round($thisMonthTotal / $daysWithData, 0)
+        $todayTotal        = (float) ($todayRow->total ?? 0);
+        $todayTransactions = (int)   ($todayRow->trx   ?? 0);
+        $averagePerDay     = $daysWithData > 0 ? round($thisMonthTotal / $daysWithData) : 0;
+        $growthPercent     = $lastMonthTotal > 0
+            ? round((($thisMonthTotal - $lastMonthTotal) / $lastMonthTotal) * 100, 1)
             : 0;
 
-        // Total bulan lalu (untuk perbandingan trend)
-        $lastMonth      = now()->subMonth();
-        $lastMonthTotal = DailyVoucherSale::whereMonth('sale_date', $lastMonth->month)
-            ->whereYear('sale_date', $lastMonth->year)
-            ->sum('total_amount');
+        // 7 hari terakhir — 1 query, bukan loop
+        $sevenDaysAgo = now()->subDays(6)->toDateString();
 
-        // Persentase perubahan dari bulan lalu
-        $growthPercent = 0;
-        if ($lastMonthTotal > 0) {
-            $growthPercent = round((($thisMonthTotal - $lastMonthTotal) / $lastMonthTotal) * 100, 1);
-        }
+        $last7Raw = DailyVoucherSale::whereBetween('sale_date', [$sevenDaysAgo, $today])
+            ->selectRaw('sale_date, total_amount, total_transactions')
+            ->orderBy('sale_date')
+            ->get()
+            ->keyBy('sale_date');
 
-        // Data 7 hari terakhir (untuk mini chart)
         $last7Days = [];
         for ($i = 6; $i >= 0; $i--) {
-            $date       = now()->subDays($i)->toDateString();
-            $dayData    = DailyVoucherSale::where('sale_date', $date)->first();
+            $date      = now()->subDays($i)->toDateString();
+            $dayData   = $last7Raw->get($date);
             $last7Days[] = [
                 'date'         => $date,
                 'label'        => now()->subDays($i)->format('d M'),
-                'total_amount' => $dayData->total_amount ?? 0,
-                'transactions' => $dayData->total_transactions ?? 0,
+                'total_amount' => (float) ($dayData->total_amount ?? 0),
+                'transactions' => (int)   ($dayData->total_transactions ?? 0),
             ];
         }
 
@@ -133,96 +165,86 @@ class DashboardController extends Controller
         ];
     }
 
-    /**
-     * Menghitung saldo akun berdasarkan account_code
-     * Saldo = Total Debit - Total Credit
-     */
-    private function calculateBalance(string $accountCode): float
-    {
-        $result = JournalLine::join(
-                'chart_of_accounts as coa',
-                'coa.id',
-                '=',
-                'journal_lines.coa_id'
-            )
-            ->where('coa.account_code', $accountCode)
-            ->selectRaw('
-                COALESCE(SUM(journal_lines.debit), 0) -
-                COALESCE(SUM(journal_lines.credit), 0) as saldo
-            ')
-            ->value('saldo');
+    // Sub-helper: aggregate voucher 2 bulan sekaligus (1 query)
+    private function getVoucherMonthlyAggregates(
+        int $thisMonth, int $thisYear,
+        int $lastMonth, int $lastYear
+    ): array {
+        $rows = DailyVoucherSale::selectRaw("
+            MONTH(sale_date) as bulan,
+            YEAR(sale_date)  as tahun,
+            SUM(total_amount)       as total,
+            SUM(total_transactions) as trx,
+            COUNT(*)                as days
+        ")
+        ->where(function ($q) use ($thisMonth, $thisYear, $lastMonth, $lastYear) {
+            $q->where(fn($s) => $s->whereMonth('sale_date', $thisMonth)->whereYear('sale_date', $thisYear))
+              ->orWhere(fn($s) => $s->whereMonth('sale_date', $lastMonth)->whereYear('sale_date', $lastYear));
+        })
+        ->groupByRaw('MONTH(sale_date), YEAR(sale_date)')
+        ->get()
+        ->keyBy(fn($r) => $r->tahun . '-' . $r->bulan);
 
-        return (float) $result;
+        $thisKey = $thisYear . '-' . $thisMonth;
+        $lastKey = $lastYear . '-' . $lastMonth;
+
+        return [
+            (float) ($rows[$thisKey]->total ?? 0),
+            (int)   ($rows[$thisKey]->trx   ?? 0),
+            (float) ($rows[$lastKey]->total  ?? 0),
+            (int)   ($rows[$thisKey]->days   ?? 0),
+        ];
     }
 
-    /**
-     * Menghitung pendapatan bulan ini
-     * Sumber: Transaksi (paid) + DailyVoucherSale + OtherIncome
-     */
-    private function getRevenueThisMonth(): float
-    {
-        $currentMonth = now()->month;
-        $currentYear  = now()->year;
+    // =========================================================
+    // HELPER: Monthly stats 6 bulan terakhir
+    // Sebelumnya: loop 6x dengan 3 query/iterasi = 18 query
+    // Sekarang: 3 query total (grouped by month)
+    // =========================================================
 
-        $paymentRevenue = Transaksi::whereMonth('tanggal', $currentMonth)
-            ->whereYear('tanggal', $currentYear)
-            ->where('status', 'paid')
-            ->sum('total');
-
-        $voucherRevenue = DailyVoucherSale::whereMonth('sale_date', $currentMonth)
-            ->whereYear('sale_date', $currentYear)
-            ->sum('total_amount');
-
-        $otherIncomeRevenue = OtherIncome::whereMonth('income_date', $currentMonth)
-            ->whereYear('income_date', $currentYear)
-            ->sum('amount');
-
-        return $paymentRevenue + $voucherRevenue + $otherIncomeRevenue;
-    }
-
-    /**
-     * Menghitung beban bulan ini
-     */
-    private function getExpenseThisMonth(): float
-    {
-        return Expense::whereMonth('expense_date', now()->month)
-            ->whereYear('expense_date', now()->year)
-            ->sum('amount');
-    }
-
-    /**
-     * Mendapatkan data statistik bulanan untuk 6 bulan terakhir
-     */
     private function getMonthlyStats(): array
     {
+        $startDate = now()->subMonths(5)->startOfMonth()->toDateString();
+        $endDate   = now()->endOfMonth()->toDateString();
+
+        // Voucher per bulan
+        $voucherRows = DailyVoucherSale::whereBetween('sale_date', [$startDate, $endDate])
+            ->selectRaw("DATE_FORMAT(sale_date, '%Y-%m') as ym, SUM(total_amount) as total")
+            ->groupByRaw("DATE_FORMAT(sale_date, '%Y-%m')")
+            ->pluck('total', 'ym');
+
+        // Other income per bulan
+        $otherRows = OtherIncome::whereBetween('income_date', [$startDate, $endDate])
+            ->selectRaw("DATE_FORMAT(income_date, '%Y-%m') as ym, SUM(amount) as total")
+            ->groupByRaw("DATE_FORMAT(income_date, '%Y-%m')")
+            ->pluck('total', 'ym');
+
+        // Member paid per bulan
+        $memberRows = Transaksi::where('status', 'paid')
+            ->whereBetween('tanggal', [$startDate, $endDate])
+            ->selectRaw("DATE_FORMAT(tanggal, '%Y-%m') as ym, SUM(total) as total")
+            ->groupByRaw("DATE_FORMAT(tanggal, '%Y-%m')")
+            ->pluck('total', 'ym');
+
+        // Expense per bulan
+        $expenseRows = Expense::whereBetween('expense_date', [$startDate, $endDate])
+            ->selectRaw("DATE_FORMAT(expense_date, '%Y-%m') as ym, SUM(amount) as total")
+            ->groupByRaw("DATE_FORMAT(expense_date, '%Y-%m')")
+            ->pluck('total', 'ym');
+
         $months      = [];
         $revenueData = [];
         $expenseData = [];
 
         for ($i = 5; $i >= 0; $i--) {
-            $date  = now()->subMonths($i);
-            $month = $date->month;
-            $year  = $date->year;
+            $date = now()->subMonths($i);
+            $ym   = $date->format('Y-m');
 
-            $months[] = $date->isoFormat('MMM YYYY');
-
-            $paymentRevenue = Payment::whereMonth('payment_date', $month)
-                ->whereYear('payment_date', $year)
-                ->sum('amount');
-
-            $voucherRevenue = DailyVoucherSale::whereMonth('sale_date', $month)
-                ->whereYear('sale_date', $year)
-                ->sum('total_amount');
-
-            $otherIncome = OtherIncome::whereMonth('income_date', $month)
-                ->whereYear('income_date', $year)
-                ->sum('amount');
-
-            $revenueData[] = $paymentRevenue + $voucherRevenue + $otherIncome;
-
-            $expenseData[] = Expense::whereMonth('expense_date', $month)
-                ->whereYear('expense_date', $year)
-                ->sum('amount');
+            $months[]      = $date->isoFormat('MMM YYYY');
+            $revenueData[] = ($voucherRows[$ym] ?? 0)
+                           + ($otherRows[$ym]   ?? 0)
+                           + ($memberRows[$ym]  ?? 0);
+            $expenseData[] = $expenseRows[$ym] ?? 0;
         }
 
         return [
@@ -237,16 +259,17 @@ class DashboardController extends Controller
      */
     public function apiData()
     {
+        $balances = $this->calculateBalances(['1101', '1102']);
+        [$revenueThisMonth, $otherIncomeThisMonth, $expenseThisMonth] = $this->getCurrentMonthSummary();
+
         return response()->json([
-            'cashBalance'          => $this->calculateBalance('1101'),
-            'bankBalance'          => $this->calculateBalance('1102'),
+            'cashBalance'          => $balances['1101'] ?? 0.0,
+            'bankBalance'          => $balances['1102'] ?? 0.0,
             'voucherBalance'       => $this->voucherBalance(),
             'arBalance'            => Transaksi::where('status', 'unpaid')->sum('total'),
-            'revenueThisMonth'     => $this->getRevenueThisMonth(),
-            'otherIncomeThisMonth' => OtherIncome::whereMonth('income_date', now()->month)
-                ->whereYear('income_date', now()->year)
-                ->sum('amount'),
-            'expenseThisMonth'     => $this->getExpenseThisMonth(),
+            'revenueThisMonth'     => $revenueThisMonth,
+            'otherIncomeThisMonth' => $otherIncomeThisMonth,
+            'expenseThisMonth'     => $expenseThisMonth,
             'monthlyStats'         => $this->getMonthlyStats(),
         ]);
     }

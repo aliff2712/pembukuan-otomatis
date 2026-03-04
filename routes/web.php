@@ -1,6 +1,4 @@
 <?php
-
-use App\Http\Controllers\BeatInvoiceController;
 use App\Http\Controllers\ChartOfAccountController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ExpenseController;
@@ -9,7 +7,6 @@ use App\Http\Controllers\Finance\FinanceSettingController;
 use App\Http\Controllers\JournalEntryController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\MikhmonImportController;
-use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TransaksiController;
 use App\Http\Controllers\VoucherSaleController;
@@ -95,34 +92,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // API endpoint untuk chart
     Route::get('/api/voucher-sales/chart', [VoucherSaleController::class, 'chartData'])
         ->name('voucher-sales.chart');
-
-    // =====================================================================
-    // BEAT INVOICES
-    // =====================================================================
-    Route::prefix('beat-invoices')->name('beat-invoices.')->group(function () {
-        Route::get('/', [BeatInvoiceController::class, 'index'])->name('index');
-        Route::get('/export', [BeatInvoiceController::class, 'export'])->name('export');
-        Route::get('/{id}', [BeatInvoiceController::class, 'show'])->name('show');
-        Route::get('/{id}/pdf', [BeatInvoiceController::class, 'exportPDF'])->name('pdf');
-        Route::get('/{id}/preview', [BeatInvoiceController::class, 'previewPDF'])->name('preview');
-    });
-
-    // API endpoint untuk payment form
-    Route::get('/api/invoices/unpaid', [BeatInvoiceController::class, 'getUnpaid'])
-        ->name('beat-invoices.unpaid');
-
-    // =====================================================================
-    // PAYMENTS
-    // =====================================================================
-    Route::prefix('payments')->name('payments.')->group(function () {
-        Route::get('/receipt/{id}', [PaymentController::class, 'receipt'])->name('receipt');
-        Route::get('/', [PaymentController::class, 'index'])->name('index');
-        Route::get('/create', [PaymentController::class, 'create'])->name('create');
-        Route::post('/', [PaymentController::class, 'store'])->name('store');
-        Route::get('/export', [PaymentController::class, 'export'])->name('export');
-        Route::get('/{id}', [PaymentController::class, 'show'])->name('show');
-        Route::delete('/{id}', [PaymentController::class, 'destroy'])->name('destroy');
-    });
 
     // =====================================================================
     // EXPENSES

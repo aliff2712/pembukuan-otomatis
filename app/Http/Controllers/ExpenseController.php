@@ -27,44 +27,16 @@ class ExpenseController extends Controller
     {
         $query = Expense::with(['expenseAccount', 'cashAccount']);
 
-        // Filter by date range
-        if ($request->filled('date_from')) {
-            $query->where('expense_date', '>=', $request->date_from);
-        }
-
-        if ($request->filled('date_to')) {
-            $query->where('expense_date', '<=', $request->date_to);
-        }
-
-        // Filter by month & year
-        if ($request->filled('month') && $request->filled('year')) {
-            $query->whereMonth('expense_date', $request->month)
-                  ->whereYear('expense_date', $request->year);
-        }
-
-        // Filter by expense account
-        if ($request->filled('expense_account_id')) {
-            $query->where('expense_coa_id', $request->expense_account_id);
-        }
-
-        // Filter by cash/bank account
-        if ($request->filled('cash_account_id')) {
-            $query->where('cash_coa_id', $request->cash_account_id);
-        }
-
-        // Search by description
-        if ($request->filled('search')) {
-            $query->where('description', 'like', '%' . $request->search . '%');
-        }
+        $this->applyFilters($query, $request);
 
         $expenses = $query->orderBy('expense_date', 'desc')
             ->orderBy('id', 'desc')
             ->paginate(20);
 
-        // Summary statistics
+        // ─── Stats: 1 query aggregate + 3 query scalar (bukan 6 query) ────
         $stats = $this->getStatistics($request);
 
-        // Get accounts for filter dropdowns
+        // Get accounts for filter dropdowns — lazy via cache jika diperlukan
         $expenseAccounts = ChartOfAccount::where('account_type', 'expense')
             ->orderBy('account_code')
             ->get();
@@ -81,18 +53,15 @@ class ExpenseController extends Controller
      */
     public function create()
     {
-        // Get expense accounts (account_type = 'expense')
         $expenseAccounts = ChartOfAccount::where('account_type', 'expense')
             ->orderBy('account_code')
             ->get();
 
-        // Get cash/bank accounts (is_cash = true)
-         $cashAccounts = ChartOfAccount::where('account_type', 'asset')
-        ->where('is_cash', true)
-        ->orderBy('account_code')
-        ->get();
+        $cashAccounts = ChartOfAccount::where('account_type', 'asset')
+            ->where('is_cash', true)
+            ->orderBy('account_code')
+            ->get();
 
-        // Check if accounts exist
         if ($expenseAccounts->isEmpty()) {
             return redirect()
                 ->route('chart-of-accounts.index')
@@ -114,15 +83,14 @@ class ExpenseController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'expense_date' => 'required|date',
+            'expense_date'   => 'required|date',
             'expense_coa_id' => 'required|exists:chart_of_accounts,id',
-            'cash_coa_id' => 'required|exists:chart_of_accounts,id',
-            'amount' => 'required|numeric|min:0',
-            'description' => 'required|string|max:1000',
+            'cash_coa_id'    => 'required|exists:chart_of_accounts,id',
+            'amount'         => 'required|numeric|min:0',
+            'description'    => 'required|string|max:1000',
         ]);
 
         try {
-            // Use ExpenseService to create expense + journal entry
             $expense = $this->expenseService->record($validated);
 
             return redirect()
@@ -130,9 +98,7 @@ class ExpenseController extends Controller
                 ->with('success', 'Expense berhasil dicatat sebesar Rp ' . number_format($expense->amount, 0, ',', '.'));
 
         } catch (\Exception $e) {
-            return redirect()
-                ->back()
-                ->withInput()
+            return redirect()->back()->withInput()
                 ->withErrors(['error' => 'Terjadi kesalahan: ' . $e->getMessage()]);
         }
     }
@@ -144,7 +110,7 @@ class ExpenseController extends Controller
     {
         $expense = Expense::with(['expenseAccount', 'cashAccount'])->findOrFail($id);
 
-        // Get related journal entry
+        // Eager load lines sekaligus agar tidak lazy-load di view
         $journalEntry = JournalEntry::where('source_type', 'expense')
             ->where('source_id', $expense->id)
             ->with('lines')
@@ -160,12 +126,10 @@ class ExpenseController extends Controller
     {
         $expense = Expense::findOrFail($id);
 
-        // Get expense accounts
         $expenseAccounts = ChartOfAccount::where('account_type', 'expense')
             ->orderBy('account_code')
             ->get();
 
-        // Get cash/bank accounts
         $cashAccounts = ChartOfAccount::where('is_cash', true)
             ->orderBy('account_code')
             ->get();
@@ -181,71 +145,69 @@ class ExpenseController extends Controller
         $expense = Expense::findOrFail($id);
 
         $validated = $request->validate([
-            'expense_date' => 'required|date',
+            'expense_date'   => 'required|date',
             'expense_coa_id' => 'required|exists:chart_of_accounts,id',
-            'cash_coa_id' => 'required|exists:chart_of_accounts,id',
-            'amount' => 'required|numeric|min:0',
-            'description' => 'required|string|max:1000',
+            'cash_coa_id'    => 'required|exists:chart_of_accounts,id',
+            'amount'         => 'required|numeric|min:0',
+            'description'    => 'required|string|max:1000',
         ]);
 
         try {
             DB::beginTransaction();
 
-            // Update expense
             $expense->update($validated);
 
-            // Update related journal entry
             $journalEntry = JournalEntry::where('source_type', 'expense')
                 ->where('source_id', $expense->id)
                 ->first();
 
             if ($journalEntry) {
-                // Update journal entry header
                 $journalEntry->update([
                     'journal_date' => $validated['expense_date'],
-                    'description' => $validated['description'],
-                    'total_debit' => $validated['amount'],
+                    'description'  => $validated['description'],
+                    'total_debit'  => $validated['amount'],
                     'total_credit' => $validated['amount'],
                 ]);
 
-                // Delete old lines
+                // Batch delete + re-insert lines
                 JournalLine::where('journal_entry_id', $journalEntry->id)->delete();
 
-                // Get account info
-                $expenseAccount = ChartOfAccount::findOrFail($validated['expense_coa_id']);
-                $cashAccount = ChartOfAccount::findOrFail($validated['cash_coa_id']);
+                // Fetch kedua akun sekaligus (1 query)
+                $accounts = ChartOfAccount::findMany([
+                    $validated['expense_coa_id'],
+                    $validated['cash_coa_id'],
+                ])->keyBy('id');
 
-                // Create new lines - Debit: Expense
-                JournalLine::create([
-                    'journal_entry_id' => $journalEntry->id,
-                    'account_code' => $expenseAccount->account_code,
-                    'account_name' => $expenseAccount->account_name,
-                    'debit' => $validated['amount'],
-                    'credit' => 0,
-                ]);
+                $expenseAccount = $accounts[$validated['expense_coa_id']];
+                $cashAccount    = $accounts[$validated['cash_coa_id']];
 
-                // Create new lines - Credit: Cash/Bank
-                JournalLine::create([
-                    'journal_entry_id' => $journalEntry->id,
-                    'account_code' => $cashAccount->account_code,
-                    'account_name' => $cashAccount->account_name,
-                    'debit' => 0,
-                    'credit' => $validated['amount'],
+                JournalLine::insert([
+                    [
+                        'journal_entry_id' => $journalEntry->id,
+                        'account_code'     => $expenseAccount->account_code,
+                        'account_name'     => $expenseAccount->account_name,
+                        'debit'            => $validated['amount'],
+                        'credit'           => 0,
+                    ],
+                    [
+                        'journal_entry_id' => $journalEntry->id,
+                        'account_code'     => $cashAccount->account_code,
+                        'account_name'     => $cashAccount->account_name,
+                        'debit'            => 0,
+                        'credit'           => $validated['amount'],
+                    ],
                 ]);
             }
 
             DB::commit();
 
-            return redirect()
-                ->route('expenses.show', $expense->id)
+            return redirect()->route('expenses.show', $expense->id)
                 ->with('success', 'Expense berhasil diupdate.');
 
         } catch (\Exception $e) {
             DB::rollBack();
 
-            return redirect()
-                ->back()
-                ->withInput()
+            return redirect()->back()->withInput()
                 ->withErrors(['error' => 'Terjadi kesalahan: ' . $e->getMessage()]);
         }
     }
@@ -260,7 +222,6 @@ class ExpenseController extends Controller
 
             $expense = Expense::findOrFail($id);
 
-            // Delete related journal entry and lines
             $journalEntry = JournalEntry::where('source_type', 'expense')
                 ->where('source_id', $expense->id)
                 ->first();
@@ -270,34 +231,89 @@ class ExpenseController extends Controller
                 $journalEntry->delete();
             }
 
-            // Delete expense
-            $amount = $expense->amount;
-            $description = $expense->description;
+            $amount      = $expense->amount;
             $expense->delete();
 
             DB::commit();
 
-            return redirect()
-                ->route('expenses.index')
+            return redirect()->route('expenses.index')
                 ->with('success', 'Expense sebesar Rp ' . number_format($amount, 0, ',', '.') . ' berhasil dihapus.');
 
         } catch (\Exception $e) {
             DB::rollBack();
 
-            return redirect()
-                ->back()
+            return redirect()->back()
                 ->withErrors(['error' => 'Gagal menghapus expense: ' . $e->getMessage()]);
         }
     }
 
-    /**
-     * Get statistics for summary cards
-     */
-    private function getStatistics(Request $request)
-    {
-        $query = Expense::query();
+    // =========================================================
+    // HELPER: Statistics
+    // Sebelumnya: 6 query terpisah (total, count, avg, this_month, last_month, today)
+    // Sekarang:   1 query aggregate + 3 query scalar yang berbeda konteks
+    // =========================================================
 
-        // Apply same filters as index
+    private function getStatistics(Request $request): array
+    {
+        // Query dengan filter (untuk total/count/avg sesuai filter aktif)
+        $filteredQuery = Expense::query();
+        $this->applyFilters($filteredQuery, $request);
+
+        // 1 query untuk total, count, avg berdasarkan filter
+        $filtered = $filteredQuery->selectRaw('
+            COUNT(*)    as total_expenses,
+            SUM(amount) as total_amount,
+            AVG(amount) as average_amount
+        ')->first();
+
+        $today     = now()->toDateString();
+        $thisMonth = now()->month;
+        $thisYear  = now()->year;
+        $lastMonth = now()->subMonth();
+
+        // 3 scalar query — sudah tidak bisa digabung karena konteks beda
+        [$thisMonthAmt, $lastMonthAmt, $todayAmt] = $this->getContextualAmounts(
+            $thisMonth, $thisYear,
+            $lastMonth->month, $lastMonth->year,
+            $today
+        );
+
+        return [
+            'total_expenses' => (int)   ($filtered->total_expenses  ?? 0),
+            'total_amount'   => (float) ($filtered->total_amount     ?? 0),
+            'average_amount' => (float) ($filtered->average_amount   ?? 0),
+            'this_month'     => $thisMonthAmt,
+            'last_month'     => $lastMonthAmt,
+            'today'          => $todayAmt,
+        ];
+    }
+
+    // Sub-helper: ambil this_month, last_month, today dalam 1 query CASE WHEN
+    private function getContextualAmounts(
+        int $thisMonth, int $thisYear,
+        int $lastMonth, int $lastYear,
+        string $today
+    ): array {
+        $row = Expense::selectRaw("
+            SUM(CASE WHEN MONTH(expense_date) = ? AND YEAR(expense_date) = ? THEN amount ELSE 0 END) as this_month,
+            SUM(CASE WHEN MONTH(expense_date) = ? AND YEAR(expense_date) = ? THEN amount ELSE 0 END) as last_month,
+            SUM(CASE WHEN expense_date = ?                                    THEN amount ELSE 0 END) as today
+        ", [$thisMonth, $thisYear, $lastMonth, $lastYear, $today])
+        ->first();
+
+        return [
+            (float) ($row->this_month ?? 0),
+            (float) ($row->last_month ?? 0),
+            (float) ($row->today      ?? 0),
+        ];
+    }
+
+    // =========================================================
+    // HELPER: Centralized filter agar tidak duplikasi kode
+    // =========================================================
+
+    private function applyFilters($query, Request $request): void
+    {
         if ($request->filled('date_from')) {
             $query->where('expense_date', '>=', $request->date_from);
         }
@@ -311,19 +327,17 @@ class ExpenseController extends Controller
                   ->whereYear('expense_date', $request->year);
         }
 
-        return [
-            'total_expenses' => $query->count(),
-            'total_amount' => $query->sum('amount'),
-            'average_amount' => $query->avg('amount') ?? 0,
-            'this_month' => Expense::whereMonth('expense_date', now()->month)
-                ->whereYear('expense_date', now()->year)
-                ->sum('amount'),
-            'last_month' => Expense::whereMonth('expense_date', now()->subMonth()->month)
-                ->whereYear('expense_date', now()->subMonth()->year)
-                ->sum('amount'),
-            'today' => Expense::whereDate('expense_date', now()->toDateString())
-                ->sum('amount'),
-        ];
+        if ($request->filled('expense_account_id')) {
+            $query->where('expense_coa_id', $request->expense_account_id);
+        }
+
+        if ($request->filled('cash_account_id')) {
+            $query->where('cash_coa_id', $request->cash_account_id);
+        }
+
+        if ($request->filled('search')) {
+            $query->where('description', 'like', '%' . $request->search . '%');
+        }
     }
 
     /**
@@ -333,27 +347,12 @@ class ExpenseController extends Controller
     {
         $query = Expense::with(['expenseAccount', 'cashAccount']);
 
-        // Apply filters
-        if ($request->filled('date_from')) {
-            $query->where('expense_date', '>=', $request->date_from);
-        }
-
-        if ($request->filled('date_to')) {
-            $query->where('expense_date', '<=', $request->date_to);
-        }
+        $this->applyFilters($query, $request);
 
         $expenses = $query->orderBy('expense_date')->get();
 
-        // Prepare CSV
-        $csvData = [];
-        $csvData[] = [
-            'Expense ID',
-            'Date',
-            'Expense Account',
-            'Cash/Bank Account',
-            'Amount',
-            'Description'
-        ];
+        $csvData   = [];
+        $csvData[] = ['Expense ID', 'Date', 'Expense Account', 'Cash/Bank Account', 'Amount', 'Description'];
 
         foreach ($expenses as $expense) {
             $csvData[] = [
@@ -366,7 +365,6 @@ class ExpenseController extends Controller
             ];
         }
 
-        // Generate CSV
         $filename = 'expenses_' . now()->format('Y-m-d_His') . '.csv';
 
         $handle = fopen('php://temp', 'r+');
@@ -378,7 +376,7 @@ class ExpenseController extends Controller
         fclose($handle);
 
         return response($csv, 200, [
-            'Content-Type' => 'text/csv',
+            'Content-Type'        => 'text/csv',
             'Content-Disposition' => 'attachment; filename="' . $filename . '"',
         ]);
     }
@@ -389,7 +387,7 @@ class ExpenseController extends Controller
     public function summaryByAccount(Request $request)
     {
         $dateFrom = $request->get('date_from', now()->startOfMonth()->toDateString());
-        $dateTo = $request->get('date_to', now()->endOfMonth()->toDateString());
+        $dateTo   = $request->get('date_to',   now()->endOfMonth()->toDateString());
 
         $summary = Expense::with('expenseAccount')
             ->whereBetween('expense_date', [$dateFrom, $dateTo])

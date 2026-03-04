@@ -1,12 +1,14 @@
-<ul class="navbar-nav sidebar modern-sidebar accordion" id="accordionSidebar">
+<ul class="navbar-nav modern-sidebar accordion h-100" id="accordionSidebar">
 
     <!-- BRAND -->
-    <div class="sidebar-brand d-flex align-items-center justify-content-center">
-        <div class="sidebar-brand-icon">
-            <i class="fas fa-chart-line"></i>
+    <li class="sidebar-brand-wrapper">
+        <div class="sidebar-brand d-flex align-items-center justify-content-center">
+            <div class="sidebar-brand-icon">
+                <i class="fas fa-chart-line"></i>
+            </div>
+            <div class="sidebar-brand-text ms-2">DHS Finance</div>
         </div>
-        <div class="sidebar-brand-text ms-2">DHS Finance</div>
-    </div>
+    </li>
 
     <hr class="sidebar-divider my-3">
 
@@ -21,7 +23,7 @@
     <hr class="sidebar-divider">
 
     <div class="sidebar-heading">
-        Transaksi 
+        Transaksi
     </div>
 
     <li class="nav-item {{ request()->routeIs('finance*') ? 'active' : '' }}">
@@ -34,10 +36,9 @@
     <li class="nav-item {{ request()->routeIs('voucher-sales*') ? 'active' : '' }}">
         <a class="nav-link" href="{{ route('voucher-sales.index') }}">
             <i class="fas fa-receipt"></i>
-            <span>Transaksi Voucher</span>
+            <span>Penjualan Voucher</span>
         </a>
     </li>
-
 
     <li class="nav-item {{ request()->routeIs('expenses*') ? 'active' : '' }}">
         <a class="nav-link" href="{{ route('expenses.index') }}">
@@ -49,7 +50,7 @@
     <li class="nav-item {{ request()->routeIs('other-incomes*') ? 'active' : '' }}">
         <a class="nav-link" href="{{ route('other-incomes.index') }}">
             <i class="fas fa-coins"></i>
-            <span>Pemasukan lain</span>
+            <span>Pendapatan Lain</span>
         </a>
     </li>
 
@@ -72,53 +73,46 @@
             <span>Journal Entries</span>
         </a>
     </li>
-    <div class="sidebar-heading">
-        Laporan
+     <div class="sidebar-heading">
+        Akuntansi
     </div>
-    <li class="nav-item {{ request()->routeIs('laporan*') ? 'active' : '' }}">
+     <li class="nav-item {{ request()->routeIs('finance.laporan*') ? 'active' : '' }}">
         <a class="nav-link" href="{{ route('finance.laporan.index') }}">
-            <i class="fas fa-file-alt"></i>
-            <span>Laporan Keuangan</span>
+            <i class="fas fa-book"></i>
+            <span>Laporan</span>
         </a>
     </li>
 
+
 </ul>
-    
-
 <style>
-
-/* ================================
-   PREMIUM MODERN NAVY SIDEBAR
+    /* ================================
+   MODERN SIDEBAR RESPONSIVE
 ================================ */
 
 .modern-sidebar {
     background: #0f172a;
     min-height: 100vh;
+    height: 100%;
     padding-top: 1rem;
-    transition: all 0.3s ease;
+    overflow-y: auto;
+    overflow-x: hidden;
     border-right: 1px solid rgba(255,255,255,0.05);
 }
 
 /* BRAND */
+.sidebar-brand-wrapper {
+    list-style: none;
+}
+
 .modern-sidebar .sidebar-brand {
     font-weight: 600;
     font-size: 0.95rem;
-    letter-spacing: 0.5px;
     color: #ffffff;
     padding: 1rem;
     border-radius: 14px;
     margin: 0 12px;
     background: rgba(255,255,255,0.03);
-    transition: 0.3s ease;
-}
-
-.modern-sidebar .sidebar-brand:hover {
-    background: rgba(59,130,246,0.15);
-}
-
-.modern-sidebar .sidebar-brand-icon i {
-    font-size: 1.2rem;
-    color: #3b82f6;
 }
 
 /* SECTION HEADING */
@@ -135,13 +129,13 @@
 /* NAV ITEM */
 .modern-sidebar .nav-link {
     color: rgba(255,255,255,0.75);
-    padding: 0.75rem 1rem;
+    padding: 0.7rem 1rem;
     margin: 4px 12px;
     border-radius: 12px;
     font-size: 0.85rem;
     display: flex;
     align-items: center;
-    transition: all 0.2s ease;
+    transition: 0.2s ease;
 }
 
 /* ICON */
@@ -149,14 +143,12 @@
     margin-right: 10px;
     font-size: 0.9rem;
     color: rgba(255,255,255,0.5);
-    transition: 0.2s ease;
 }
 
 /* HOVER */
 .modern-sidebar .nav-link:hover {
     background: rgba(59,130,246,0.12);
     color: #ffffff;
-    transform: translateX(4px);
 }
 
 .modern-sidebar .nav-link:hover i {
@@ -171,8 +163,46 @@
     box-shadow: inset 3px 0 0 #3b82f6;
 }
 
-.modern-sidebar .nav-item.active i {
-    color: #3b82f6;
+/* ============================
+   ACTIVE COLOR PER MENU
+============================ */
+
+/* Transaksi Membership - Biru Tua */
+.nav-item.active:has(a[href*="finance"]) .nav-link {
+    background: #1e3a8a;
+    box-shadow: inset 3px 0 0 #3b82f6;
+}
+
+/* Penjualan Voucher - Hijau Gelap */
+.nav-item.active:has(a[href*="voucher-sales"]) .nav-link {
+    background: #14532d;
+    box-shadow: inset 3px 0 0 #22c55e;
+}
+
+/* Pengeluaran - Merah Gelap */
+.nav-item.active:has(a[href*="expenses"]) .nav-link {
+    background: #7f1d1d;
+    box-shadow: inset 3px 0 0 #ef4444;
+}
+
+/* Pendapatan Lain - Oren Gelap */
+.nav-item.active:has(a[href*="other-incomes"]) .nav-link {
+    background: #7c2d12;
+    box-shadow: inset 3px 0 0 #f97316;
+}
+
+/* Chart of Accounts - Abu Gelap */
+.nav-item.active:has(a[href*="chart-of-accounts"]) .nav-link {
+    color: #ffffff;
+    background: #374151;
+    box-shadow: inset 3px 0 0 #9ca3af;
+}
+
+/* Journal Entries - Abu Gelap */
+.nav-item.active:has(a[href*="journal-entries"]) .nav-link {
+    color: #ffffff;
+    background: #374151;
+    box-shadow: inset 3px 0 0 #9ca3af;
 }
 
 /* DIVIDER */
@@ -181,7 +211,7 @@
     margin: 1rem 1rem;
 }
 
-/* SMOOTH SCROLLBAR */
+/* SCROLLBAR */
 .modern-sidebar::-webkit-scrollbar {
     width: 6px;
 }
@@ -191,4 +221,30 @@
     border-radius: 10px;
 }
 
+/* ================= MOBILE ================= */
+
+@media (max-width: 768px) {
+
+    .modern-sidebar {
+        min-height: auto;
+        padding-top: 0.5rem;
+    }
+
+    .modern-sidebar .sidebar-brand {
+        margin: 0 8px;
+        padding: 0.8rem;
+        font-size: 0.9rem;
+    }
+
+    .modern-sidebar .nav-link {
+        margin: 4px 8px;
+        padding: 0.65rem 0.9rem;
+        font-size: 0.8rem;
+    }
+
+    .modern-sidebar .nav-link i {
+        font-size: 0.85rem;
+    }
+
+}
 </style>

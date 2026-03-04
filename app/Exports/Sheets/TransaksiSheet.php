@@ -2,40 +2,81 @@
 
 namespace App\Exports\Sheets;
 
-use Illuminate\Support\Collection;
-use Maatwebsite\Excel\Concerns\FromCollection;
+use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Concerns\FromQuery;
+use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithHeadings;
-use Maatwebsite\Excel\Concerns\WithTitle;
-use Maatwebsite\Excel\Concerns\WithStyles;
-use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+use Maatwebsite\Excel\Concerns\WithChunkReading;
 
-class TransaksiSheet implements FromCollection, WithHeadings, WithTitle, WithStyles
+class TransaksiSheet implements FromQuery, WithMapping, WithHeadings, WithChunkReading
 {
-    public function __construct(protected Collection $transaksis) {}
+    protected ?int $bulan;
+    protected int $tahun;
+    protected int $rowNumber = 0;
 
-    public function collection(): Collection
+    public function __construct(?int $bulan, int $tahun)
     {
-        return $this->transaksis->values()->map(fn($t, $i) => [
-            'No'           => $i + 1,
-            'Kode'         => $t->kode_transaksi,
-            'Customer'     => $t->nama_customer,
-            'Tanggal'      => $t->tanggal->format('d/m/Y'),
-            'Jatuh Tempo'  => $t->jatuh_tempo?->format('d/m/Y') ?? '-',
-            'Total'        => $t->total,
-            'Status'       => strtoupper($t->status),
-            'Dibayar Pada' => $t->paid_at?->format('d/m/Y H:i') ?? '-',
-        ]);
+        $this->bulan = $bulan;
+        $this->tahun = $tahun;
+    }
+
+    public function query()
+    {
+        return DB::table('transaksis')
+            ->when($this->bulan, function ($query) {
+                $query->whereMonth('tanggal', $this->bulan);
+            })
+            ->whereYear('tanggal', $this->tahun)
+            ->select(
+                'kode_transaksi',
+                'nama_customer',
+                'tanggal',
+                'jatuh_tempo',
+                'total',
+                'status',
+                'paid_at'
+            )
+            ->orderBy('tanggal');
+    }
+
+    public function map($transaksi): array
+    {
+        $this->rowNumber++;
+
+        return [
+            $this->rowNumber,
+            $transaksi->kode_transaksi,
+            $transaksi->nama_customer,
+            $transaksi->tanggal 
+                ? date('d/m/Y', strtotime($transaksi->tanggal)) 
+                : '-',
+            $transaksi->jatuh_tempo 
+                ? date('d/m/Y', strtotime($transaksi->jatuh_tempo)) 
+                : '-',
+            $transaksi->total,
+            strtoupper($transaksi->status),
+            $transaksi->paid_at 
+                ? date('d/m/Y H:i', strtotime($transaksi->paid_at)) 
+                : '-',
+        ];
     }
 
     public function headings(): array
     {
-        return ['No', 'Kode Transaksi', 'Customer', 'Tanggal', 'Jatuh Tempo', 'Total', 'Status', 'Dibayar Pada'];
+        return [
+            'No',
+            'Kode Transaksi',
+            'Customer',
+            'Tanggal',
+            'Jatuh Tempo',
+            'Total',
+            'Status',
+            'Dibayar Pada',
+        ];
     }
 
-    public function title(): string { return 'Member'; }
-
-    public function styles(Worksheet $sheet): array
+    public function chunkSize(): int
     {
-        return [1 => ['font' => ['bold' => true]]];
+        return 1000;
     }
 }
