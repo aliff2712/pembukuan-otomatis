@@ -36,189 +36,176 @@
     </div>
 
     <!-- Summary Cards -->
-    <div class="row mb-4">
-        <!-- Total Accounts -->
-        <div class="col-xl-2 col-md-6 mb-4">
-            <div class="card border-left-primary shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                {{ __('Total Accounts') }}
-                            </div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                {{ number_format($stats['total'], 0, ',', '.') }}
-                            </div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-list fa-2x text-gray-300"></i>
-                        </div>
-                    </div>
+    <div class="row g-3 mb-4">
+
+<!-- Total Accounts -->
+<div class="col-xl-2 col-md-4 col-6">
+    <div class="card summary-card border-primary h-100">
+        <div class="card-body d-flex justify-content-between align-items-center">
+            <div>
+                <div class="summary-label text-primary">
+                    {{ __('Total Accounts') }}
+                </div>
+                <div class="summary-value">
+                    {{ number_format($stats['total'], 0, ',', '.') }}
                 </div>
             </div>
-        </div>
-
-        <!-- Asset Accounts -->
-        <div class="col-xl-2 col-md-6 mb-4">
-            <div class="card border-left-info shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                                {{ __('Asset') }} 
-                            </div>
-                            <div class="h3 mb-0 font-weight-bold text-gray-800">
-                              {{ $stats['asset_count'] }}
-                            </div>
-                            
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-coins fa-2x text-gray-300"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-
-        <!-- Revenue Accounts -->
-        <div class="col-xl-2 col-md-6 mb-4">
-            <div class="card border-left-success shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                {{ __('Revenue') }} 
-                            </div>
-                            <div class="h3 mb-0 font-weight-bold text-gray-800">
-                              {{ $stats['revenue_count'] }}
-                            </div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-arrow-up fa-2x text-gray-300"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Expense Accounts -->
-        <div class="col-xl-2 col-md-6 mb-4">
-            <div class="card border-left-danger shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
-                                {{ __('Expense') }} 
-                            </div>
-                            <div class="h3 mb-0 font-weight-bold text-gray-800">
-                                {{ $stats['expense_count'] }}
-                            </div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-arrow-down fa-2x text-gray-300"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Liability Accounts -->
-        <div class="col-xl-2 col-md-6 mb-4">
-            <div class="card border-left-warning shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                {{ __('Liability') }} 
-                            </div>
-                            <div class="h3 mb-0 font-weight-bold text-gray-800">
-                              {{ $stats['liability_count'] }}
-                            </div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-file-invoice-dollar fa-2x text-gray-300"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Equity Accounts -->
-        <div class="col-xl-2 col-md-6 mb-4">
-            <div class="card border-left-primary shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                {{ __('Equity') }} 
-                            </div>
-                            <div class="h3 mb-0 font-weight-bold text-gray-800">
-                              {{ $stats['equity_count'] }}
-                            </div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-piggy-bank fa-2x text-gray-300"></i>
-                        </div>
-                    </div>
-                </div>
+            <div class="summary-icon bg-primary-soft">
+                <i class="fas fa-list text-primary"></i>
             </div>
         </div>
     </div>
+</div>
 
-    
+<!-- Asset -->
+<div class="col-xl-2 col-md-4 col-6">
+    <div class="card summary-card border-info h-100">
+        <div class="card-body d-flex justify-content-between align-items-center">
+            <div>
+                <div class="summary-label text-info">Asset</div>
+                <div class="summary-value">
+                    {{ $stats['asset_count'] }}
+                </div>
+            </div>
+            <div class="summary-icon bg-info-soft">
+                <i class="fas fa-coins text-info"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Revenue -->
+<div class="col-xl-2 col-md-4 col-6">
+    <div class="card summary-card border-success h-100">
+        <div class="card-body d-flex justify-content-between align-items-center">
+            <div>
+                <div class="summary-label text-success">Revenue</div>
+                <div class="summary-value">
+                    {{ $stats['revenue_count'] }}
+                </div>
+            </div>
+            <div class="summary-icon bg-success-soft">
+                <i class="fas fa-arrow-up text-success"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Expense -->
+<div class="col-xl-2 col-md-4 col-6">
+    <div class="card summary-card border-danger h-100">
+        <div class="card-body d-flex justify-content-between align-items-center">
+            <div>
+                <div class="summary-label text-danger">Expense</div>
+                <div class="summary-value">
+                    {{ $stats['expense_count'] }}
+                </div>
+            </div>
+            <div class="summary-icon bg-danger-soft">
+                <i class="fas fa-arrow-down text-danger"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Liability -->
+<div class="col-xl-2 col-md-4 col-6">
+    <div class="card summary-card border-warning h-100">
+        <div class="card-body d-flex justify-content-between align-items-center">
+            <div>
+                <div class="summary-label text-warning">Liability</div>
+                <div class="summary-value">
+                    {{ $stats['liability_count'] }}
+                </div>
+            </div>
+            <div class="summary-icon bg-warning-soft">
+                <i class="fas fa-file-invoice-dollar text-warning"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Equity -->
+<div class="col-xl-2 col-md-4 col-6">
+    <div class="card summary-card border-primary h-100">
+        <div class="card-body d-flex justify-content-between align-items-center">
+            <div>
+                <div class="summary-label text-primary">Equity</div>
+                <div class="summary-value">
+                    {{ $stats['equity_count'] }}
+                </div>
+            </div>
+            <div class="summary-icon bg-primary-soft">
+                <i class="fas fa-piggy-bank text-primary"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+</div>
 
 
     <!-- Filter Card -->
-    <div class="card shadow mb-4">
-        <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">{{ __('Filter & Search') }}</h6>
-        </div>
-        <div class="card-body">
-            <form action="{{ route('chart-of-accounts.index') }}" method="GET">
-                <div class="row">
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label for="search">{{ __('Search Code/Name') }}</label>
-                            <input type="text" name="search" id="search" class="form-control" 
-                                   placeholder="{{ __('Enter code or name') }}" value="{{ request('search') }}">
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label for="account_type">{{ __('Account Type') }}</label>
-                            <select name="account_type" id="account_type" class="form-select">
-                                <option value="">{{ __('All Types') }}</option>
-                                <option value="asset" @selected(request('account_type') == 'asset')>{{ __('Asset') }}</option>
-                                <option value="revenue" @selected(request('account_type') == 'revenue')>{{ __('Revenue') }}</option>
-                                <option value="expense" @selected(request('account_type') == 'expense')>{{ __('Expense') }}</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label for="is_cash">{{ __('Cash Account') }}</label>
-                            <select name="is_cash" id="is_cash" class="form-select">
-                                <option value="">{{ __('All') }}</option>
-                                <option value="1" @selected(request('is_cash') == '1')>{{ __('Yes') }}</option>
-                                <option value="0" @selected(request('is_cash') == '0')>{{ __('No') }}</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-12">
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-search"></i> {{ __('Search') }}
-                        </button>
-                        <a href="{{ route('chart-of-accounts.index') }}" class="btn btn-secondary">
-                            <i class="fas fa-redo"></i> {{ __('Reset') }}
-                        </a>
-                    </div>
-                </div>
-            </form>
-        </div>
+<div class="card filter-card mb-4 border-0">
+    <div class="card-header bg-navy text-white d-flex align-items-center justify-content-between">
+        <span class="fw-semibold">
+            <i class="fas fa-filter me-2"></i> {{ __('Filter & Search') }}
+        </span>
     </div>
+
+    <div class="card-body">
+        <form action="{{ route('chart-of-accounts.index') }}" method="GET">
+            <div class="row g-3 align-items-end">
+
+                <div class="col-md-4">
+                    <label class="form-label small fw-semibold">
+                        {{ __('Search Code/Name') }}
+                    </label>
+                    <input type="text"
+                           name="search"
+                           class="form-control filter-input"
+                           placeholder="Enter code or name..."
+                           value="{{ request('search') }}">
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label small fw-semibold">
+                        {{ __('Account Type') }}
+                    </label>
+                    <select name="account_type" class="form-select filter-input">
+                        <option value="">{{ __('All Types') }}</option>
+                        <option value="asset" @selected(request('account_type')=='asset')>Asset</option>
+                        <option value="revenue" @selected(request('account_type')=='revenue')>Revenue</option>
+                        <option value="expense" @selected(request('account_type')=='expense')>Expense</option>
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label small fw-semibold">
+                        {{ __('Cash Account') }}
+                    </label>
+                    <select name="is_cash" class="form-select filter-input">
+                        <option value="">{{ __('All') }}</option>
+                        <option value="1" @selected(request('is_cash')=='1')>Yes</option>
+                        <option value="0" @selected(request('is_cash')=='0')>No</option>
+                    </select>
+                </div>
+
+                <div class="col-md-2 d-flex gap-2">
+                <button type="submit" class="btn btn-grey w-100">
+    <i class="fas fa-search"></i>
+</button>
+                  
+                    <a href="{{ route('chart-of-accounts.index') }}"
+                       class="btn btn-outline-secondary w-100">
+                        <i class="fas fa-undo"></i>
+                    </a>
+                </div>
+
+            </div>
+        </form>
+    </div>
+</div>
 
     <!-- Accounts Table -->
     <div class="card shadow">
@@ -273,26 +260,28 @@
                                     @endif
                                 </td>
                                 <td class="text-center">
-                                    <div class="btn-group btn-group-sm" role="group">
-                                        <a href="{{ route('chart-of-accounts.show', $account->id) }}" 
-                                           class="btn btn-info" title="{{ __('View') }}">
-                                            <i class="fas fa-eye"></i>
-                                        </a>
-                                        <a href="{{ route('chart-of-accounts.edit', $account->id) }}" 
-                                           class="btn btn-warning" title="{{ __('Edit') }}">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <form action="{{ route('chart-of-accounts.destroy', $account->id) }}" 
-                                              method="POST" style="display:inline;" 
-                                              onsubmit="return confirm('{{ __('Are you sure?') }}');">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-danger btn-sm" title="{{ __('Delete') }}">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </form>
-                                    </div>
-                                </td>
+    <div class="d-flex justify-content-center gap-2 action-buttons">
+
+        <a href="{{ route('chart-of-accounts.show', $account->id) }}"
+           class="btn btn-sm btn-outline-primary"
+           title="View">
+            <i class="fas fa-eye"></i>
+        </a>
+
+        <a href="{{ route('chart-of-accounts.edit', $account->id) }}"
+           class="btn btn-sm btn-outline-warning"
+           title="Edit">
+            <i class="fas fa-edit"></i>
+        </a>
+
+        <button type="button"
+        class="btn btn-sm btn-outline-danger"
+        onclick="deleteAccount({{ $account->id }}, '{{ $account->account_name }}')">
+    <i class="fas fa-trash"></i>
+</button>
+
+    </div>
+</td>
                             </tr>
                         @empty
                             <tr>
@@ -316,35 +305,92 @@
 </div>
 
 <style>
-    .border-left-primary {
-        border-left: 4px solid #4e73df;
-    }
-    .border-left-info {
-        border-left: 4px solid #36b9cc;
-    }
-    .border-left-warning {
-        border-left: 4px solid #f6c23e;
-    }
-    .border-left-success {
-        border-left: 4px solid #1cc88a;
-    }
-    .border-left-danger {
-        border-left: 4px solid #e74a3b;
-    }
-    .text-gray-800 {
-        color: #2e59d9;
-    }
-    .text-gray-300 {
-        color: #e3e6f0;
-    }
-    .font-weight-bold {
-        font-weight: 700;
-    }
-    .text-xs {
-        font-size: 0.8rem;
-    }
-    .text-uppercase {
-        text-transform: uppercase;
-    }
+
+.action-buttons .btn {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.action-buttons .btn:hover {
+    transform: translateY(-2px);
+}
+
+.border-left-primary { border-left: 4px solid #4e73df; }
+.border-left-info { border-left: 4px solid #36b9cc; }
+.border-left-warning { border-left: 4px solid #f6c23e; }
+.border-left-success { border-left: 4px solid #1cc88a; }
+.border-left-danger { border-left: 4px solid #e74a3b; }
+
+.text-gray-800 { color: #2e59d9; }
+.text-gray-300 { color: #e3e6f0; }
+
+.font-weight-bold { font-weight: 700; }
+.text-xs { font-size: 0.8rem; }
+.text-uppercase { text-transform: uppercase; }
+
+/* BUTTON GREY FIX */
+.btn-grey {
+    background-color: #6c757d;
+    color: #fff;
+    border: none;
+    transition: all 0.2s ease;
+}
+
+.btn-grey:hover {
+    background-color: #5c636a;
+    color: #fff;
+}
+
+.btn-grey:active {
+    background-color: #ffffff !important;
+    color: #6c757d !important;
+    box-shadow: inset 0 2px 6px rgba(0,0,0,0.15);
+}
 </style>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+function deleteAccount(id, name) {
+    Swal.fire({
+        title: 'Delete Account?',
+        html: `Are you sure you want to delete this account?<br><br>
+               <strong>${name}</strong><br><br>
+               This action cannot be undone.`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#dc3545',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Yes, delete it!',
+        cancelButtonText: 'Cancel'
+    }).then((result) => {
+        if (result.isConfirmed) {
+
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = `/chart-of-accounts/${id}`;
+
+            const csrfToken = document.createElement('input');
+            csrfToken.type = 'hidden';
+            csrfToken.name = '_token';
+            csrfToken.value = '{{ csrf_token() }}';
+
+            const methodField = document.createElement('input');
+            methodField.type = 'hidden';
+            methodField.name = '_method';
+            methodField.value = 'DELETE';
+
+            form.appendChild(csrfToken);
+            form.appendChild(methodField);
+            document.body.appendChild(form);
+            form.submit();
+        }
+    });
+}
+</script>
 @endsection

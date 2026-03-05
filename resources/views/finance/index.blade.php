@@ -371,24 +371,28 @@ $canPay = $trx->status === 'unpaid' && (!$jatuhTempo || now()->lessThanOrEqualTo
                                 @endif
                             </td>
                             <td class="text-center">
-                                <a href="{{ route('finance.transaksi.show', $trx->id) }}" class="btn btn-sm btn-outline-primary">
-                                    <i class="fas fa-eye"></i>
-                                </a>
+    <a href="{{ route('finance.transaksi.show', $trx->id) }}" 
+       class="btn btn-sm btn-outline-primary">
+        <i class="fas fa-eye"></i>
+    </a>
 
-                                @if($canPay)
-                                    <a href="{{ route('finance.transaksi.payment.form', $trx->id) }}" class="btn btn-sm btn-success">
-                                        <i class="fas fa-credit-card"></i>
-                                    </a>
-                                @endif
+    @if(strtolower(trim($trx->status)) === 'unpaid')
+        <a href="{{ route('finance.transaksi.payment.form', $trx->id) }}" 
+           class="btn btn-sm btn-success">
+            <i class="fas fa-credit-card"></i>
+        </a>
+    @endif
 
-                                <form action="{{ route('finance.transaksi.destroy', $trx->id) }}" method="POST" class="d-inline"
-                                      onsubmit="return confirm('Yakin hapus transaksi ini?')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button class="btn btn-sm btn-outline-danger">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </form>
+    <form action="{{ route('finance.transaksi.destroy', $trx->id) }}" 
+          method="POST" 
+          class="d-inline form-delete">
+        @csrf
+        @method('DELETE')
+        <button type="submit" class="btn btn-sm btn-outline-danger">
+            <i class="fas fa-trash"></i>
+        </button>
+    </form>
+</td>
                             </td>
                         </tr>
 @empty
@@ -410,5 +414,36 @@ $canPay = $trx->status === 'unpaid' && (!$jatuhTempo || now()->lessThanOrEqualTo
     </div>
 
 </div>
+<!-- SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    document.querySelectorAll('.form-delete').forEach(function(form) {
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            Swal.fire({
+                title: "Yakin hapus transaksi ini?",
+                text: "Data yang sudah dihapus tidak bisa dikembalikan.",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#dc3545",
+                cancelButtonColor: "#6c757d",
+                confirmButtonText: "Ya, Hapus",
+                cancelButtonText: "Batal"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+
+        });
+
+    });
+
+});
+</script>
 @endsection

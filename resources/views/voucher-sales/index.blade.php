@@ -4,6 +4,7 @@
 @section('page-title', 'Voucher Sales - Mikhmon')
 
 @section('content')
+<link rel="stylesheet" href="{{ asset('assets/css/voucher.css') }}">
 <div class="row">
     <!-- Summary Cards -->
     <div class="col-xl-3 col-md-6 mb-4">
@@ -87,72 +88,113 @@
     </div>
 </div>
 
-<!-- Filter & Action Bar -->
+<!---actions---->
 <div class="card shadow mb-4">
-    <div class="card-header py-3 d-flex justify-content-between align-items-center">
-        <h6 class="m-0 font-weight-bold text-primary">Filter & Actions</h6>
-        <div>
-             <a href="{{ route('voucher-sales.import') }}" class="btn btn-warning btn-sm">
-                <i class="fas fa-download"></i> Import CSV
-            </a>
-            <a href="{{ route('voucher-sales.reimport-form') }}" class="btn btn-warning btn-sm">
-                <i class="fas fa-sync-alt"></i> Re-import
-            </a>
-            <a href="{{ route('voucher-sales.export', request()->all()) }}" class="btn btn-success btn-sm">
-                <i class="fas fa-file-excel"></i> Export CSV
-            </a>
-        </div>
-    </div>
-    <div class="card-body">
-        <form method="GET" action="{{ route('voucher-sales.index') }}" class="row g-3">
-            <div class="col-md-3">
-                <label class="form-label small">Date From</label>
-                <input type="date" name="date_from" class="form-control form-control-sm" 
-                    value="{{ request('date_from') }}">
-            </div>
-            <div class="col-md-3">
-                <label class="form-label small">Date To</label>
-                <input type="date" name="date_to" class="form-control form-control-sm" 
-                    value="{{ request('date_to') }}">
-            </div>
-            <div class="col-md-2">
-                <label class="form-label small">Month</label>
-                <select name="month" class="form-control form-control-sm">
-                    <option value="">All</option>
-                    @for ($m = 1; $m <= 12; $m++)
-                        <option value="{{ $m }}" {{ request('month') == $m ? 'selected' : '' }}>
-                            {{ date('F', mktime(0, 0, 0, $m, 1)) }}
-                        </option>
-                    @endfor
-                </select>
-            </div>
-            <div class="col-md-2">
-                <label class="form-label small">Year</label>
-                <select name="year" class="form-control form-control-sm">
-                    <option value="">All</option>
-                    @for ($y = date('Y'); $y >= date('Y') - 3; $y--)
-                        <option value="{{ $y }}" {{ request('year') == $y ? 'selected' : '' }}>
-                            {{ $y }}
-                        </option>
-                    @endfor
-                </select>
-            </div>
-            <div class="col-md-2 d-flex align-items-end">
-                <button type="submit" class="btn btn-primary btn-sm me-2">
-                    <i class="fas fa-filter"></i> Filter
-                </button>
-                <a href="{{ route('voucher-sales.index') }}" class="btn btn-secondary btn-sm">
-                    <i class="fas fa-redo"></i> Reset
+    <div class="card-header py-3">
+
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+
+            <span class="fw-bold text-primary-white">
+                Actions
+            </span>
+
+            <div class="d-flex gap-2 flex-wrap">
+
+                <a href="{{ route('voucher-sales.import') }}"
+                   class="btn btn-warning btn-sm">
+                    <i class="fas fa-download"></i> Import
                 </a>
+
+                <a href="{{ route('voucher-sales.export', request()->all()) }}"
+                   class="btn btn-success btn-sm">
+                    <i class="fas fa-file-excel"></i> Export
+                </a>
+
             </div>
-        </form>
-    </div>
+
+        </div>
+
+</div>
+</div>
+<div class="card shadow mb-4">
+
+<div class="card-header py-3">
+    <h6 class="m-0 font-weight-bold text-primary-white">
+        Filter Data
+    </h6>
 </div>
 
+<div class="card-body">
+    <form method="GET"
+          action="{{ route('voucher-sales.index') }}"
+          class="row g-3">
+
+        <div class="col-12 col-md-3">
+            <label class="form-label small">Date From</label>
+            <input type="date"
+                   name="date_from"
+                   class="form-control form-control-sm"
+                   value="{{ request('date_from') }}">
+        </div>
+
+        <div class="col-12 col-md-3">
+            <label class="form-label small">Date To</label>
+            <input type="date"
+                   name="date_to"
+                   class="form-control form-control-sm"
+                   value="{{ request('date_to') }}">
+        </div>
+
+        <div class="col-12 col-md-2">
+            <label class="form-label small">Month</label>
+            <select name="month"
+                    class="form-control form-control-sm">
+                <option value="">All</option>
+                @for ($m = 1; $m <= 12; $m++)
+                    <option value="{{ $m }}"
+                        {{ request('month') == $m ? 'selected' : '' }}>
+                        {{ date('F', mktime(0, 0, 0, $m, 1)) }}
+                    </option>
+                @endfor
+            </select>
+        </div>
+
+        <div class="col-12 col-md-2">
+            <label class="form-label small">Year</label>
+            <select name="year"
+                    class="form-control form-control-sm">
+                <option value="">All</option>
+                @for ($y = date('Y'); $y >= date('Y') - 3; $y--)
+                    <option value="{{ $y }}"
+                        {{ request('year') == $y ? 'selected' : '' }}>
+                        {{ $y }}
+                    </option>
+                @endfor
+            </select>
+        </div>
+
+        <div class="col-12 col-md-2 d-flex align-items-md-end gap-2">
+
+            <button type="submit"
+                    class="btn btn-primary btn-sm">
+                <i class="fas fa-filter"></i> Filter
+            </button>
+
+            <a href="{{ route('voucher-sales.index') }}"
+               class="btn btn-secondary btn-sm">
+                <i class="fas fa-redo"></i> Reset
+            </a>
+
+        </div>
+
+    </form>
+</div>
+
+</div>
 <!-- Data Table -->
 <div class="card shadow mb-4">
     <div class="card-header py-3">
-        <h6 class="m-0 font-weight-bold text-primary">Voucher Sales Data</h6>
+        <h6 class="m-0 font-weight-bold text-primary-white">Voucher Sales Data</h6>
     </div>
     <div class="card-body">
         @if(session('success'))
@@ -188,49 +230,62 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse($sales as $sale)
-                        <tr>
-                            <td>{{ $sale->id }}</td>
-                            <td>
-                                <i class="far fa-calendar"></i>
-                                {{ \Carbon\Carbon::parse($sale->sale_date)->format('d M Y') }}
-                            </td>
-                            <td class="text-center">
-                                <span class="badge bg-info">{{ number_format($sale->total_transactions) }}</span>
-                            </td>
-                            <td class="text-end">
-                                <strong>Rp {{ number_format($sale->total_amount, 0, ',', '.') }}</strong>
-                            </td>
-                            <td>
-                                <span class="badge bg-secondary">{{ $sale->source }}</span>
-                            </td>
-                            <td>
-                                <small>{{ \Carbon\Carbon::parse($sale->updated_at)->format('d/m/Y H:i') }}</small>
-                            </td>
-                            <td>
-                                <a href="{{ route('voucher-sales.show', $sale->id) }}" 
-                                    class="btn btn-info btn-sm" title="View Detail">
-                                    <i class="fas fa-eye"></i>
-                                </a>
-                                <button type="button" class="btn btn-danger btn-sm" 
-                                    onclick="voidSale({{ $sale->id }}, '{{ $sale->sale_date }}')" 
-                                    title="Void">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="7" class="text-center py-4">
-                                <i class="fas fa-inbox fa-3x mb-3"></i>
-                                <p>No voucher sales data found.</p>
-                                <a href="{{ route('voucher-sales.reimport-form') }}" class="btn btn-primary btn-sm">
-                                    <i class="fas fa-upload"></i> Import Data
-                                </a>
-                            </td>
-                        </tr>
-                    @endforelse
-                </tbody>
+@forelse($sales as $sale)
+<tr>
+    <td data-label="ID">{{ $sale->id }}</td>
+
+    <td data-label="Sale Date">
+        {{ \Carbon\Carbon::parse($sale->sale_date)->format('d M Y') }}
+    </td>
+
+    <td data-label="Transactions" class="text-center">
+        <span class="badge bg-info">
+            {{ number_format($sale->total_transactions) }}
+        </span>
+    </td>
+
+    <td data-label="Total Amount" class="text-end">
+        <strong>
+            Rp {{ number_format($sale->total_amount, 0, ',', '.') }}
+        </strong>
+    </td>
+
+    <td data-label="Source">
+        <span class="badge bg-secondary">
+            {{ $sale->source }}
+        </span>
+    </td>
+
+    <td data-label="Updated">
+        <small>
+            {{ \Carbon\Carbon::parse($sale->updated_at)->format('d/m/Y H:i') }}
+        </small>
+    </td>
+
+    <td data-label="Actions">
+        <div class="d-flex gap-1 justify-content-end">
+            <a href="{{ route('voucher-sales.show', $sale->id) }}" 
+               class="btn btn-info btn-sm">
+                <i class="fas fa-eye"></i>
+            </a>
+
+            <button type="button"
+                class="btn btn-danger btn-sm"
+                onclick="voidSale({{ $sale->id }}, '{{ $sale->sale_date }}')">
+                <i class="fas fa-trash"></i>
+            </button>
+        </div>
+    </td>
+</tr>
+@empty
+<tr>
+    <td colspan="7" class="text-center py-4">
+        <i class="fas fa-inbox fa-3x mb-3"></i>
+        <p>No voucher sales data found.</p>
+    </td>
+</tr>
+@endforelse
+</tbody>
                 @if($sales->count() > 0)
                     <tfoot class="table-light">
                         <tr>

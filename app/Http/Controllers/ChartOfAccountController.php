@@ -10,9 +10,6 @@ use Illuminate\Support\Facades\DB;
 
 class ChartOfAccountController extends Controller
 {
-    /**
-     * Display a listing of chart of accounts
-     */
     public function index(Request $request)
     {
         $query = ChartOfAccount::query();
@@ -31,38 +28,58 @@ class ChartOfAccountController extends Controller
             });
         }
 
-        // Filter cash accounts only
+        // Filter cash accounts
         if ($request->filled('is_cash')) {
             $query->where('is_cash', $request->is_cash);
         }
 
         $accounts = $query->orderBy('account_code')->paginate(20);
 
-        // Summary statistics with balance calculation
-        // Accounting equation: Assets = Liabilities + Equity
-        $assetBalance = JournalLine::join('chart_of_accounts', 'journal_lines.coa_id', '=', 'chart_of_accounts.account_code')
+        /*
+        |--------------------------------------------------------------------------
+        | SUMMARY BALANCE
+        |--------------------------------------------------------------------------
+        | journal_lines.coa_id = chart_of_accounts.account_code
+        */
+
+        $assetBalance = JournalLine::join(
+                'chart_of_accounts',
+                'journal_lines.coa_id',
+                '=',
+                'chart_of_accounts.account_code'
+            )
             ->where('chart_of_accounts.account_type', 'asset')
-            ->selectRaw('SUM(debit) - SUM(credit) as balance')
+            ->selectRaw('COALESCE(SUM(debit),0) - COALESCE(SUM(credit),0) as balance')
             ->value('balance') ?? 0;
 
-        $liabilityBalance = JournalLine::join('chart_of_accounts', 'journal_lines.coa_id', '=', 'chart_of_accounts.account_code')
-            ->where('chart_of_accounts.account_type', 'liability')
-            ->selectRaw('SUM(credit) - SUM(debit) as balance')
-            ->value('balance') ?? 0;
-
-        $equityBalance = JournalLine::join('chart_of_accounts', 'journal_lines.coa_id', '=', 'chart_of_accounts.account_code')
+        $equityBalance = JournalLine::join(
+                'chart_of_accounts',
+                'journal_lines.coa_id',
+                '=',
+                'chart_of_accounts.account_code'
+            )
             ->where('chart_of_accounts.account_type', 'equity')
-            ->selectRaw('SUM(credit) - SUM(debit) as balance')
+            ->selectRaw('COALESCE(SUM(credit),0) - COALESCE(SUM(debit),0) as balance')
             ->value('balance') ?? 0;
 
-        $revenueBalance = JournalLine::join('chart_of_accounts', 'journal_lines.coa_id', '=', 'chart_of_accounts.account_code')
+        $revenueBalance = JournalLine::join(
+                'chart_of_accounts',
+                'journal_lines.coa_id',
+                '=',
+                'chart_of_accounts.account_code'
+            )
             ->where('chart_of_accounts.account_type', 'revenue')
-            ->selectRaw('COALESCE(SUM(credit), 0) - COALESCE(SUM(debit), 0) as balance')
+            ->selectRaw('COALESCE(SUM(credit),0) - COALESCE(SUM(debit),0) as balance')
             ->value('balance') ?? 0;
 
-        $expenseBalance = JournalLine::join('chart_of_accounts', 'journal_lines.coa_id', '=', 'chart_of_accounts.account_code')
+        $expenseBalance = JournalLine::join(
+                'chart_of_accounts',
+                'journal_lines.coa_id',
+                '=',
+                'chart_of_accounts.account_code'
+            )
             ->where('chart_of_accounts.account_type', 'expense')
-            ->selectRaw('COALESCE(SUM(debit), 0) - COALESCE(SUM(credit), 0) as balance')
+            ->selectRaw('COALESCE(SUM(debit),0) - COALESCE(SUM(credit),0) as balance')
             ->value('balance') ?? 0;
 
         $stats = [
@@ -74,7 +91,6 @@ class ChartOfAccountController extends Controller
             'expense_count' => ChartOfAccount::where('account_type', 'expense')->count(),
 
             'asset_balance' => $assetBalance,
-            // 'liability_balance' => $liabilityBalance,
             'equity_balance' => $equityBalance,
             'revenue_balance' => $revenueBalance,
             'expense_balance' => $expenseBalance,
@@ -83,9 +99,6 @@ class ChartOfAccountController extends Controller
         return view('chart-of-accounts.index', compact('accounts', 'stats'));
     }
 
-    /**
-     * Show the form for creating a new account
-     */
     public function create()
     {
         $accountTypes = [
@@ -99,9 +112,6 @@ class ChartOfAccountController extends Controller
         return view('chart-of-accounts.create', compact('accountTypes'));
     }
 
-    /**
-     * Store a newly created account
-     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -111,7 +121,7 @@ class ChartOfAccountController extends Controller
             'is_cash' => 'boolean',
         ]);
 
-        $validated['is_cash'] = $request->has('is_cash') ? true : false;
+        $validated['is_cash'] = $request->has('is_cash');
 
         $account = ChartOfAccount::create($validated);
 
@@ -120,17 +130,12 @@ class ChartOfAccountController extends Controller
             ->with('success', 'Account berhasil ditambahkan: ' . $account->account_code . ' - ' . $account->account_name);
     }
 
-    /**
-     * Display the specified account
-     */
     public function show($id)
     {
         $account = ChartOfAccount::findOrFail($id);
 
-        // Get usage count in journal lines
         $usageCount = JournalLine::where('coa_id', $account->account_code)->count();
 
-        // Get recent transactions
         $recentTransactions = DB::table('journal_lines')
             ->join('journal_entries', 'journal_entries.id', '=', 'journal_lines.journal_entry_id')
             ->where('journal_lines.coa_id', $account->account_code)
@@ -144,17 +149,18 @@ class ChartOfAccountController extends Controller
             ->limit(10)
             ->get();
 
-        // Calculate balance
         $balance = JournalLine::where('coa_id', $account->account_code)
-            ->selectRaw('SUM(debit) - SUM(credit) as balance')
+            ->selectRaw('COALESCE(SUM(debit),0) - COALESCE(SUM(credit),0) as balance')
             ->value('balance') ?? 0;
 
-        return view('chart-of-accounts.show', compact('account', 'usageCount', 'recentTransactions', 'balance'));
+        return view('chart-of-accounts.show', compact(
+            'account',
+            'usageCount',
+            'recentTransactions',
+            'balance'
+        ));
     }
 
-    /**
-     * Show the form for editing the specified account
-     */
     public function edit($id)
     {
         $account = ChartOfAccount::findOrFail($id);
@@ -167,15 +173,15 @@ class ChartOfAccountController extends Controller
             'expense' => 'Expense (Beban)',
         ];
 
-        // Check if account has transactions
         $hasTransactions = JournalLine::where('coa_id', $account->account_code)->exists();
 
-        return view('chart-of-accounts.edit', compact('account', 'accountTypes', 'hasTransactions'));
+        return view('chart-of-accounts.edit', compact(
+            'account',
+            'accountTypes',
+            'hasTransactions'
+        ));
     }
 
-    /**
-     * Update the specified account
-     */
     public function update(Request $request, $id)
     {
         $account = ChartOfAccount::findOrFail($id);
@@ -187,16 +193,19 @@ class ChartOfAccountController extends Controller
             'is_cash' => 'boolean',
         ]);
 
-        $validated['is_cash'] = $request->has('is_cash') ? true : false;
+        $validated['is_cash'] = $request->has('is_cash');
 
-        // Check if account_code changed and has transactions
+        // Jika kode akun berubah & sudah ada transaksi → tolak
         if ($account->account_code !== $validated['account_code']) {
-            $hasTransactions = JournalLine::where('account_code', $account->account_code)->exists();
-            
+
+            $hasTransactions = JournalLine::where('coa_id', $account->account_code)->exists();
+
             if ($hasTransactions) {
                 return redirect()
                     ->back()
-                    ->withErrors(['account_code' => 'Tidak dapat mengubah kode akun yang sudah memiliki transaksi.'])
+                    ->withErrors([
+                        'account_code' => 'Tidak dapat mengubah kode akun yang sudah memiliki transaksi.'
+                    ])
                     ->withInput();
             }
         }
@@ -208,53 +217,26 @@ class ChartOfAccountController extends Controller
             ->with('success', 'Account berhasil diupdate: ' . $account->account_code . ' - ' . $account->account_name);
     }
 
-    /**
-     * Remove the specified account
-     */
     public function destroy($id)
     {
         $account = ChartOfAccount::findOrFail($id);
 
-        // Check if account has been used in any transactions
-        $usageCount = JournalLine::where('account_code', $account->account_code)->count();
+        $usageCount = JournalLine::where('coa_id', $account->account_code)->count();
 
         if ($usageCount > 0) {
             return redirect()
                 ->back()
-                ->withErrors(['delete' => "Tidak dapat menghapus akun yang sudah memiliki {$usageCount} transaksi."]);
+                ->withErrors([
+                    'delete' => "Tidak dapat menghapus akun yang sudah memiliki {$usageCount} transaksi."
+                ]);
         }
 
         $accountInfo = $account->account_code . ' - ' . $account->account_name;
+
         $account->delete();
 
         return redirect()
             ->route('chart-of-accounts.index')
             ->with('success', 'Account berhasil dihapus: ' . $accountInfo);
-    }
-
-    /**
-     * Get accounts by type (AJAX endpoint)
-     */
-    public function getByType(Request $request)
-    {
-        $type = $request->get('type');
-        
-        $accounts = ChartOfAccount::where('account_type', $type)
-            ->orderBy('account_code')
-            ->get(['id', 'account_code', 'account_name']);
-
-        return response()->json($accounts);
-    }
-
-    /**
-     * Get cash/bank accounts only (AJAX endpoint)
-     */
-    public function getCashAccounts()
-    {
-        $accounts = ChartOfAccount::where('is_cash', true)
-            ->orderBy('account_code')
-            ->get(['id', 'account_code', 'account_name']);
-
-        return response()->json($accounts);
     }
 }

@@ -1,38 +1,148 @@
 @extends('layouts-main.app')
 
 @section('title', 'Import Transaksi')
-
 @section('page-title', 'Import Data Transaksi DHS Dipanet Hotspot Solution')
 
 @section('content')
 
+<style>
+/* ===============================
+   NAVY BACKGROUND
+=================================*/
+body {
+    background: #0f172a;
+}
+
+/* ===============================
+   IMPORT CARD
+=================================*/
+.import-card {
+    background: #1e293b;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.05);
+    box-shadow:
+        0 15px 35px rgba(0,0,0,0.4),
+        inset 0 1px 0 rgba(255,255,255,0.04);
+    transition: all .25s ease;
+}
+
+.import-card:hover {
+    transform: translateY(-3px);
+}
+
+/* HEADER */
+.import-header {
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    padding: 20px 25px;
+}
+
+.import-header h5 {
+    color: #ffffff;
+    font-weight: 600;
+}
+
+/* BODY */
+.import-body {
+    padding: 30px;
+}
+
+/* LABEL */
+.import-body label {
+    color: #cbd5e1;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+/* FILE INPUT STYLE */
+.file-upload-wrapper {
+    background: #0f172a;
+    border: 2px dashed rgba(255,255,255,0.15);
+    border-radius: 16px;
+    padding: 40px;
+    text-align: center;
+    cursor: pointer;
+    transition: all .25s ease;
+}
+
+.file-upload-wrapper:hover {
+    border-color: #3b82f6;
+    background: rgba(59,130,246,0.08);
+}
+
+.file-upload-wrapper i {
+    font-size: 40px;
+    color: #3b82f6;
+    margin-bottom: 10px;
+}
+
+.file-upload-wrapper p {
+    color: #94a3b8;
+    margin-bottom: 0;
+}
+
+.file-upload-wrapper strong {
+    color: #ffffff;
+}
+
+/* HIDDEN INPUT */
+.file-upload-wrapper input {
+    display: none;
+}
+
+/* BUTTON */
+.btn-navy {
+    background: #2563eb;
+    border: none;
+    border-radius: 12px;
+    color: #fff;
+    font-weight: 600;
+    padding: 10px 24px;
+}
+
+.btn-navy:hover {
+    background: #1d4ed8;
+}
+
+.btn-outline-light {
+    border-radius: 12px;
+}
+
+/* ALERT NAVY STYLE */
+.alert-success {
+    background: rgba(22,163,74,.15);
+    color: #4ade80;
+    border: none;
+}
+
+.alert-danger {
+    background: rgba(220,38,38,.15);
+    color: #f87171;
+    border: none;
+}
+</style>
+
 <div class="container-fluid">
 
-    <!-- Page Heading -->
+    <!-- PAGE TITLE -->
     <div class="mb-4">
-        <h1 class="h3 text-gray-800 font-weight-bold">
-            Import Transaksi
-        </h1>
-        <p class="mb-0">
-            Upload data transaksi dari file Excel (xlsx) untuk mempercepat proses input data.
+        <h1 class="h3 text-white fw-bold">Import Transaksi</h1>
+        <p class="text-secondary mb-0">
+            Upload file Excel untuk menambahkan data transaksi secara otomatis.
         </p>
     </div>
 
-    <!-- Success Alert -->
-    @if (session('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
+    <!-- SUCCESS -->
+    @if(session('success'))
+        <div class="alert alert-success mb-4">
             <strong>Berhasil!</strong> {{ session('success') }}
-            <button type="button" class="close" data-dismiss="alert">
-                <span>&times;</span>
-            </button>
         </div>
     @endif
 
-    <!-- Error Alert -->
-    @if ($errors->any())
-        <div class="alert alert-danger">
+    <!-- ERROR -->
+    @if($errors->any())
+        <div class="alert alert-danger mb-4">
             <strong>Terjadi Kesalahan:</strong>
-            <ul class="mb-0 mt-2">
+            <ul class="mt-2 mb-0">
                 @foreach ($errors->all() as $error)
                     <li>{{ $error }}</li>
                 @endforeach
@@ -40,78 +150,98 @@
         </div>
     @endif
 
-    <!-- Card -->
-    <div class="card shadow-lg mb-4">
+    <!-- IMPORT CARD -->
+    <div class="import-card">
 
-        <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">
-                Upload File Excel
-            </h6>
+        <div class="import-header">
+            <h5>Upload File Excel</h5>
         </div>
 
-        <div class="card-body">
+        <div class="import-body">
 
             <form action="{{ route('finance.transaksi.import') }}"
                   method="POST"
                   enctype="multipart/form-data">
-
                 @csrf
 
-                <!-- File Input -->
-                <div class="form-group">
-                    <label><strong>Pilih File Excel</strong></label>
+                <!-- FILE UPLOAD AREA -->
+                <label class="file-upload-wrapper">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <p>
+                        <strong id="file-name">Klik untuk memilih file</strong><br>
+                        <small>Format: .xlsx, .xls, .csv</small>
+                    </p>
 
-                    <div class="custom-file">
-                        <input type="file"
-                               name="file"
-                               class="custom-file-input"
-                               id="fileInput"
-                               accept=".xlsx,.xls,.csv"
-                               required>
+                    <input type="file"
+                           name="file"
+                           id="fileInput"
+                           accept=".xlsx,.xls,.csv"
+                           required>
+                </label>
 
-                        <label class="custom-file-label" for="fileInput">
-                            Pilih file...
-                        </label>
-                    </div>
-
-                    <small class="form-text">
-                        Format yang didukung: .xlsx, .xls, .csv
-                    </small>
-                </div>
-
-                <!-- Action Buttons -->
-                <div class="mt-4">
-
-                    <button type="submit"
-                            class="btn btn-success">
-                        <i class="fas fa-file-import"></i>
+                <!-- BUTTONS -->
+                <div class="mt-4 d-flex gap-2">
+                    <button type="submit" class="btn btn-navy">
+                        <i class="fas fa-file-import me-1"></i>
                         Import Transaksi
                     </button>
 
                     <a href="{{ route('finance.transaksi.index') }}"
-                       class="btn btn-secondary">
-                        Batal
-                    </a>
-
+   class="btn btn-outline-light btn-cancel">
+    Batal
+</a>
                 </div>
 
             </form>
 
         </div>
-
     </div>
 
 </div>
 
-{{-- Script untuk menampilkan nama file --}}
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    const fileInput = document.getElementById('fileInput');
+<!-- SweetAlert2 CDN -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    fileInput.addEventListener('change', function () {
-        let fileName = this.files[0].name;
-        this.nextElementSibling.innerText = fileName;
-    });
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const fileInput = document.getElementById("fileInput");
+    const fileName = document.getElementById("file-name");
+    const cancelBtn = document.querySelector('.btn-cancel');
+
+    // Preview nama file
+    if (fileInput) {
+        fileInput.addEventListener("change", function () {
+            if (this.files.length > 0) {
+                fileName.innerText = this.files[0].name;
+            }
+        });
+    }
+
+    // Konfirmasi batal
+    if (cancelBtn) {
+        cancelBtn.addEventListener('click', function(e){
+            e.preventDefault();
+
+            const targetUrl = this.getAttribute('href');
+
+            Swal.fire({
+                title: "Batalkan proses import?",
+                text: "File yang sudah dipilih tidak akan tersimpan.",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#2563eb",
+                cancelButtonColor: "#6c757d",
+                confirmButtonText: "Ya, Batalkan",
+                cancelButtonText: "Tetap di Halaman"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = targetUrl;
+                }
+            });
+        });
+    }
+
 });
 </script>
 

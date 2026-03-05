@@ -35,7 +35,7 @@
                             <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
                                 {{ __('Total Entries') }}
                             </div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                            <div class="h5 mb-0 font-weight-bold text-white">
                                 {{ number_format($stats['total_entries'] ?? 0) }}
                             </div>
                         </div>
@@ -56,7 +56,7 @@
                             <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
                                 {{ __('This Month') }}
                             </div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                            <div class="h5 mb-0 font-weight-bold text-white">
                                 {{ number_format($stats['this_month'] ?? 0) }}
                             </div>
                         </div>
@@ -77,7 +77,7 @@
                             <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
                                 {{ __('Total Debit') }}
                             </div>
-                            <div class="h6 mb-0 font-weight-bold text-gray-800">
+                            <div class="h6 mb-0 font-weight-bold text-white">
                                 Rp {{ number_format($stats['total_debit'] ?? 0, 0, ',', '.') }}
                             </div>
                         </div>
@@ -112,91 +112,75 @@
     </div>
 
     <!-- Filter Card -->
-    <div class="card shadow mb-4">
-        <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">{{ __('Filter & Search') }}</h6>
+    <div class="filter-toolbar mb-4">
+
+<form action="{{ route('journal-entries.index') }}" method="GET">
+
+    <div class="navy-filter d-flex flex-wrap align-items-center gap-3 p-4 rounded-4">
+
+        <!-- Search -->
+        <div class="flex-grow-1" style="min-width:220px;">
+            <div class="input-group">
+                <span class="input-group-text bg-white border-0">
+                    <i class="fas fa-search text-muted"></i>
+                </span>
+                <input type="text"
+                       name="search"
+                       class="form-control border-0"
+                       placeholder="Search description / reference..."
+                       value="{{ request('search') }}">
+            </div>
         </div>
-        <div class="card-body">
-            <form action="{{ route('journal-entries.index') }}" method="GET">
-                <div class="row mb-3">
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label for="search">{{ __('Search Description/Reference') }}</label>
-                            <input type="text" name="search" id="search" class="form-control" 
-                                   placeholder="{{ __('Enter description or reference') }}" value="{{ request('search') }}">
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label for="source_type">{{ __('Source Type') }}</label>
-                            <select name="source_type" id="source_type" class="form-select">
-                                <option value="">{{ __('All Sources') }}</option>
-                                @foreach($sourceTypes as $type)
-                                    <option value="{{ $type }}" @selected(request('source_type') == $type)>{{ $type }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label for="date_from">{{ __('Date From') }}</label>
-                            <input type="date" name="date_from" id="date_from" class="form-control" 
-                                   value="{{ request('date_from') }}">
-                        </div>
-                    </div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label for="date_to">{{ __('Date To') }}</label>
-                            <input type="date" name="date_to" id="date_to" class="form-control" 
-                                   value="{{ request('date_to') }}">
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="form-group">
-                            <label for="month">{{ __('Month') }}</label>
-                            <select name="month" id="month" class="form-select">
-                                <option value="">{{ __('All') }}</option>
-                                @for($m = 1; $m <= 12; $m++)
-                                    <option value="{{ $m }}" @selected(request('month') == $m)>
-                                        {{ \Carbon\Carbon::createFromFormat('n', $m)->format('F') }}
-                                    </option>
-                                @endfor
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="form-group">
-                            <label for="year">{{ __('Year') }}</label>
-                            <select name="year" id="year" class="form-select">
-                                <option value="">{{ __('All') }}</option>
-                                @for($y = now()->year; $y >= 2020; $y--)
-                                    <option value="{{ $y }}" @selected(request('year') == $y)>{{ $y }}</option>
-                                @endfor
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="form-group">
-                            <label>&nbsp;</label>
-                            <button type="submit" class="btn btn-primary w-100">
-                                <i class="fas fa-search"></i> {{ __('Search') }}
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-12">
-                        <a href="{{ route('journal-entries.index') }}" class="btn btn-secondary">
-                            <i class="fas fa-redo"></i> {{ __('Reset') }}
-                        </a>
-                    </div>
-                </div>
-            </form>
-        </div>
+
+        <!-- Source -->
+        <select name="source_type" class="form-select border-0" style="width:160px;">
+            <option value="">Source</option>
+            @foreach($sourceTypes as $type)
+                <option value="{{ $type }}" @selected(request('source_type') == $type)>
+                    {{ $type }}
+                </option>
+            @endforeach
+        </select>
+
+        <!-- Date -->
+        <input type="date" name="date_from" class="form-control border-0" style="width:150px;" value="{{ request('date_from') }}">
+        <input type="date" name="date_to" class="form-control border-0" style="width:150px;" value="{{ request('date_to') }}">
+
+        <!-- Month -->
+        <select name="month" class="form-select border-0" style="width:120px;">
+            <option value="">Month</option>
+            @for($m = 1; $m <= 12; $m++)
+                <option value="{{ $m }}" @selected(request('month') == $m)>
+                    {{ \Carbon\Carbon::createFromFormat('n', $m)->format('M') }}
+                </option>
+            @endfor
+        </select>
+
+        <!-- Year -->
+        <select name="year" class="form-select border-0" style="width:100px;">
+            <option value="">Year</option>
+            @for($y = now()->year; $y >= 2020; $y--)
+                <option value="{{ $y }}" @selected(request('year') == $y)>
+                    {{ $y }}
+                </option>
+            @endfor
+        </select>
+
+        <!-- Button -->
+        <button type="submit" class="btn btn-navy px-4">
+            Filter
+        </button>
+
+        <a href="{{ route('journal-entries.index') }}" class="reset-link">
+            Reset
+        </a>
+
     </div>
 
+</form>
+
+</div>
+ 
     <!-- Journal Entries Table -->
     <div class="card shadow">
         <div class="card-header py-3">
@@ -294,5 +278,47 @@
     .text-uppercase {
         text-transform: uppercase;
     }
+    .navy-filter {
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+.navy-filter .form-control,
+.navy-filter .form-select {
+    border-radius: 10px;
+    height: 42px;
+}
+
+.navy-filter .input-group-text {
+    border-radius: 10px 0 0 10px;
+}
+
+.navy-filter .form-control:focus,
+.navy-filter .form-select:focus {
+    box-shadow: 0 0 0 2px rgba(255,255,255,0.2);
+}
+
+.btn-navy {
+    background-color: #1e3a8a;
+    color: #fff;
+    border-radius: 10px;
+    height: 42px;
+    transition: all 0.2s ease;
+}
+
+.btn-navy:hover {
+    background-color: #1e40af;
+    transform: translateY(-2px);
+}
+
+.reset-link {
+    color: #cbd5e1;
+    text-decoration: none;
+    font-size: 0.85rem;
+}
+
+.reset-link:hover {
+    color: #fff;
+}
 </style>
 @endsection

@@ -26,28 +26,19 @@
         Transaksi
     </div>
 
-    <li class="nav-item {{ request()->routeIs('finance*') ? 'active' : '' }}">
-        <a class="nav-link" href="{{ route('finance.transaksi.index') }}">
-            <i class="fas fa-ticket-alt"></i>
-            <span>Transaksi Membership</span>
-        </a>
-    </li>
+    <li class="nav-item {{ request()->routeIs('finance.transaksi.*') ? 'active' : '' }}">
+    <a class="nav-link" href="{{ route('finance.transaksi.index') }}">
+        <i class="fas fa-ticket-alt"></i>
+        <span>Transaksi Membership</span>
+    </a>
+</li>
 
     <li class="nav-item {{ request()->routeIs('voucher-sales*') ? 'active' : '' }}">
         <a class="nav-link" href="{{ route('voucher-sales.index') }}">
             <i class="fas fa-receipt"></i>
-<<<<<<< HEAD
-            <span>Transaksi Voucher</span>
             <span>Penjualan Voucher</span>
         </a>
     </li>
-
-    {{-- <li class="nav-item {{ request()->routeIs('payments*') ? 'active' : '' }}">
-        <a class="nav-link" href="{{ route('payments.index') }}">
-            <i class="fas fa-money-bill-wave"></i>
-            <span>Payments</span>
-        </a>
-    </li> --}}
 
     <li class="nav-item {{ request()->routeIs('expenses*') ? 'active' : '' }}">
         <a class="nav-link" href="{{ route('expenses.index') }}">
@@ -60,11 +51,6 @@
         <a class="nav-link" href="{{ route('other-incomes.index') }}">
             <i class="fas fa-coins"></i>
             <span>Pendapatan Lain</span>
-<<<<<<< HEAD
-            <span>Pemasukan lain</span>
-=======
-            <span>Pendapatan lain</span>
->>>>>>> c140d34 (ui 26ffeb)
         </a>
     </li>
 
@@ -84,28 +70,16 @@
     <li class="nav-item {{ request()->routeIs('journal-entries*') ? 'active' : '' }}">
         <a class="nav-link" href="{{ route('journal-entries.index') }}">
             <i class="fas fa-book"></i>
-            <span>Journal Entries </span>
-        </a>
-    </li>
-     <div class="sidebar-heading">
-        Akuntansi
-    </div>
-     <li class="nav-item {{ request()->routeIs('finance.laporan*') ? 'active' : '' }}">
-        <a class="nav-link" href="{{ route('finance.laporan.index') }}">
-            <i class="fas fa-book"></i>
-            <span>Laporan</span>
-        </a>
-    </li>
-     <div class="sidebar-heading">
-        Akuntansi
-    </div>
-     <li class="nav-item {{ request()->routeIs('finance.laporan*') ? 'active' : '' }}">
-        <a class="nav-link" href="{{ route('finance.laporan.index') }}">
-            <i class="fas fa-book"></i>
-            <span>Laporan</span>
+            <span>Journal Entries</span>
         </a>
     </li>
 
+     <li class="nav-item {{ request()->routeIs('finance.laporan*') ? 'active' : '' }}">
+        <a class="nav-link" href="{{ route('finance.laporan.index') }}">
+            <i class="fas fa-book"></i>
+            <span>Laporan</span>
+        </a>
+    </li>
 
 
 </ul>
@@ -192,9 +166,16 @@
 ============================ */
 
 /* Transaksi Membership - Biru Tua */
-.nav-item.active:has(a[href*="finance"]) .nav-link {
+/* Transaksi Membership */
+.nav-item.active:has(a[href="{{ route('finance.transaksi.index') }}"]) .nav-link {
     background: #1e3a8a;
     box-shadow: inset 3px 0 0 #3b82f6;
+}
+
+/* Laporan */
+.nav-item.active:has(a[href="{{ route('finance.laporan.index') }}"]) .nav-link {
+    background: #374151;
+    box-shadow: inset 3px 0 0 #9ca3af;
 }
 
 /* Penjualan Voucher - Hijau Gelap */

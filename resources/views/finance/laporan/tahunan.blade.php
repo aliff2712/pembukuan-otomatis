@@ -27,10 +27,6 @@
             Export Excel
         </a>
 
-        <a href="{{ route('finance.laporan.export.pdf.tahunan', ['tahun'=>$tahun]) }}"
-           class="btn btn-outline-danger btn-sm">
-            Export PDF
-        </a>
     </div>
 
     {{-- TABLE PER BULAN --}}
