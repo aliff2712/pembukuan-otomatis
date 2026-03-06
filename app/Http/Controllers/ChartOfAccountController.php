@@ -220,23 +220,22 @@ class ChartOfAccountController extends Controller
     public function destroy($id)
     {
         $account = ChartOfAccount::findOrFail($id);
-
-        $usageCount = JournalLine::where('coa_id', $account->account_code)->count();
-
-        if ($usageCount > 0) {
+    
+        $accountInfo = $account->account_code . ' - ' . $account->account_name;
+    
+        try {
+    
+            $account->delete();
+    
+            return redirect()
+                ->route('chart-of-accounts.index')
+                ->with('success', 'Account berhasil dihapus: ' . $accountInfo);
+    
+        } catch (\Illuminate\Database\QueryException $e) {
+    
             return redirect()
                 ->back()
-                ->withErrors([
-                    'delete' => "Tidak dapat menghapus akun yang sudah memiliki {$usageCount} transaksi."
-                ]);
+                ->with('error', 'Account tidak dapat dihapus karena masih digunakan di transaksi.');
         }
-
-        $accountInfo = $account->account_code . ' - ' . $account->account_name;
-
-        $account->delete();
-
-        return redirect()
-            ->route('chart-of-accounts.index')
-            ->with('success', 'Account berhasil dihapus: ' . $accountInfo);
     }
 }

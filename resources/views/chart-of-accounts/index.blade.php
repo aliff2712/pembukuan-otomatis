@@ -26,7 +26,7 @@
     <!-- Page Header -->
     <div class="row mb-4">
         <div class="col-md-6">
-            <h1 class="h3 mb-0 text-gray-800">{{ __('Chart of Accounts') }}</h1>
+        <h3 class="m-0 font-weight-bold text-white">{{ __('Chart of Accounts') }}</h3>
         </div>
         <div class="col-md-6 text-end">
             <a href="{{ route('chart-of-accounts.create') }}" class="btn btn-primary">
@@ -356,6 +356,7 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
+
 function deleteAccount(id, name) {
     Swal.fire({
         title: 'Delete Account?',
@@ -369,6 +370,7 @@ function deleteAccount(id, name) {
         confirmButtonText: 'Yes, delete it!',
         cancelButtonText: 'Cancel'
     }).then((result) => {
+
         if (result.isConfirmed) {
 
             const form = document.createElement('form');
@@ -390,7 +392,27 @@ function deleteAccount(id, name) {
             document.body.appendChild(form);
             form.submit();
         }
+
     });
 }
+
+@if(session('error'))
+Swal.fire({
+    icon: 'error',
+    title: 'Delete Failed',
+    text: "{{ session('error') }}",
+    confirmButtonColor: '#dc3545'
+});
+@endif
+
+@if(session('success'))
+Swal.fire({
+    icon: 'success',
+    title: 'Success',
+    text: "{{ session('success') }}",
+    confirmButtonColor: '#3085d6'
+});
+@endif
+
 </script>
 @endsection

@@ -15,7 +15,7 @@
     <!-- Page Header -->
     <div class="row mb-4">
         <div class="col-md-6">
-            <h1 class="h3 mb-0 text-gray-800">{{ __('Journal Entries') }}</h1>
+        <h3 class="m-0 font-weight-bold text-white">{{ __('Journal Entries') }}</h3>
         </div>
         <div class="col-md-6 text-end">
             <a href="{{ route('journal-entries.export') }}" class="btn btn-secondary">
@@ -116,66 +116,79 @@
 
 <form action="{{ route('journal-entries.index') }}" method="GET">
 
-    <div class="navy-filter d-flex flex-wrap align-items-center gap-3 p-4 rounded-4">
+<div class="navy-filter d-flex flex-wrap align-items-center gap-3 p-3 rounded-4">
 
-        <!-- Search -->
-        <div class="flex-grow-1" style="min-width:220px;">
-            <div class="input-group">
-                <span class="input-group-text bg-white border-0">
-                    <i class="fas fa-search text-muted"></i>
-                </span>
-                <input type="text"
-                       name="search"
-                       class="form-control border-0"
-                       placeholder="Search description / reference..."
-                       value="{{ request('search') }}">
-            </div>
+    <!-- Search -->
+    <div class="flex-grow-1" style="min-width:240px;">
+        <div class="input-group">
+            <span class="input-group-text bg-white border-0">
+                <i class="fas fa-search text-muted"></i>
+            </span>
+            <input type="text"
+                   name="search"
+                   class="form-control border-0"
+                   placeholder="Search description / reference..."
+                   value="{{ request('search') }}">
         </div>
+    </div>
 
-        <!-- Source -->
-        <select name="source_type" class="form-select border-0" style="width:160px;">
-            <option value="">Source</option>
-            @foreach($sourceTypes as $type)
-                <option value="{{ $type }}" @selected(request('source_type') == $type)>
-                    {{ $type }}
-                </option>
-            @endforeach
-        </select>
+    <!-- Source -->
+    <select name="source_type" class="form-select border-0" style="width:160px;">
+        <option value="">Source</option>
+        @foreach($sourceTypes as $type)
+            <option value="{{ $type }}" @selected(request('source_type') == $type)>
+                {{ $type }}
+            </option>
+        @endforeach
+    </select>
 
-        <!-- Date -->
-        <input type="date" name="date_from" class="form-control border-0" style="width:150px;" value="{{ request('date_from') }}">
-        <input type="date" name="date_to" class="form-control border-0" style="width:150px;" value="{{ request('date_to') }}">
+    <!-- Date Range -->
+    <input type="date"
+           name="date_from"
+           class="form-control border-0"
+           style="width:150px;"
+           value="{{ request('date_from') }}">
 
-        <!-- Month -->
-        <select name="month" class="form-select border-0" style="width:120px;">
-            <option value="">Month</option>
-            @for($m = 1; $m <= 12; $m++)
-                <option value="{{ $m }}" @selected(request('month') == $m)>
-                    {{ \Carbon\Carbon::createFromFormat('n', $m)->format('M') }}
-                </option>
-            @endfor
-        </select>
+    <input type="date"
+           name="date_to"
+           class="form-control border-0"
+           style="width:150px;"
+           value="{{ request('date_to') }}">
 
-        <!-- Year -->
-        <select name="year" class="form-select border-0" style="width:100px;">
-            <option value="">Year</option>
-            @for($y = now()->year; $y >= 2020; $y--)
-                <option value="{{ $y }}" @selected(request('year') == $y)>
-                    {{ $y }}
-                </option>
-            @endfor
-        </select>
+    <!-- Month -->
+    <select name="month" class="form-select border-0" style="width:120px;">
+        <option value="">Month</option>
+        @for($m = 1; $m <= 12; $m++)
+            <option value="{{ $m }}" @selected(request('month') == $m)>
+                {{ \Carbon\Carbon::createFromFormat('n', $m)->format('M') }}
+            </option>
+        @endfor
+    </select>
 
-        <!-- Button -->
+    <!-- Year -->
+    <select name="year" class="form-select border-0" style="width:110px;">
+        <option value="">Year</option>
+        @for($y = now()->year; $y >= 2020; $y--)
+            <option value="{{ $y }}" @selected(request('year') == $y)>
+                {{ $y }}
+            </option>
+        @endfor
+    </select>
+
+    <!-- Buttons -->
+    <div class="d-flex align-items-center gap-2">
+
         <button type="submit" class="btn btn-navy px-4">
-            Filter
+            <i class="fas fa-filter me-1"></i> Filter
         </button>
 
-        <a href="{{ route('journal-entries.index') }}" class="reset-link">
+        <a href="{{ route('journal-entries.index') }}" class="btn btn-light">
             Reset
         </a>
 
     </div>
+
+</div>
 
 </form>
 
@@ -251,74 +264,184 @@
 </div>
 
 <style>
-    .border-left-primary {
-        border-left: 4px solid #4e73df;
-    }
-    .border-left-info {
-        border-left: 4px solid #36b9cc;
-    }
-    .border-left-success {
-        border-left: 4px solid #1cc88a;
-    }
-    .border-left-warning {
-        border-left: 4px solid #f6c23e;
-    }
-    .text-gray-800 {
-        color: #2e59d9;
-    }
-    .text-gray-300 {
-        color: #e3e6f0;
-    }
-    .font-weight-bold {
-        font-weight: 700;
-    }
-    .text-xs {
-        font-size: 0.8rem;
-    }
-    .text-uppercase {
-        text-transform: uppercase;
-    }
-    .navy-filter {
-    background: linear-gradient(135deg, #0f172a, #1e293b);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    ./* ===============================
+   PAGE HEADER
+=================================*/
+
+.page-title{
+    font-size:22px;
+    font-weight:700;
+    color:#0f172a;
+}
+
+/* ===============================
+   STAT CARDS
+=================================*/
+
+.stat-card{
+    border:none;
+    border-radius:14px;
+    padding:18px;
+    transition:all .2s ease;
+}
+
+.stat-card:hover{
+    transform:translateY(-4px);
+    box-shadow:0 8px 25px rgba(0,0,0,0.08);
+}
+
+.stat-card .stat-title{
+    font-size:11px;
+    text-transform:uppercase;
+    font-weight:600;
+    letter-spacing:.5px;
+}
+
+.stat-card .stat-value{
+    font-size:20px;
+    font-weight:700;
+}
+
+/* Card Colors */
+
+.border-left-primary{border-left:4px solid #3b82f6;}
+.border-left-info{border-left:4px solid #06b6d4;}
+.border-left-success{border-left:4px solid #22c55e;}
+.border-left-warning{border-left:4px solid #f59e0b;}
+
+/* ===============================
+   FILTER BAR
+=================================*/
+
+.navy-filter{
+    background:linear-gradient(135deg,#0f172a,#1e293b);
+    box-shadow:0 10px 25px rgba(0,0,0,0.15);
 }
 
 .navy-filter .form-control,
-.navy-filter .form-select {
-    border-radius: 10px;
-    height: 42px;
+.navy-filter .form-select{
+    border-radius:10px;
+    height:42px;
+    font-size:13px;
 }
 
-.navy-filter .input-group-text {
-    border-radius: 10px 0 0 10px;
+.navy-filter .input-group-text{
+    border-radius:10px 0 0 10px;
 }
 
 .navy-filter .form-control:focus,
-.navy-filter .form-select:focus {
-    box-shadow: 0 0 0 2px rgba(255,255,255,0.2);
+.navy-filter .form-select:focus{
+    box-shadow:0 0 0 2px rgba(255,255,255,0.15);
 }
 
-.btn-navy {
-    background-color: #1e3a8a;
-    color: #fff;
-    border-radius: 10px;
-    height: 42px;
-    transition: all 0.2s ease;
+.btn-navy{
+    background:#1e3a8a;
+    color:#fff;
+    border-radius:10px;
+    height:42px;
+    padding:0 18px;
 }
 
-.btn-navy:hover {
-    background-color: #1e40af;
-    transform: translateY(-2px);
+.btn-navy:hover{
+    background:#1e40af;
 }
 
-.reset-link {
-    color: #cbd5e1;
-    text-decoration: none;
-    font-size: 0.85rem;
+.reset-link{
+    color:#cbd5e1;
+    font-size:12px;
 }
 
-.reset-link:hover {
-    color: #fff;
+.reset-link:hover{
+    color:#fff;
+}
+
+/* ===============================
+   TABLE
+=================================*/
+
+.table{
+    font-size:14px;
+}
+
+.table thead th{
+    font-size:12px;
+    text-transform:uppercase;
+    letter-spacing:.4px;
+}
+
+.table td{
+    vertical-align:middle;
+}
+
+.table tbody tr{
+    transition:.15s;
+}
+
+.table tbody tr:hover{
+    background:#f8fafc;
+}
+
+/* ===============================
+   BADGES
+=================================*/
+
+.badge{
+    font-size:11px;
+    padding:6px 8px;
+}
+
+/* ===============================
+   PAGINATION
+=================================*/
+
+.pagination{
+    justify-content:center;
+}
+
+/* ===============================
+   MOBILE OPTIMIZATION
+=================================*/
+
+@media (max-width:768px){
+
+.page-title{
+    font-size:18px;
+}
+
+/* FILTER STACK */
+.navy-filter{
+    flex-direction:column;
+    align-items:stretch !important;
+}
+
+.navy-filter .form-control,
+.navy-filter .form-select{
+    width:100% !important;
+}
+
+/* TABLE FONT */
+.table{
+    font-size:12px;
+}
+
+.table thead{
+    font-size:11px;
+}
+
+/* BUTTON SMALL */
+.btn{
+    font-size:12px;
+}
+
+/* STAT CARD */
+.stat-card{
+    padding:14px;
+}
+
+.stat-card .stat-value{
+    font-size:16px;
+}
+
 }
 </style>
 @endsection

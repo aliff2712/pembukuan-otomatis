@@ -227,18 +227,29 @@ body {
     background: #1d4ed8;
 }
 </style>
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h1 class="page-title mb-0">Manajemen Transaksi</h1>
+<div class="row mb-4 align-items-center">
 
-    <div class="d-flex gap-2">
-        <a href="{{ route('finance.transaksi.import.form') }}" class="btn btn-navy">
-            <i class="fas fa-file-import me-1"></i> Import Transaksi
-        </a>
-        <a href="{{ route('converter.index') }}" class="btn btn-success px-4">
-            <i class="fas fa-external-link-alt me-1"></i>
-            Buka Converter
-        </a>
+    <div class="col-md-6">
+        <h3 class="m-0 font-weight-bold text-white">
+            {{ __('Transaksi') }}
+        </h3>
     </div>
+
+    <div class="col-md-6 text-end">
+        <div class="d-flex justify-content-end gap-2">
+
+            <a href="{{ route('finance.transaksi.import.form') }}" class="btn btn-navy">
+                <i class="fas fa-file-import me-1"></i> Import Transaksi
+            </a>
+
+            <a href="{{ route('converter.index') }}" class="btn btn-success px-4">
+                <i class="fas fa-external-link-alt me-1"></i>
+                Buka Converter
+            </a>
+
+        </div>
+    </div>
+
 </div>
 @php
 $totalTransaksi = $transaksis->total();
