@@ -5,6 +5,18 @@
     .bg-navy{
         background-color: #0f172a;
     }
+    /* ALERT NAVY STYLE */
+.alert-success {
+    background: rgba(22,163,74,.15);
+    color: #4ade80;
+    border: none;
+}
+
+.alert-danger {
+    background: rgba(220,38,38,.15);
+    color: #f87171;
+    border: none;
+}
 </style>
 <div class="container py-4">
 
@@ -103,12 +115,12 @@
                         {{-- ACTION BUTTONS --}}
                         <div class="d-flex justify-content-between align-items-center pt-3 border-top">
 
-                            <a href="{{ route('voucher-sales.index') }}"
-                               class="btn btn-outline-secondary rounded-pill px-4">
-                                <i class="fas fa-arrow-left me-1"></i>
-                                Kembali
-                            </a>
-
+                        <a href="{{ route('voucher-sales.index') }}"
+   id="cancelBtn"
+   class="btn btn-outline-secondary rounded-pill px-4 btn-cancel">
+    <i class="fas fa-arrow-left me-1"></i>
+    Kembali
+</a>
                             <button type="submit"
                                     class="btn btn-primary rounded-pill px-4"
                                     id="btn-submit">
@@ -131,6 +143,7 @@
 @endsection
 
 @push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     document.querySelector('form').addEventListener('submit', function () {
         const btn = document.getElementById('btn-submit');
@@ -147,5 +160,27 @@ fileInput.addEventListener('change', function () {
         fileNameDisplay.textContent = "";
     }
 });
+if (cancelBtn) {
+        cancelBtn.addEventListener('click', function(e){
+            e.preventDefault();
+
+            const targetUrl = this.getAttribute('href');
+
+            Swal.fire({
+                title: "Batalkan proses import?",
+                text: "File yang sudah dipilih tidak akan tersimpan.",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#2563eb",
+                cancelButtonColor: "#6c757d",
+                confirmButtonText: "Ya, Batalkan",
+                cancelButtonText: "Tetap di Halaman"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = targetUrl;
+                }
+            });
+        });
+    }
 </script>
 @endpush

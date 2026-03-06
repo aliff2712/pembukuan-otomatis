@@ -106,9 +106,10 @@
                 </a>
 
                 <a href="{{ route('voucher-sales.export', request()->all()) }}"
-                   class="btn btn-success btn-sm">
-                    <i class="fas fa-file-excel"></i> Export
-                </a>
+   class="btn btn-success btn-sm"
+   onclick="startExport(event)">
+    <i class="fas fa-file-excel"></i> Export
+</a>
 
             </div>
 
@@ -347,7 +348,32 @@
             </div>
         </div>
     </div>
+</div><div class="modal fade" id="exportModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content p-4 text-center">
+
+            <h5 class="mb-3">
+                <i class="fas fa-file-export me-2"></i> Exporting Data
+            </h5>
+
+            <div class="d-flex justify-content-center mb-3">
+                <div class="spinner-border" role="status"></div>
+            </div>
+
+            <div class="progress mb-2">
+                <div id="exportProgress"
+                     class="progress-bar progress-bar-striped progress-bar-animated"
+                     style="width:0%">
+                     0%
+                </div>
+            </div>
+
+            <div id="progressText">Menyiapkan export...</div>
+
+        </div>
+    </div>
 </div>
+
 @endsection
 
 @push('scripts')
@@ -388,5 +414,37 @@ function voidSale(id, date) {
         }
     });
 }
+
+function startExport(){
+
+var modal = new bootstrap.Modal(document.getElementById('exportModal'));
+modal.show();
+
+let progress = 0;
+let bar = document.getElementById("exportProgress");
+
+let interval = setInterval(function(){
+
+    progress += 10;
+
+    bar.style.width = progress + "%";
+    bar.innerText = progress + "%";
+
+    if(progress >= 100){
+
+        clearInterval(interval);
+
+        document.getElementById("progressText").innerText = "Export selesai";
+
+        setTimeout(function(){
+            modal.hide();
+        },1000);
+
+    }
+
+},300);
+
+}
+
 </script>
 @endpush

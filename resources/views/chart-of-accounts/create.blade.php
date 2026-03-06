@@ -73,11 +73,48 @@
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-save"></i> {{ __('Save') }}
                     </button>
-                    <a href="{{ route('chart-of-accounts.index') }}" class="btn btn-secondary">{{ __('Cancel') }}</a>
+                    <a href="{{ route('chart-of-accounts.index') }}" 
+   class="btn btn-secondary" 
+   id="cancelBtn">
+   
+{{ __('Cancel') }}</a>
                 </div>
             </form>
         </div>
     </div>
 
 </div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+
+const cancelBtn = document.getElementById('cancelBtn');
+
+if (cancelBtn) {
+    cancelBtn.addEventListener('click', function(e){
+
+        e.preventDefault();
+
+        const targetUrl = this.getAttribute('href');
+
+        Swal.fire({
+            title: "Batalkan pembuatan akun?",
+            text: "Data yang sudah diisi tidak akan tersimpan.",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#0b2a4a",
+            cancelButtonColor: "#6c757d",
+            confirmButtonText: "Ya, Batalkan",
+            cancelButtonText: "Kembali"
+        }).then((result) => {
+
+            if (result.isConfirmed) {
+                window.location.href = targetUrl;
+            }
+
+        });
+
+    });
+}
+</script>
+
 @endsection

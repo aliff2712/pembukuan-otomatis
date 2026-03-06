@@ -4,11 +4,7 @@
 @section('content')
 <div class="container-fluid py-4">
     <!-- Back Button -->
-    <div class="mb-3">
-        <a href="{{ route('other-incomes.index') }}" class="btn btn-secondary btn-sm">
-            <i class="fas fa-arrow-left"></i> Kembali ke Daftar
-        </a>
-    </div>
+   
 
     <div class="card shadow mb-4">
         <div class="card-header py-3">
@@ -198,7 +194,7 @@
 
                 <!-- Buttons -->
                 <div class="d-flex justify-content-between">
-                    <a href="{{ route('other-incomes.index') }}" class="btn btn-secondary">
+                    <a href="{{ route('other-incomes.index') }}" class="btn btn-secondary" id="cancelBtn">
                         <i class="fas fa-times"></i> Batal
                     </a>
                     <button type="submit" class="btn btn-success">
@@ -212,6 +208,8 @@
 @endsection
 
 @push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <script>
 function formatRupiah(value) {
     return 'Rp ' + new Intl.NumberFormat('id-ID').format(value || 0);
@@ -246,5 +244,27 @@ document.getElementById('income_coa_id').addEventListener('change', updatePrevie
 
 // Trigger on load
 window.addEventListener('load', updatePreview);
+if (cancelBtn) {
+        cancelBtn.addEventListener('click', function(e){
+            e.preventDefault();
+
+            const targetUrl = this.getAttribute('href');
+
+            Swal.fire({
+                title: "Batalkan proses input",
+                text: "Data yang sudah di input tidak akan tersimpan.",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#2563eb",
+                cancelButtonColor: "#6c757d",
+                confirmButtonText: "Ya, Batalkan",
+                cancelButtonText: "Tetap di Halaman"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = targetUrl;
+                }
+            });
+        });
+    }
 </script>
 @endpush

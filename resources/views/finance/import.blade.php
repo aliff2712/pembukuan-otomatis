@@ -107,18 +107,7 @@ body {
     border-radius: 12px;
 }
 
-/* ALERT NAVY STYLE */
-.alert-success {
-    background: rgba(22,163,74,.15);
-    color: #4ade80;
-    border: none;
-}
 
-.alert-danger {
-    background: rgba(220,38,38,.15);
-    color: #f87171;
-    border: none;
-}
 </style>
 
 <div class="container-fluid">

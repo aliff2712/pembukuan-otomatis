@@ -2,6 +2,7 @@
 @section('title', __('Journal Entries'))
 @section('page-title', __('Journal Entries'))
 @section('content')
+<link rel="stylesheet" href="{{ asset('assets/journal-entries.css') }}">
 <div class="container-fluid">
 
     <!-- Success Alert -->
@@ -18,9 +19,11 @@
         <h3 class="m-0 font-weight-bold text-white">{{ __('Journal Entries') }}</h3>
         </div>
         <div class="col-md-6 text-end">
-            <a href="{{ route('journal-entries.export') }}" class="btn btn-secondary">
-                <i class="fas fa-download"></i> {{ __('Export') }}
-            </a>
+        <a href="{{ route('journal-entries.export') }}"
+   class="btn btn-navy export-btn"
+   onclick="startExport()">
+    <i class="fas fa-download me-1"></i> Export
+</a>
         </div>
     </div>
 
@@ -262,186 +265,68 @@
     </div>
 
 </div>
+<!-- EXPORT MODAL -->
+<div class="modal fade" id="exportModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content p-4 text-center">
 
-<style>
-    ./* ===============================
-   PAGE HEADER
-=================================*/
+            <h5 class="mb-3">
+                <i class="fas fa-file-export me-2"></i> Exporting Data
+            </h5>
 
-.page-title{
-    font-size:22px;
-    font-weight:700;
-    color:#0f172a;
-}
+            <div class="d-flex justify-content-center mb-3">
+                <div class="spinner-border" role="status"></div>
+            </div>
 
-/* ===============================
-   STAT CARDS
-=================================*/
+            <div class="progress mb-2" style="height:20px;">
+    <div id="exportProgress"
+         class="progress-bar progress-bar-striped progress-bar-animated bg-success"
+         role="progressbar"
+         style="width:0%"
+         aria-valuemin="0"
+         aria-valuemax="100">
+         0%
+    </div>
+</div>
+            <div id="progressText">Menyiapkan export...</div>
 
-.stat-card{
-    border:none;
-    border-radius:14px;
-    padding:18px;
-    transition:all .2s ease;
-}
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-.stat-card:hover{
-    transform:translateY(-4px);
-    box-shadow:0 8px 25px rgba(0,0,0,0.08);
-}
+<script>
 
-.stat-card .stat-title{
-    font-size:11px;
-    text-transform:uppercase;
-    font-weight:600;
-    letter-spacing:.5px;
-}
+function startExport(){
 
-.stat-card .stat-value{
-    font-size:20px;
-    font-weight:700;
-}
+    var modal = new bootstrap.Modal(document.getElementById('exportModal'));
+    modal.show();
 
-/* Card Colors */
+    let progress = 0;
+    let bar = document.getElementById("exportProgress");
 
-.border-left-primary{border-left:4px solid #3b82f6;}
-.border-left-info{border-left:4px solid #06b6d4;}
-.border-left-success{border-left:4px solid #22c55e;}
-.border-left-warning{border-left:4px solid #f59e0b;}
+    let interval = setInterval(function(){
 
-/* ===============================
-   FILTER BAR
-=================================*/
+        progress += 10;
 
-.navy-filter{
-    background:linear-gradient(135deg,#0f172a,#1e293b);
-    box-shadow:0 10px 25px rgba(0,0,0,0.15);
-}
+        bar.style.width = progress + "%";
+        bar.innerText = progress + "%";
 
-.navy-filter .form-control,
-.navy-filter .form-select{
-    border-radius:10px;
-    height:42px;
-    font-size:13px;
-}
+        if(progress >= 100){
 
-.navy-filter .input-group-text{
-    border-radius:10px 0 0 10px;
-}
+            clearInterval(interval);
 
-.navy-filter .form-control:focus,
-.navy-filter .form-select:focus{
-    box-shadow:0 0 0 2px rgba(255,255,255,0.15);
-}
+            document.getElementById("progressText").innerText = "Export selesai";
 
-.btn-navy{
-    background:#1e3a8a;
-    color:#fff;
-    border-radius:10px;
-    height:42px;
-    padding:0 18px;
-}
+            setTimeout(function(){
+                modal.hide();
+            },1000);
 
-.btn-navy:hover{
-    background:#1e40af;
-}
+        }
 
-.reset-link{
-    color:#cbd5e1;
-    font-size:12px;
-}
-
-.reset-link:hover{
-    color:#fff;
-}
-
-/* ===============================
-   TABLE
-=================================*/
-
-.table{
-    font-size:14px;
-}
-
-.table thead th{
-    font-size:12px;
-    text-transform:uppercase;
-    letter-spacing:.4px;
-}
-
-.table td{
-    vertical-align:middle;
-}
-
-.table tbody tr{
-    transition:.15s;
-}
-
-.table tbody tr:hover{
-    background:#f8fafc;
-}
-
-/* ===============================
-   BADGES
-=================================*/
-
-.badge{
-    font-size:11px;
-    padding:6px 8px;
-}
-
-/* ===============================
-   PAGINATION
-=================================*/
-
-.pagination{
-    justify-content:center;
-}
-
-/* ===============================
-   MOBILE OPTIMIZATION
-=================================*/
-
-@media (max-width:768px){
-
-.page-title{
-    font-size:18px;
-}
-
-/* FILTER STACK */
-.navy-filter{
-    flex-direction:column;
-    align-items:stretch !important;
-}
-
-.navy-filter .form-control,
-.navy-filter .form-select{
-    width:100% !important;
-}
-
-/* TABLE FONT */
-.table{
-    font-size:12px;
-}
-
-.table thead{
-    font-size:11px;
-}
-
-/* BUTTON SMALL */
-.btn{
-    font-size:12px;
-}
-
-/* STAT CARD */
-.stat-card{
-    padding:14px;
-}
-
-.stat-card .stat-value{
-    font-size:16px;
-}
+    },300);
 
 }
-</style>
+
+</script>
 @endsection

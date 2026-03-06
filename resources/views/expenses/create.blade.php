@@ -5,16 +5,28 @@
 
 @section('content')
 <!-- Back Button -->
-<div class="mb-3">
-    <a href="{{ route('expenses.index') }}" class="btn btn-secondary btn-sm">
-        <i class="fas fa-arrow-left"></i> Back to Expenses
-    </a>
-</div>
 
+<style>
+    /* ALERT NAVY STYLE */
+.alert-success {
+    background: rgba(22,163,74,.15);
+    color: #4ade80;
+    border: none;
+}
+
+.alert-danger {
+    background: rgba(220,38,38,.15);
+    color: #f87171;
+    border: none;
+}
+.text-primary-white {
+    color: #ffffff;
+}
+</style>
 <!-- Form Card -->
 <div class="card shadow mb-4">
     <div class="card-header py-3">
-        <h6 class="m-0 font-weight-bold text-primary">
+        <h6 class="m-0 font-weight-bold text-primary-white">
             <i class="fas fa-receipt"></i> Expense Information
         </h6>
     </div>
@@ -173,7 +185,7 @@
 
             <!-- Submit Buttons -->
             <div class="d-flex justify-content-between">
-                <a href="{{ route('expenses.index') }}" class="btn btn-secondary">
+                <a href="{{ route('expenses.index') }}" class="btn btn-secondary" id="cancelBtn">
                     <i class="fas fa-times"></i> Cancel
                 </a>
                 <button type="submit" class="btn btn-primary">
@@ -186,6 +198,7 @@
 @endsection
 
 @push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
 // Format amount as currency
 document.getElementById('amount').addEventListener('input', function(e) {
@@ -224,5 +237,29 @@ document.getElementById('amount').addEventListener('input', updatePreview);
 
 // Trigger on page load if old values exist
 window.addEventListener('load', updatePreview);
+if (cancelBtn) {
+        cancelBtn.addEventListener('click', function(e){
+            e.preventDefault();
+
+            const targetUrl = this.getAttribute('href');
+
+            Swal.fire({
+                title: "Batalkan proses input?",
+                text: "Data yang sudah diisi tidak akan tersimpan.",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#2563eb",
+                cancelButtonColor: "#6c757d",
+                confirmButtonText: "Ya, Batalkan",
+                cancelButtonText: "Tetap di Halamaxn"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = targetUrl;
+                }
+            });
+        });
+    }
+
+
 </script>
 @endpush
