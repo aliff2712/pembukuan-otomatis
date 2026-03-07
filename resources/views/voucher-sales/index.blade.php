@@ -429,38 +429,44 @@ setTimeout(function(){
 
 function voidSale(id, date) {
     Swal.fire({
-        title: 'Void Voucher Sale?',
-        html: `Are you sure you want to void voucher sale for date: <strong>${date}</strong>?<br><br>This action cannot be undone.`,
+        title: 'Hapus Data Ini?',
+        html: `Anda akan menghapus data penjualan voucher tanggal <strong>${date}</strong>.`,
         icon: 'warning',
+        width: 420,
+        padding: '1.8em',
         showCancelButton: true,
-        confirmButtonColor: '#e74a3b',
-        cancelButtonColor: '#858796',
-        confirmButtonText: 'Yes, void it!',
-        cancelButtonText: 'Cancel'
+        confirmButtonColor: '#dc3545',
+        cancelButtonColor: '#475569',
+        confirmButtonText: 'Ya,Hapus Data Ini',
+        cancelButtonText: 'Cancel',
+        reverseButtons: true
     }).then((result) => {
+
         if (result.isConfirmed) {
+
             const form = document.createElement('form');
             form.method = 'POST';
             form.action = `/voucher-sales/${id}`;
-            
+
             const csrfToken = document.createElement('input');
             csrfToken.type = 'hidden';
             csrfToken.name = '_token';
             csrfToken.value = '{{ csrf_token() }}';
-            
+
             const methodField = document.createElement('input');
             methodField.type = 'hidden';
             methodField.name = '_method';
             methodField.value = 'DELETE';
-            
+
             form.appendChild(csrfToken);
             form.appendChild(methodField);
+
             document.body.appendChild(form);
             form.submit();
         }
+
     });
 }
-
 
 
 

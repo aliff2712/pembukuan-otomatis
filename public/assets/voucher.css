@@ -128,3 +128,57 @@
     font-size:14px;
     color:#0b2a4a;
 }
+/* ===============================
+   SWEETALERT NAVY THEME
+=================================*/
+
+.swal2-popup {
+    background: #1e293b !important;
+    color: #e2e8f0 !important;
+    border-radius: 16px !important;
+    padding: 22px !important;
+}
+
+.swal2-title {
+    color: #ffffff !important;
+    font-weight: 600;
+}
+
+.swal2-html-container {
+    color: #cbd5e1 !important;
+}
+
+/* BUTTON */
+.swal2-confirm {
+    border-radius: 10px !important;
+    padding: 10px 18px !important;
+    font-weight: 600;
+}
+
+.swal2-cancel {
+    border-radius: 10px !important;
+}
+
+/* MOBILE FIX */
+@media (max-width: 576px) {
+
+    .swal2-popup {
+        width: 92% !important;
+        font-size: 14px;
+        padding: 18px !important;
+    }
+
+    .swal2-title {
+        font-size: 18px;
+    }
+
+    .swal2-actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .swal2-actions button {
+        width: 100%;
+    }
+
+}

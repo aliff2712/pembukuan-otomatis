@@ -315,59 +315,69 @@
 <script>
 
 function deleteAccount(id, name) {
-    Swal.fire({
-        title: 'Delete Account?',
-        html: `Are you sure you want to delete this account?<br><br>
-               <strong>${name}</strong><br><br>
-               This action cannot be undone.`,
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#dc3545',
-        cancelButtonColor: '#6c757d',
-        confirmButtonText: 'Yes, delete it!',
-        cancelButtonText: 'Cancel'
-    }).then((result) => {
 
-        if (result.isConfirmed) {
+Swal.fire({
+    title: "Hapus Account?",
+    html: `Apakah kamu yakin ingin menghapus account berikut?<br><br>
+           <strong>${name}</strong><br><br>
+           <small>Data yang sudah dihapus tidak dapat dikembalikan.</small>`,
+    icon: "warning",
+    width: window.innerWidth < 576 ? '85%' : '420px',
+    showCancelButton: true,
+    confirmButtonText: "Ya, Hapus",
+    cancelButtonText: "Batal",
+    confirmButtonColor: "#dc3545",
+    cancelButtonColor: "#475569",
+    background: "#1e293b",
+    color: "#e2e8f0"
+}).then((result) => {
 
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = `/chart-of-accounts/${id}`;
+    if (result.isConfirmed) {
 
-            const csrfToken = document.createElement('input');
-            csrfToken.type = 'hidden';
-            csrfToken.name = '_token';
-            csrfToken.value = '{{ csrf_token() }}';
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = `/chart-of-accounts/${id}`;
 
-            const methodField = document.createElement('input');
-            methodField.type = 'hidden';
-            methodField.name = '_method';
-            methodField.value = 'DELETE';
+        const csrfToken = document.createElement('input');
+        csrfToken.type = 'hidden';
+        csrfToken.name = '_token';
+        csrfToken.value = '{{ csrf_token() }}';
 
-            form.appendChild(csrfToken);
-            form.appendChild(methodField);
-            document.body.appendChild(form);
-            form.submit();
-        }
+        const methodField = document.createElement('input');
+        methodField.type = 'hidden';
+        methodField.name = '_method';
+        methodField.value = 'DELETE';
 
-    });
+        form.appendChild(csrfToken);
+        form.appendChild(methodField);
+        document.body.appendChild(form);
+        form.submit();
+    }
+
+});
+
 }
+@if(session('success'))
+Swal.fire({
+    icon: 'success',
+    title: 'Success',
+    text: "{{ session('success') }}",
+    width: window.innerWidth < 576 ? '85%' : '420px',
+    background: "#1e293b",
+    color: "#e2e8f0",
+    confirmButtonColor: "#2563eb"
+});
+@endif
 
 @if(session('error'))
 Swal.fire({
     icon: 'error',
     title: 'Delete Failed',
     text: "{{ session('error') }}",
-    confirmButtonColor: '#dc3545'
-});
-@endif
-
-@if(session('success'))
-Swal.fire({
-    icon: 'success',
-    title: 'Success',
-    text: "{{ session('success') }}",
-    confirmButtonColor: '#3085d6'
+    width: window.innerWidth < 576 ? '85%' : '420px',
+    background: "#1e293b",
+    color: "#e2e8f0",
+    confirmButtonColor: "#dc3545"
 });
 @endif
 

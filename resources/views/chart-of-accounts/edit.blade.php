@@ -4,6 +4,44 @@
 @section('page-title', 'Edit Chart of Account')
 
 @section('content')
+<style>
+    .swal2-popup {
+    background: #1e293b !important;
+    color: #e2e8f0 !important;
+    border-radius: 16px !important;
+    border: 1px solid rgba(255,255,255,0.05);
+}
+
+.swal2-title {
+    color: #ffffff !important;
+    font-weight: 600;
+}
+
+.swal2-html-container {
+    color: #cbd5e1 !important;
+}
+
+/* BUTTON CONFIRM */
+.swal2-confirm {
+    background: #2563eb !important;
+    border-radius: 10px !important;
+    padding: 8px 20px !important;
+}
+
+/* BUTTON CANCEL */
+.swal2-cancel {
+    background: #334155 !important;
+    border-radius: 10px !important;
+}
+
+/* MOBILE SIZE */
+@media (max-width: 576px) {
+    .swal2-popup {
+        width: 85% !important;
+        font-size: 14px;
+    }
+}
+</style>
 <!-- Back Button -->
 <div class="mb-3">
     <a href="{{ route('chart-of-accounts.show', $account->id) }}" class="btn btn-secondary btn-sm">
@@ -176,7 +214,8 @@
 
             <!-- Submit Buttons -->
             <div class="d-flex justify-content-between">
-                <a href="{{ route('chart-of-accounts.show', $account->id) }}" class="btn btn-secondary">
+                <a href="{{ route('chart-of-accounts.show', $account->id) }}" class="btn btn-secondary"
+                id="cancelBtn">
                     <i class="fas fa-times"></i> Cancel
                 </a>
                 <button type="submit" class="btn btn-primary">
@@ -257,5 +296,37 @@ if (accountTypeSelect && isCashRow) {
 
     toggleCashVisibility(accountTypeSelect.value);
 }
+if (cancelBtn) {
+
+cancelBtn.addEventListener('click', function(e){
+
+    e.preventDefault();
+
+    const targetUrl = this.href;
+
+    Swal.fire({
+        title: "Batalkan Perubahan?",
+        text: "Perubahan yang sudah Anda buat tidak akan disimpan.",
+        icon: "warning",
+        width: window.innerWidth < 576 ? '85%' : '420px',
+        showCancelButton: true,
+        confirmButtonText: "Ya, Batalkan",
+        cancelButtonText: "Tetap di Halaman",
+        confirmButtonColor: "#2563eb",
+        cancelButtonColor: "#475569",
+        background: "#1e293b",
+        color: "#e2e8f0"
+    }).then((result) => {
+
+        if (result.isConfirmed) {
+            window.location.href = targetUrl;
+        }
+
+    });
+
+});
+
+}
+
 </script>
 @endpush

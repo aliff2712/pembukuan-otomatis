@@ -226,6 +226,51 @@ body {
 .btn-navy:hover {
     background: #1d4ed8;
 }
+/* ===============================
+   SWEETALERT NAVY THEME
+=================================*/
+
+.swal2-popup {
+    background: #1e293b !important; /* navy */
+    color: #e2e8f0 !important;
+    border-radius: 16px !important;
+    padding: 24px !important;
+}
+
+.swal2-title {
+    color: #ffffff !important;
+    font-weight: 600;
+}
+
+.swal2-html-container {
+    color: #cbd5e1 !important;
+}
+
+/* BUTTON */
+.swal2-confirm {
+    background: #dc3545 !important;
+    border-radius: 10px !important;
+    padding: 10px 20px !important;
+    font-weight: 600;
+}
+
+.swal2-cancel {
+    background: #334155 !important;
+    border-radius: 10px !important;
+    padding: 10px 20px !important;
+}
+
+/* MOBILE FIX */
+@media (max-width: 576px) {
+    .swal2-popup {
+        width: 90% !important;
+        font-size: 14px;
+    }
+
+    .swal2-title {
+        font-size: 18px;
+    }
+}
 </style>
 <div class="row mb-4 align-items-center">
 
@@ -437,19 +482,21 @@ document.addEventListener("DOMContentLoaded", function () {
             e.preventDefault();
 
             Swal.fire({
-                title: "Yakin hapus transaksi ini?",
-                text: "Data yang sudah dihapus tidak bisa dikembalikan.",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#dc3545",
-                cancelButtonColor: "#6c757d",
-                confirmButtonText: "Ya, Hapus",
-                cancelButtonText: "Batal"
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    form.submit();
-                }
-            });
+    title: "Yakin hapus transaksi ini?",
+    text: "Data yang sudah dihapus tidak bisa dikembalikan.",
+    icon: "warning",
+    width: 420,
+    padding: "2em",
+    showCancelButton: true,
+    confirmButtonColor: "#dc3545",
+    cancelButtonColor: "#475569",
+    confirmButtonText: "Ya, Hapus",
+    cancelButtonText: "Batal"
+}).then((result) => {
+    if (result.isConfirmed) {
+        form.submit();
+    }
+});
 
         });
 
