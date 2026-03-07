@@ -200,7 +200,7 @@
     <!-- Journal Entries Table -->
     <div class="card shadow">
         <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">{{ __('Journal Entries') }}</h6>
+            <h6 class="m-0 font-weight-bold text-primary-white">{{ __('Journal Entries') }}</h6>
         </div>
         <div class="card-body">
             <div class="table-responsive">

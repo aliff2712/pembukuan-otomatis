@@ -2,6 +2,7 @@
 @section('title', __('Chart of Accounts'))
 @section('page-title', __('Chart of Accounts'))
 @section('content')
+<link rel="stylesheet" href="{{ asset('assets/COA.css') }}">
 <div class="container-fluid">
 
     <!-- Success Alert -->
@@ -157,7 +158,7 @@
         <form action="{{ route('chart-of-accounts.index') }}" method="GET">
             <div class="row g-3 align-items-end">
 
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <label class="form-label small fw-semibold">
                         {{ __('Search Code/Name') }}
                     </label>
@@ -191,26 +192,30 @@
                     </select>
                 </div>
 
-                <div class="col-md-2 d-flex gap-2">
-                <button type="submit" class="btn btn-grey w-100">
-    <i class="fas fa-search"></i>
-</button>
-                  
+                <div class="col-md-3 d-flex align-items-end gap-2">
+
+                    <button type="submit" class="btn btn-primary flex-grow-1">
+                        <i class="fas fa-filter me-1"></i>
+                        Filter
+                    </button>
+
                     <a href="{{ route('chart-of-accounts.index') }}"
-                       class="btn btn-outline-secondary w-100">
+                       class="btn btn-outline-secondary d-flex align-items-center justify-content-center"
+                       style="width:38px;height:38px;"
+                       title="Reset Filter">
                         <i class="fas fa-undo"></i>
                     </a>
+
                 </div>
 
             </div>
         </form>
     </div>
 </div>
-
     <!-- Accounts Table -->
     <div class="card shadow">
         <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">{{ __('Chart of Accounts') }}</h6>
+            <h6 class="m-0 font-weight-bold text-primary-white">{{ __('Chart of Accounts') }}</h6>
         </div>
         <div class="card-body">
             <div class="table-responsive">
@@ -304,55 +309,7 @@
 
 </div>
 
-<style>
 
-.action-buttons .btn {
-    width: 36px;
-    height: 36px;
-    padding: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 8px;
-    transition: all 0.2s ease;
-}
-
-.action-buttons .btn:hover {
-    transform: translateY(-2px);
-}
-
-.border-left-primary { border-left: 4px solid #4e73df; }
-.border-left-info { border-left: 4px solid #36b9cc; }
-.border-left-warning { border-left: 4px solid #f6c23e; }
-.border-left-success { border-left: 4px solid #1cc88a; }
-.border-left-danger { border-left: 4px solid #e74a3b; }
-
-.text-gray-800 { color: #2e59d9; }
-.text-gray-300 { color: #e3e6f0; }
-
-.font-weight-bold { font-weight: 700; }
-.text-xs { font-size: 0.8rem; }
-.text-uppercase { text-transform: uppercase; }
-
-/* BUTTON GREY FIX */
-.btn-grey {
-    background-color: #6c757d;
-    color: #fff;
-    border: none;
-    transition: all 0.2s ease;
-}
-
-.btn-grey:hover {
-    background-color: #5c636a;
-    color: #fff;
-}
-
-.btn-grey:active {
-    background-color: #ffffff !important;
-    color: #6c757d !important;
-    box-shadow: inset 0 2px 6px rgba(0,0,0,0.15);
-}
-</style>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
