@@ -19,12 +19,12 @@
         <h3 class="m-0 font-weight-bold text-white">{{ __('Journal Entries') }}</h3>
         </div>
         <div class="col-md-6 text-end">
-        <a href="{{ route('journal-entries.export') }}"
-   class="btn btn-navy export-btn"
-   onclick="startExport()">
-    <i class="fas fa-download me-1"></i> Export
-</a>
-        </div>
+    <a href="#"
+       class="btn btn-navy export-btn"
+       onclick="startExport(event)">
+        <i class="fas fa-download me-1"></i> Export
+    </a>
+</div>
     </div>
 
     <!-- Summary Cards -->
@@ -280,13 +280,11 @@
 
             <div class="progress mb-2" style="height:20px;">
     <div id="exportProgress"
-         class="progress-bar progress-bar-striped progress-bar-animated bg-success"
-         role="progressbar"
-         style="width:0%"
-         aria-valuemin="0"
-         aria-valuemax="100">
+         class="progress-bar progress-bar-striped progress-bar-animated"
+         style="width:0%; background:#3b82f6;">
          0%
     </div>
+</div>
 </div>
             <div id="progressText">Menyiapkan export...</div>
 
@@ -297,34 +295,49 @@
 
 <script>
 
-function startExport(){
+function startExport(e){
 
-    var modal = new bootstrap.Modal(document.getElementById('exportModal'));
+    e.preventDefault();
+
+    const modal = new bootstrap.Modal(document.getElementById('exportModal'));
     modal.show();
 
     let progress = 0;
-    let bar = document.getElementById("exportProgress");
 
-    let interval = setInterval(function(){
+    const bar = document.getElementById("exportProgress");
+    const text = document.getElementById("progressText");
 
-        progress += 10;
+    function animate(){
 
-        bar.style.width = progress + "%";
-        bar.innerText = progress + "%";
+        if(progress < 90){
 
-        if(progress >= 100){
+            progress += Math.random() * 7;
 
-            clearInterval(interval);
+            bar.style.width = progress + "%";
+            bar.innerText = Math.floor(progress) + "%";
 
-            document.getElementById("progressText").innerText = "Export selesai";
-
-            setTimeout(function(){
-                modal.hide();
-            },1000);
+            requestAnimationFrame(animate);
 
         }
 
-    },300);
+    }
+
+    animate();
+
+    setTimeout(function(){
+
+        bar.style.width = "100%";
+        bar.innerText = "100%";
+        text.innerText = "Export selesai";
+
+        // DOWNLOAD FILE
+        window.location.href = "{{ route('journal-entries.export') }}";
+
+        setTimeout(()=>{
+            modal.hide();
+        },1200);
+
+    },2000);
 
 }
 

@@ -151,7 +151,7 @@ class TransaksiController extends Controller
 
     return redirect()
         ->route('finance.transaksi.show', $transaksi->id)
-        ->with('success', 'Pembayaran berhasil diproses 🔥');
+        ->with('success', 'Pembayaran Berhasil!');
 }
 
 

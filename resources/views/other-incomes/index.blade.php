@@ -118,7 +118,7 @@
 }
 
 /* ===============================
-   MOBILE OPTIMIZATION
+   MOBILE
 =================================*/
 
 @media (max-width:768px){
@@ -160,21 +160,32 @@
 <!-- HEADER -->
 <div class="page-header d-flex justify-content-between align-items-center">
 
-    <div>
-        <h1>
-            <i class="fas fa-coins me-2"></i>
-            Income / Pendapatan Lain
-        </h1>
+<div>
 
-        <p>
-            Kelola semua pendapatan lain yang tidak berasal dari penjualan utama.
-        </p>
-    </div>
+<h1>
+<i class="fas fa-coins me-2"></i>
+Income / Pendapatan Lain
+</h1>
 
-    <a href="{{ route('other-incomes.create') }}" class="btn btn-light btn-modern">
-        <i class="fas fa-plus me-2"></i>
-        Tambah Income
-    </a>
+<p>
+Kelola semua pendapatan lain yang tidak berasal dari penjualan utama.
+</p>
+
+</div>
+
+<div class="d-flex gap-2">
+
+<a href="{{ route('dashboard') }}" class="btn btn-light btn-modern">
+<i class="fas fa-arrow-left me-2"></i>
+Back
+</a>
+
+<a href="{{ route('other-incomes.create') }}" class="btn btn-light btn-modern">
+<i class="fas fa-plus me-2"></i>
+Tambah Income
+</a>
+
+</div>
 
 </div>
 
@@ -228,14 +239,19 @@
 </td>
 
 <td>
+
 {{ $income->description }}
 
 @if ($income->notes)
+
 <br>
+
 <small class="text-muted">
 {{ $income->notes }}
 </small>
+
 @endif
+
 </td>
 
 <td class="text-end amount">
@@ -326,11 +342,6 @@ onclick="confirmDelete('{{ route('other-incomes.destroy',$income) }}')">
 Tambahkan pendapatan lain untuk mulai mencatat transaksi.
 </p>
 
-<a href="{{ route('other-incomes.create') }}" class="btn btn-warning btn-modern">
-<i class="fas fa-plus me-2"></i>
-Buat Income Pertama
-</a>
-
 </div>
 
 @endif
@@ -338,6 +349,8 @@ Buat Income Pertama
 </div>
 
 </div>
+
+
 
 </div>
 

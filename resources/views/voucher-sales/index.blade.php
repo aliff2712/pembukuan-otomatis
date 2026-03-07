@@ -4,7 +4,7 @@
 @section('page-title', 'Voucher Sales - Mikhmon')
 
 @section('content')
-<link rel="stylesheet" href="{{ asset('assets/css/voucher.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/voucher.css') }}">
 <div class="row">
     <!-- Summary Cards -->
     <div class="col-xl-3 col-md-6 mb-4">
@@ -105,7 +105,7 @@
                     <i class="fas fa-download"></i> Import
                 </a>
 
-                <a href="{{ route('voucher-sales.export', request()->all()) }}"
+                <a href="#"
    class="btn btn-success btn-sm"
    onclick="startExport(event)">
     <i class="fas fa-file-excel"></i> Export
@@ -360,13 +360,13 @@
                 <div class="spinner-border" role="status"></div>
             </div>
 
-            <div class="progress mb-2">
-                <div id="exportProgress"
-                     class="progress-bar progress-bar-striped progress-bar-animated"
-                     style="width:0%">
-                     0%
-                </div>
-            </div>
+            <div class="progress mb-2" style="height:20px;">
+    <div id="exportProgress"
+         class="progress-bar progress-bar-striped progress-bar-animated"
+         style="width:0%; background:#3b82f6;">
+         0%
+    </div>
+</div>
 
             <div id="progressText">Menyiapkan export...</div>
 
@@ -381,6 +381,52 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
+function startExport(e){
+
+e.preventDefault();
+
+const modal = new bootstrap.Modal(document.getElementById('exportModal'));
+modal.show();
+
+let progress = 0;
+
+const bar = document.getElementById("exportProgress");
+const text = document.getElementById("progressText");
+
+function animate(){
+
+    if(progress < 90){
+
+        progress += Math.random() * 7;
+
+        bar.style.width = progress + "%";
+        bar.innerText = Math.floor(progress) + "%";
+
+        requestAnimationFrame(animate);
+
+    }
+
+}
+
+animate();
+
+setTimeout(function(){
+
+    bar.style.width = "100%";
+    bar.innerText = "100%";
+    text.innerText = "Export selesai";
+
+    // DOWNLOAD FILE
+    window.location.href = "{{ route('voucher-sales.export') }}";
+
+    setTimeout(()=>{
+        modal.hide();
+    },1200);
+
+},2000);
+
+}
+
 function voidSale(id, date) {
     Swal.fire({
         title: 'Void Voucher Sale?',
@@ -415,36 +461,9 @@ function voidSale(id, date) {
     });
 }
 
-function startExport(){
 
-var modal = new bootstrap.Modal(document.getElementById('exportModal'));
-modal.show();
 
-let progress = 0;
-let bar = document.getElementById("exportProgress");
 
-let interval = setInterval(function(){
-
-    progress += 10;
-
-    bar.style.width = progress + "%";
-    bar.innerText = progress + "%";
-
-    if(progress >= 100){
-
-        clearInterval(interval);
-
-        document.getElementById("progressText").innerText = "Export selesai";
-
-        setTimeout(function(){
-            modal.hide();
-        },1000);
-
-    }
-
-},300);
-
-}
 
 </script>
 @endpush

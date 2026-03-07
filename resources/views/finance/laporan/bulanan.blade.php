@@ -70,14 +70,21 @@
         </div>
 
 
-    {{-- EXPORT BUTTON --}}
-    <div class="mb-3">
-        <a href="{{ route('finance.laporan.export.excel.bulanan', ['bulan'=>$bulan,'tahun'=>$tahun]) }}"
-           class="btn btn-outline-success btn-sm"
-           onclick="startExport()">
-            Export Excel
-        </a>
-    </div>
+    <div class="mb-3 d-flex gap-2">
+
+<a href="#"
+   class="btn btn-outline-success btn-sm"
+   onclick="startExport(event)">
+    <i class="fas fa-file-excel me-1"></i>
+    Export Excel
+</a>
+
+<a href="{{ route('finance.laporan.index') }}" class="btn btn-outline-secondary btn-modern">
+    <i class="fas fa-arrow-left me-2"></i>
+    Back
+</a>
+
+</div>
 
     {{-- DETAIL TABLE --}}
     <div class="card shadow-sm border-0">
@@ -172,13 +179,13 @@
                 <div class="spinner-border" role="status"></div>
             </div>
 
-            <div class="progress mb-2">
-                <div id="exportProgress"
-                     class="progress-bar progress-bar-striped progress-bar-animated"
-                     style="width:0%">
-                     0%
-                </div>
-            </div>
+            <div class="progress mb-2" style="height:20px;">
+    <div id="exportProgress"
+         class="progress-bar progress-bar-striped progress-bar-animated"
+         style="width:0%; background:#3b82f6;">
+         0%
+    </div>
+</div>
 
             <div id="progressText">Menyiapkan export...</div>
 
@@ -244,34 +251,49 @@
 </style>
 <script>
 
-function startExport(){
+function startExport(e){
 
-    var modal = new bootstrap.Modal(document.getElementById('exportModal'));
-    modal.show();
+e.preventDefault();
 
-    let progress = 0;
-    let bar = document.getElementById("exportProgress");
+const modal = new bootstrap.Modal(document.getElementById('exportModal'));
+modal.show();
 
-    let interval = setInterval(function(){
+let progress = 0;
 
-        progress += 10;
+const bar = document.getElementById("exportProgress");
+const text = document.getElementById("progressText");
+
+function animate(){
+
+    if(progress < 90){
+
+        progress += Math.random() * 7;
 
         bar.style.width = progress + "%";
-        bar.innerText = progress + "%";
+        bar.innerText = Math.floor(progress) + "%";
 
-        if(progress >= 100){
+        requestAnimationFrame(animate);
 
-            clearInterval(interval);
+    }
 
-            document.getElementById("progressText").innerText = "Export selesai";
+}
 
-            setTimeout(function(){
-                modal.hide();
-            },1000);
+animate();
 
-        }
+setTimeout(function(){
 
-    },300);
+    bar.style.width = "100%";
+    bar.innerText = "100%";
+    text.innerText = "Export selesai";
+
+    // DOWNLOAD FILE
+    window.location.href = "{{ route('finance.laporan.export.excel.bulanan') }}";
+
+    setTimeout(()=>{
+        modal.hide();
+    },1200);
+
+},2000);
 
 }
 

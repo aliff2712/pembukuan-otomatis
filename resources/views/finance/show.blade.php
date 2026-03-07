@@ -104,6 +104,28 @@
     .info-row:last-child {
         border-bottom: none;
     }
+    /* SWEETALERT DARK THEME */
+.swal2-popup {
+    background: #1e293b !important;
+    color: #e2e8f0 !important;
+    border-radius: 16px !important;
+}
+
+.swal2-title {
+    color: #e2e8f0 !important;
+}
+
+.swal2-html-container {
+    color: #94a3b8 !important;
+}
+
+.swal2-icon.swal2-success {
+    border-color: #22c55e !important;
+}
+
+.swal2-timer-progress-bar {
+    background: #3b82f6 !important;
+}
 </style>
 
 <div class="container py-5">
@@ -233,5 +255,52 @@
     </div>
 
 </div>
+@push('scripts')
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+
+@if(session('success'))
+
+Swal.fire({
+    icon: 'success',
+    title: 'Pembayaran Berhasil',
+    text: "{{ session('success') }}",
+    background: '#1e293b',
+    color: '#e2e8f0',
+    iconColor: '#22c55e',
+    showConfirmButton: false,
+    timer: 2000,
+    timerProgressBar: true,
+    backdrop: `
+        rgba(15,23,42,0.85)
+    `
+});
+
+@endif
+
+
+@if(session('error'))
+
+Swal.fire({
+    icon: 'error',
+    title: 'Terjadi Kesalahan',
+    text: "{{ session('error') }}",
+    background: '#1e293b',
+    color: '#e2e8f0',
+    iconColor: '#ef4444',
+    showConfirmButton: false,
+    timer: 2500,
+    backdrop: `
+        rgba(15,23,42,0.85)
+    `
+});
+
+@endif
+
+});
+</script>
+@endpush
 @endsection

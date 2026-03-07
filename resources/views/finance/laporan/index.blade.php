@@ -123,6 +123,17 @@
 
     </div>
 
+<!-- BACK BUTTON BAWAH -->
+<div class="mt-4 text-end">
+
+<a href="{{ route('dashboard') }}" class="btn btn-outline-secondary btn-modern">
+
+<i class="fas fa-arrow-left me-2"></i>
+Back
+
+</a>
+
+</div>
 </div>
 
 

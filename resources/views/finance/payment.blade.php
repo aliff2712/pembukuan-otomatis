@@ -6,31 +6,6 @@
 
 <div class="container py-5 d-flex justify-content-center">
 
-    {{-- NOTIF SUCCESS --}}
-    @if(session('success'))
-    <div class="alert alert-success alert-dismissible fade show shadow" role="alert">
-        <i class="fas fa-check-circle me-1"></i>
-        {{ session('success') }}
-    </div>
-
-    <script>
-        setTimeout(function(){
-            let alert = document.querySelector('.alert-success');
-            if(alert){
-                alert.classList.remove('show');
-                alert.classList.add('fade');
-                setTimeout(() => alert.remove(), 500);
-            }
-        }, 3000);
-    </script>
-@endif
-
-@if(session('error'))
-    <div class="alert alert-danger alert-dismissible fade show shadow" role="alert">
-        <i class="fas fa-exclamation-circle me-1"></i>
-        {{ session('error') }}
-    </div>
-@endif
 
 
     <div class="card shadow-lg border-0" style="max-width: 500px; width:100%;">
@@ -117,6 +92,9 @@
     </div>
 
 </div>
+
+
+
 
 
 @endsection

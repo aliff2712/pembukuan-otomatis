@@ -4,6 +4,8 @@
 @section('page-title', 'Expenses - Pengeluaran Operasional')
 
 @section('content')
+
+<link rel="stylesheet" href="{{ asset('assets/expenses.css') }}">
 <div class="row">
     <!-- Summary Cards -->
     <div class="col-xl-3 col-md-6 mb-4">
@@ -87,42 +89,58 @@
     </div>
 </div>
 
-<!-- Filter & Action Bar -->
+<!-- Action Bar -->
 <div class="card shadow mb-4">
     <div class="card-header py-3 d-flex justify-content-between align-items-center">
-        <h6 class="m-0 font-weight-bold text-primary">Filter & Actions</h6>
-        <div>
+        <h6 class="m-0 font-weight-bold text-primary-white">Actions</h6>
+        <div class="d-flex gap-2">
             <a href="{{ route('expenses.create') }}" class="btn btn-primary btn-sm">
                 <i class="fas fa-plus"></i> Add Expense
             </a>
-            <a href="{{ route('expenses.export', request()->all()) }}" class="btn btn-success btn-sm" onclick="startExport()">
+
+            <a href="#"
+               class="btn btn-success btn-sm"
+               onclick="startExport(event)">
                 <i class="fas fa-file-excel"></i> Export CSV
             </a>
         </div>
     </div>
+</div>
+
+
+<!-- Filter Card -->
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary-white">Filter</h6>
+    </div>
+
     <div class="card-body">
         <form method="GET" action="{{ route('expenses.index') }}" class="row g-3">
+
             <div class="col-md-3">
                 <label class="form-label small">Date From</label>
-                <input type="date" name="date_from" class="form-control form-control-sm" 
-                    value="{{ request('date_from') }}">
+                <input type="date" name="date_from" class="form-control form-control-sm"
+                       value="{{ request('date_from') }}">
             </div>
+
             <div class="col-md-3">
                 <label class="form-label small">Date To</label>
-                <input type="date" name="date_to" class="form-control form-control-sm" 
-                    value="{{ request('date_to') }}">
+                <input type="date" name="date_to" class="form-control form-control-sm"
+                       value="{{ request('date_to') }}">
             </div>
+
             <div class="col-md-2">
                 <label class="form-label small">Month</label>
                 <select name="month" class="form-control form-control-sm">
                     <option value="">All</option>
                     @for ($m = 1; $m <= 12; $m++)
                         <option value="{{ $m }}" {{ request('month') == $m ? 'selected' : '' }}>
-                            {{ date('F', mktime(0, 0, 0, $m, 1)) }}
+                            {{ date('F', mktime(0,0,0,$m,1)) }}
                         </option>
                     @endfor
                 </select>
             </div>
+
             <div class="col-md-2">
                 <label class="form-label small">Year</label>
                 <select name="year" class="form-control form-control-sm">
@@ -134,10 +152,12 @@
                     @endfor
                 </select>
             </div>
+
             <div class="col-md-2 d-flex align-items-end">
                 <button type="submit" class="btn btn-primary btn-sm me-2">
                     <i class="fas fa-filter"></i> Filter
                 </button>
+
                 <a href="{{ route('expenses.index') }}" class="btn btn-secondary btn-sm">
                     <i class="fas fa-redo"></i> Reset
                 </a>
@@ -148,27 +168,30 @@
                 <select name="expense_account_id" class="form-control form-control-sm">
                     <option value="">All Expense Accounts</option>
                     @foreach($expenseAccounts as $account)
-                        <option value="{{ $account->id }}" {{ request('expense_account_id') == $account->id ? 'selected' : '' }}>
+                        <option value="{{ $account->id }}"
+                            {{ request('expense_account_id') == $account->id ? 'selected' : '' }}>
                             {{ $account->account_code }} - {{ $account->account_name }}
                         </option>
                     @endforeach
                 </select>
             </div>
+
             <div class="col-md-6">
                 <label class="form-label small">Cash/Bank Account</label>
                 <select name="cash_account_id" class="form-control form-control-sm">
                     <option value="">All Cash/Bank Accounts</option>
                     @foreach($cashAccounts as $account)
-                        <option value="{{ $account->id }}" {{ request('cash_account_id') == $account->id ? 'selected' : '' }}>
+                        <option value="{{ $account->id }}"
+                            {{ request('cash_account_id') == $account->id ? 'selected' : '' }}>
                             {{ $account->account_code }} - {{ $account->account_name }}
                         </option>
                     @endforeach
                 </select>
             </div>
+
         </form>
     </div>
 </div>
-
 <!-- Data Table -->
 <div class="card shadow mb-4">
     <div class="card-header py-3">
@@ -295,13 +318,13 @@
                 <div class="spinner-border" role="status"></div>
             </div>
 
-            <div class="progress mb-2">
-                <div id="exportProgress"
-                     class="progress-bar progress-bar-striped progress-bar-animated"
-                     style="width:0%">
-                     0%
-                </div>
-            </div>
+            <div class="progress mb-2" style="height:20px;">
+    <div id="exportProgress"
+         class="progress-bar progress-bar-striped progress-bar-animated"
+         style="width:0%; background:#3b82f6;">
+         0%
+    </div>
+</div>
 
             <div id="progressText">Menyiapkan export...</div>
 
@@ -309,47 +332,7 @@
     </div>
 </div>
 @endsection
-<style>
 
-/* MODAL */
-#exportModal .modal-content{
-    border-radius:14px;
-    border:none;
-    box-shadow:0 10px 30px rgba(0,0,0,0.2);
-}
-
-/* TITLE */
-#exportModal h5{
-    color:#0b2a4a;
-    font-weight:600;
-}
-
-/* SPINNER */
-.spinner-border{
-    color:#0b2a4a;
-}
-
-/* PROGRESS CONTAINER */
-.progress{
-    height:22px;
-    border-radius:30px;
-    background:#e9edf2;
-}
-
-/* PROGRESS BAR CERAH */
-.progress-bar{
-    background:linear-gradient(90deg,#38bdf8,#0ea5e9);
-    font-weight:600;
-    font-size:13px;
-}
-
-/* TEXT */
-#progressText{
-    font-size:14px;
-    color:#0b2a4a;
-}
-
-</style>
 @push('scripts')
 <!-- SweetAlert2 -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -389,34 +372,49 @@ function deleteExpense(id, amount) {
         }
     });
 }
-function startExport(){
+function startExport(e){
 
-var modal = new bootstrap.Modal(document.getElementById('exportModal'));
+e.preventDefault();
+
+const modal = new bootstrap.Modal(document.getElementById('exportModal'));
 modal.show();
 
 let progress = 0;
-let bar = document.getElementById("exportProgress");
 
-let interval = setInterval(function(){
+const bar = document.getElementById("exportProgress");
+const text = document.getElementById("progressText");
 
-    progress += 10;
+function animate(){
 
-    bar.style.width = progress + "%";
-    bar.innerText = progress + "%";
+    if(progress < 90){
 
-    if(progress >= 100){
+        progress += Math.random() * 7;
 
-        clearInterval(interval);
+        bar.style.width = progress + "%";
+        bar.innerText = Math.floor(progress) + "%";
 
-        document.getElementById("progressText").innerText = "Export selesai";
-
-        setTimeout(function(){
-            modal.hide();
-        },1000);
+        requestAnimationFrame(animate);
 
     }
 
-},300);
+}
+
+animate();
+
+setTimeout(function(){
+
+    bar.style.width = "100%";
+    bar.innerText = "100%";
+    text.innerText = "Export selesai";
+
+    // DOWNLOAD FILE
+    window.location.href = "{{ route('expenses.export') }}";
+
+    setTimeout(()=>{
+        modal.hide();
+    },1200);
+
+},2000);
 
 }
 
