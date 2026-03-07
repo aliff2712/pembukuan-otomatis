@@ -56,7 +56,19 @@
             </div>
         </div>
 
-    </div>
+        {{-- BARU: Pengeluaran --}}
+        <div class="col-md-3">
+            <div class="card bg-danger text-white shadow-sm">
+                <div class="card-body">
+                    <small>Total Pengeluaran</small>
+                    <h5 class="fw-bold">
+                        Rp {{ number_format($summary['totalPengeluaran'],0,',','.') }}
+                    </h5>
+                    <small>{{ $summary['expenseCount'] }} transaksi</small>
+                </div>
+            </div>
+        </div>
+
 
     {{-- EXPORT BUTTON --}}
     <div class="mb-3">
@@ -76,6 +88,7 @@
                     <tr>
                         <th>Tanggal</th>
                         <th>Kategori</th>
+                        <th>Keterangan</th>
                         <th>Status</th>
                         <th>Total</th>
                     </tr>
@@ -86,6 +99,7 @@
                         <tr>
                             <td>{{ $t->tanggal->format('d M Y') }}</td>
                             <td>Member</td>
+                            <td>{{ $t->nama_customer }}</td>
                             <td>
                                 <span class="badge 
                                     {{ $t->status == 'paid' ? 'bg-success' : 'bg-warning' }}">
@@ -100,6 +114,7 @@
                         <tr>
                             <td>{{ $v->sale_date->format('d M Y') }}</td>
                             <td>Voucher</td>
+                            <td>{{ $v->notes ?? '-' }}</td>
                             <td>-</td>
                             <td>Rp {{ number_format($v->total_amount,0,',','.') }}</td>
                         </tr>
@@ -109,8 +124,31 @@
                         <tr>
                             <td>{{ $o->income_date->format('d M Y') }}</td>
                             <td>Other Income</td>
+                            <td>{{ $o->description ?? '-' }}</td>
                             <td>-</td>
                             <td>Rp {{ number_format($o->amount,0,',','.') }}</td>
+                        </tr>
+                    @endforeach
+
+                    {{-- BARU: Expense rows --}}
+                    @foreach($expenses as $e)
+                        <tr class="table-danger">
+                            <td>{{ \Carbon\Carbon::parse($e->expense_date)->format('d M Y') }}</td>
+                            <td>Pengeluaran</td>
+                            <td>
+                                {{ $e->expenseAccount->account_name ?? '-' }}
+                                @if($e->description)
+                                    <br><small class="text-muted">{{ $e->description }}</small>
+                                @endif
+                            </td>
+                            <td>
+                                <span class="badge bg-secondary">
+                                    {{ $e->cashAccount->account_name ?? '-' }}
+                                </span>
+                            </td>
+                            <td class="text-danger fw-semibold">
+                                - Rp {{ number_format($e->amount,0,',','.') }}
+                            </td>
                         </tr>
                     @endforeach
 

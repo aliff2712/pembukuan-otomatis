@@ -165,55 +165,6 @@
     </div>
 
 </div>
-    {{-- Statistik Cepat --}}
-    <div class="col-lg-6 mb-4">
-        <div class="card shadow-sm card-clean">
-            <div class="card-header py-2">Statistik Cepat</div>
-            <div class="card-body py-2 px-3">
-
-                @php
-                    $stats = [
-                        [
-                            'label' => 'Saldo Total (Kas + Bank)',
-                            'value' => 'Rp ' . number_format($cashBalance + $bankBalance, 0, ',', '.'),
-                            'bar'   => 100,
-                            'color' => 'bg-success',
-                        ],
-                        [
-                            'label' => 'Net Working Capital',
-                            'value' => 'Rp ' . number_format($nwcValue, 0, ',', '.'),
-                            'bar'   => max(0, min(100, $nwcPercentage)),
-                            'color' => 'bg-info',
-                        ],
-                        [
-                            'label' => 'Profit Margin Bulan Ini',
-                            'value' => number_format($profitMargin, 1) . '%',
-                            'bar'   => min(100, max(0, $profitMargin)),
-                            'color' => $profitMargin >= 20 ? 'bg-success' : ($profitMargin >= 10 ? 'bg-warning' : 'bg-danger'),
-                        ],
-                    ];
-                @endphp
-
-                @foreach($stats as $stat)
-                <div class="mb-3">
-                    <div class="d-flex justify-content-between align-items-center mb-1">
-                        <span class="text-muted" style="font-size: 0.78rem;">{{ $stat['label'] }}</span>
-                        <span class="fw-semibold" style="font-size: 0.82rem;">{{ $stat['value'] }}</span>
-                    </div>
-                    <div class="progress" style="height: 5px; border-radius: 10px;">
-                        <div class="progress-bar {{ $stat['color'] }}"
-                             style="width: {{ $stat['bar'] }}%; border-radius: 10px;">
-                        </div>
-                    </div>
-                </div>
-                @endforeach
-
-            </div>
-        </div>
-    </div>
-
-</div>
-
 @endsection
 
 

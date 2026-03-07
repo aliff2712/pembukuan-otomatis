@@ -9,32 +9,34 @@ use Maatwebsite\Excel\Concerns\WithMultipleSheets;
 
 class LaporanExport implements WithMultipleSheets
 {
-    public function __construct(
-        protected string $type,
-        protected ?int $bulan,
-        protected int $tahun
-    ) {}
+    protected string $type;
+    protected ?int $bulan;
+    protected int $tahun;
+
+    public function __construct(string $type, ?int $bulan, int $tahun)
+    {
+        $this->type = $type;
+        $this->bulan = $bulan;
+        $this->tahun = $tahun;
+    }
 
     public function sheets(): array
     {
-        $sheets = [];
+        return array_filter([
+            new LaporanSummarySheet(
+                $this->type,
+                $this->bulan,
+                $this->tahun
+            ),
 
-        $sheets[] = new LaporanSummarySheet(
-            $this->type,
-            $this->bulan,
-            $this->tahun
-        );
+            $this->type === 'tahunan'
+                ? new PerBulanSheet($this->tahun)
+                : null,
 
-        if ($this->type === 'tahunan') {
-            $sheets[] = new PerBulanSheet($this->tahun);
-        }
-
-        // ✅ Sheet Detail Transaksi
-        $sheets[] = new TransaksiSheet(
-            $this->bulan,
-            $this->tahun
-        );
-
-        return $sheets;
+            new TransaksiSheet(
+                $this->bulan,
+                $this->tahun
+            ),
+        ]);
     }
 }

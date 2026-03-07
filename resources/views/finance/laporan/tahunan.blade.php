@@ -18,7 +18,19 @@
                 </div>
             </div>
         </div>
-    </div>
+
+        {{-- BARU: Total Pengeluaran --}}
+        <div class="col-md-4">
+            <div class="card bg-danger text-white shadow-sm">
+                <div class="card-body">
+                    <small>Total Pengeluaran</small>
+                    <h4 class="fw-bold">
+                        Rp {{ number_format($summary['totalPengeluaran'],0,',','.') }}
+                    </h4>
+                    <small>{{ $summary['expenseCount'] }} transaksi</small>
+                </div>
+            </div>
+        </div>
 
     {{-- EXPORT --}}
     <div class="mb-3">
@@ -42,7 +54,10 @@
                         <th>Member Unpaid</th>
                         <th>Voucher</th>
                         <th>Other</th>
-                        <th>Total</th>
+                        <th>Total Pendapatan</th>
+                        {{-- BARU --}}
+                        <th>Pengeluaran</th>
+                        <th>Laba Kotor</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -56,6 +71,13 @@
                             <td>Rp {{ number_format($row['other'],0,',','.') }}</td>
                             <td class="fw-bold">
                                 Rp {{ number_format($row['total'],0,',','.') }}
+                            </td>
+                            {{-- BARU --}}
+                            <td class="text-danger">
+                                Rp {{ number_format($row['pengeluaran'],0,',','.') }}
+                            </td>
+                            <td class="fw-bold {{ $row['laba_kotor'] >= 0 ? 'text-success' : 'text-danger' }}">
+                                Rp {{ number_format($row['laba_kotor'],0,',','.') }}
                             </td>
                         </tr>
                     @endforeach

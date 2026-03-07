@@ -1,5 +1,7 @@
 <?php
+
 namespace App\Exports\Sheets;
+
 use App\Models\DailyVoucherSale;
 use App\Models\OtherIncome;
 use App\Models\Transaksi;
@@ -7,9 +9,12 @@ use Carbon\Carbon;
 use Maatwebsite\Excel\Concerns\FromArray;
 use Maatwebsite\Excel\Concerns\WithTitle;
 use Maatwebsite\Excel\Concerns\WithStyles;
+use Maatwebsite\Excel\Concerns\WithColumnFormatting;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 
-class LaporanSummarySheet implements FromArray, WithTitle, WithStyles
+class LaporanSummarySheet implements FromArray, WithTitle, WithStyles, WithColumnFormatting, ShouldAutoSize
 {
     public function __construct(
         protected string $type,
@@ -23,22 +28,34 @@ class LaporanSummarySheet implements FromArray, WithTitle, WithStyles
             ? Carbon::create($this->tahun, $this->bulan)->translatedFormat('F Y')
             : (string) $this->tahun;
 
-        // Transaksi
+        // =========================
+        // TRANSAKSI MEMBER
+        // =========================
         $qT = Transaksi::whereYear('tanggal', $this->tahun);
         if ($this->bulan) $qT->whereMonth('tanggal', $this->bulan);
+
         $paid   = (clone $qT)->where('status','paid')->sum('total');
         $unpaid = (clone $qT)->where('status','unpaid')->sum('total');
 
-        // Voucher
+        // =========================
+        // VOUCHER
+        // =========================
         $qV = DailyVoucherSale::whereYear('sale_date', $this->tahun);
         if ($this->bulan) $qV->whereMonth('sale_date', $this->bulan);
+
         $voucher = (clone $qV)->sum('total_amount');
 
-        // Other
+        // =========================
+        // OTHER INCOME
+        // =========================
         $qO = OtherIncome::whereYear('income_date', $this->tahun);
         if ($this->bulan) $qO->whereMonth('income_date', $this->bulan);
+
         $other = (clone $qO)->sum('amount');
 
+        // =========================
+        // TOTAL
+        // =========================
         $total = $paid + $voucher + $other;
 
         return [
@@ -46,25 +63,68 @@ class LaporanSummarySheet implements FromArray, WithTitle, WithStyles
             [''],
             ['RINGKASAN PENDAPATAN'],
             ['Sumber', 'Nominal'],
+
             ['Member - Paid',   $paid],
             ['Member - Unpaid', $unpaid],
             ['Voucher',         $voucher],
             ['Other Income',    $other],
+
             [''],
             ['TOTAL PENDAPATAN BERSIH', $total],
         ];
     }
 
-    public function title(): string { return 'Summary'; }
+    public function title(): string
+    {
+        return 'Summary';
+    }
 
+    // =========================
+    // AUTO FORMAT CURRENCY
+    // =========================
+    public function columnFormats(): array
+    {
+        return [
+            'B' => '"Rp"#,##0',
+        ];
+    }
+
+    // =========================
+    // STYLE EXCEL
+    // =========================
     public function styles(Worksheet $sheet): array
     {
         return [
-            1  => ['font' => ['bold' => true, 'size' => 14]],
-            3  => ['font' => ['bold' => true]],
-            4  => ['font' => ['bold' => true]],
-            10 => ['font' => ['bold' => true]],
+
+            // Judul
+            1 => [
+                'font' => [
+                    'bold' => true,
+                    'size' => 14
+                ]
+            ],
+
+            // Header section
+            3 => [
+                'font' => [
+                    'bold' => true
+                ]
+            ],
+
+            // Header tabel
+            4 => [
+                'font' => [
+                    'bold' => true
+                ]
+            ],
+
+            // Total
+            10 => [
+                'font' => [
+                    'bold' => true
+                ]
+            ],
+
         ];
     }
 }
-
