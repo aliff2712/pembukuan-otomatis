@@ -86,21 +86,18 @@
 
 </div>
 
-    {{-- DETAIL TABLE --}}
-    <div class="card shadow-sm border-0">
-        <div class="card-body table-responsive">
-
-            <table class="table table-bordered table-striped align-middle">
-                <thead class="table-light">
-                    <tr>
-                        <th>Tanggal</th>
-                        <th>Kategori</th>
-                        <th>Keterangan</th>
-                        <th>Status</th>
-                        <th>Total</th>
-                    </tr>
-                </thead>
-                <tbody>
+<div class="card shadow-sm border-0 rounded-3 overflow-hidden">
+    <div class="table-responsive">
+        <table class="table table-dark table-striped table-bordered mb-0">
+            <thead>
+                <tr>
+                    <th>Tanggal</th>
+                    <th>Kategori</th>
+                    <th>Keterangan</th>
+                    <th>Status</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
 
                     @foreach($transaksis as $t)
                         <tr>
@@ -195,6 +192,9 @@
 <style>
 
 /* MODAL */
+.table {
+    margin-bottom: 0;
+}
 #exportModal .modal-content{
     border-radius:14px;
     border:none;

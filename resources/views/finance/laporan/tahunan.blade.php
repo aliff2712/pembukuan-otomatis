@@ -50,11 +50,10 @@
 </div>
 
     {{-- TABLE PER BULAN --}}
-    <div class="card shadow-sm border-0">
-        <div class="card-body table-responsive">
-
-            <table class="table table-bordered table-striped align-middle">
-                <thead class="table-light">
+    <div class="card shadow-sm border-0 rounded-3 overflow-hidden">
+    <div class="table-responsive">
+        <table class="table table-dark table-striped table-bordered mb-0">
+                <thead>
                     <tr>
                         <th>Bulan</th>
                         <th>Member Paid</th>
@@ -178,7 +177,7 @@
 }
 
 </style>
-<<script>
+<script>
 
 function startExport(e){
 

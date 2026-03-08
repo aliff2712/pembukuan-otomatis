@@ -197,7 +197,7 @@
     <div class="card-header py-3">
         <h6 class="m-0 font-weight-bold text-primary-white">Voucher Sales Data</h6>
     </div>
-    <div class="card-body">
+    <div class="card-body p-0">
         @if(session('success'))
             <div class="alert alert-success alert-dismissible fade show" role="alert">
                 <i class="fas fa-check-circle"></i> {{ session('success') }}
@@ -217,8 +217,8 @@
             </div>
         @endif
 
-        <div class="table-responsive">
-            <table class="table table-bordered table-hover table-dark" width="100%" cellspacing="0">
+        <div class="table-responsive rounded-3 overflow-hidden">
+            <table class="mb-0 table table-bordered table-hover table-dark" width="100%" cellspacing="0">
                 <thead class="table-dark">
                     <tr>
                         <th>ID</th>

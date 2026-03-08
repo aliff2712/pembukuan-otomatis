@@ -84,6 +84,9 @@
     border-radius:10px;
     height:42px;
     font-size:13px;
+    background: #0f172a;
+    color: #cbd5e1;
+    border:1px solid #334155;
 }
 
 .navy-filter .input-group-text{
@@ -92,9 +95,19 @@
 
 .navy-filter .form-control:focus,
 .navy-filter .form-select:focus{
-    box-shadow:0 0 0 2px rgba(255,255,255,0.15);
+    box-shadow:0 0 0 2px #2e59e2;
+}
+/* PLACEHOLDER SEARCH */
+.navy-filter .form-control::placeholder{
+    color: #ffffff;
+    opacity: 1;
 }
 
+/* untuk browser tertentu */
+.navy-filter input::placeholder{
+    color:#ffffff;
+    opacity:1;
+}
 .btn-navy{
     background:#1e3a8a;
     color:#fff;
@@ -141,7 +154,10 @@
 .table tbody tr:hover{
     background:#f8fafc;
 }
-
+.card-header{
+    background-color:#0f172a !important; /* sedikit lebih gelap dari body */
+    color:#ffffff !important;
+}
 /* ===============================
    BADGES
 =================================*/

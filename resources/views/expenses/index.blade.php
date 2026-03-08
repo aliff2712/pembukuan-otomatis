@@ -197,7 +197,7 @@
     <div class="card-header py-3">
         <h6 class="m-0 font-weight-bold text-primary-white">Expense Records</h6>
     </div>
-    <div class="card-body">
+    <div class="card-body p-0">
         @if(session('success'))
             <div class="alert alert-success alert-dismissible fade show" role="alert">
                 <i class="fas fa-check-circle"></i> {{ session('success') }}

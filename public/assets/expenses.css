@@ -66,3 +66,7 @@
 .card-body label{
     color:#e2e8f0;
 }
+.card-header{
+    background-color:#0f172a !important; /* sedikit lebih gelap dari body */
+    color:#ffffff !important;
+}

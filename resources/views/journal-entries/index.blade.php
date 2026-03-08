@@ -124,12 +124,12 @@
     <!-- Search -->
     <div class="flex-grow-1" style="min-width:240px;">
         <div class="input-group">
-            <span class="input-group-text bg-white border-0">
-                <i class="fas fa-search text-muted"></i>
+            <span class="input-group-text bg-dark border-0">
+                <i class="fas fa-search text-primary-white"></i>
             </span>
             <input type="text"
                    name="search"
-                   class="form-control border-0"
+                   class="form-control border-0 text-primary-white"
                    placeholder="Search description / reference..."
                    value="{{ request('search') }}">
         </div>
@@ -185,8 +185,8 @@
             <i class="fas fa-filter me-1"></i> Filter
         </button>
 
-        <a href="{{ route('journal-entries.index') }}" class="btn btn-light">
-            Reset
+        <a href="{{ route('journal-entries.index') }}" class="btn btn-navy text-warning">
+            <b>RESET</b>
         </a>
 
     </div>
@@ -202,10 +202,10 @@
         <div class="card-header py-3">
             <h6 class="m-0 font-weight-bold text-primary-white">{{ __('Journal Entries') }}</h6>
         </div>
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-hover table-striped">
-                    <thead class="table-light">
+        <div class="card-body p-0">
+            <div class="table-responsive rounded-3 overflow-hidden">
+                <table class="table table-hover table-striped table-dark mb-0">
+                    <thead >
                         <tr>
                             <th>{{ __('Date') }}</th>
                             <th>{{ __('Description') }}</th>

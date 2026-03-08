@@ -154,7 +154,7 @@
         </span>
     </div>
 
-    <div class="card-body">
+    <div class="card-body ">
         <form action="{{ route('chart-of-accounts.index') }}" method="GET">
             <div class="row g-3 align-items-end">
 
@@ -213,14 +213,14 @@
     </div>
 </div>
     <!-- Accounts Table -->
-    <div class="card shadow">
+    <div class="card shadow " >
         <div class="card-header py-3">
             <h6 class="m-0 font-weight-bold text-primary-white">{{ __('Chart of Accounts') }}</h6>
         </div>
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-hover table-striped">
-                    <thead class="table-light">
+        <div class="card-body p-0">
+            <div class="table-responsive rounded-3 overflow-hidden">
+                <table class="table table-hover table-striped table-dark mb-0">
+                    <thead >
                         <tr>
                             <th>{{ __('Code') }}</th>
                             <th>{{ __('Name') }}</th>
