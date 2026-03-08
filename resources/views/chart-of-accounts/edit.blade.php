@@ -42,17 +42,13 @@
     }
 }
 </style>
-<!-- Back Button -->
-<div class="mb-3">
-    <a href="{{ route('chart-of-accounts.show', $account->id) }}" class="btn btn-secondary btn-sm">
-        <i class="fas fa-arrow-left"></i> Back to Detail
-    </a>
-</div>
+
+
 
 <!-- Form Card -->
 <div class="card shadow mb-4">
     <div class="card-header py-3">
-        <h6 class="m-0 font-weight-bold text-primary">
+        <h6 class="m-0 font-weight-bold text-white">
             <i class="fas fa-edit"></i> Edit Account Information
         </h6>
     </div>
@@ -81,7 +77,7 @@
                         <i class="fas fa-hashtag"></i> Account Code <span class="text-danger">*</span>
                     </label>
                     <input type="text"
-                        class="form-control @error('account_code') is-invalid @enderror"
+                        class="form-control @error('account_code') is-invalid @enderror bg-dark text-white border-secondary"
                         id="account_code"
                         name="account_code"
                         value="{{ old('account_code', $account->account_code) }}"
@@ -109,7 +105,7 @@
                         <i class="fas fa-signature"></i> Account Name <span class="text-danger">*</span>
                     </label>
                     <input type="text"
-                        class="form-control @error('account_name') is-invalid @enderror"
+                        class="form-control @error('account_name') is-invalid @enderror bg-dark text-white border-secondary"    
                         id="account_name"
                         name="account_name"
                         value="{{ old('account_name', $account->account_name) }}"
@@ -119,7 +115,7 @@
                     @error('account_name')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
-                    <div class="form-text">
+                    <div class="form-text ">
                         Nama akun yang deskriptif dan mudah dipahami.
                     </div>
                 </div>
@@ -129,7 +125,7 @@
                     <label for="account_type" class="form-label">
                         <i class="fas fa-layer-group"></i> Account Type <span class="text-danger">*</span>
                     </label>
-                    <select class="form-control @error('account_type') is-invalid @enderror"
+                    <select class="form-control @error('account_type') is-invalid @enderror bg-dark text-white border-secondary"
                         id="account_type"
                         name="account_type"
                         {{ $hasTransactions ? 'disabled' : '' }}

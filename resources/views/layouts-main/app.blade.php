@@ -13,6 +13,34 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
+        /* SWEETALERT DARK THEME */
+.swal2-popup {
+    background: #1e293b !important;
+    color: #e2e8f0 !important;
+    border-radius: 16px !important;
+    border: 1px solid rgba(255,255,255,0.05);
+}
+
+.swal2-title {
+    color: #ffffff !important;
+    font-weight: 600;
+}
+
+.swal2-html-container {
+    color: #cbd5e1 !important;
+}
+
+/* tombol */
+.swal2-confirm {
+    background: #2563eb !important;
+    border-radius: 10px !important;
+    padding: 8px 20px !important;
+}
+
+.swal2-cancel {
+    background: #334155 !important;
+    border-radius: 10px !important;
+}
     :root {
         --primary: #3b82f6;
         --success: #22c55e;
@@ -184,7 +212,7 @@ $(document).scroll(function () {
 <script>
 document.addEventListener("DOMContentLoaded", function(){
 
-@if(session('success'))
+    @if(session('success'))
 Swal.fire({
     icon: 'success',
     title: 'Berhasil',
@@ -193,6 +221,9 @@ Swal.fire({
     timer: 2000,
     timerProgressBar: true
 });
+
+// LOVE FILTER EFFECT
+
 @endif
 
 @if(session('error'))
@@ -206,6 +237,7 @@ Swal.fire({
 @endif
 
 });
+
 </script>
 
 @stack('scripts')

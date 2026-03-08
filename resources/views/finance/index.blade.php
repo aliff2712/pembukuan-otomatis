@@ -17,7 +17,7 @@
 /* HEADER */
 .table thead th {
     background: var(--navy-main);
-    color: #ffffff;
+
     font-weight: 600;
     font-size: 13px;
     text-transform: uppercase;
@@ -31,7 +31,7 @@
     padding: 14px 16px;
     font-size: 14px;
     color: var(--navy-dark);
-    border-color: #e2e8f0;
+    border-color: #000;
 }
 
 /* HOVER */
@@ -57,8 +57,8 @@
 
 /* BADGE */
 .badge-paid {
-    background: rgba(22,163,74,.12);
-    color: #16a34a;
+    background: #22c55e; /* hijau terang */
+    color: #ffffff;
     font-weight: 600;
     padding: 6px 14px;
     border-radius: 30px;
@@ -66,7 +66,7 @@
 }
 
 .badge-unpaid {
-    background: rgba(220,38,38,.12);
+    background: rgba(0,0,0,0.25);
     color: #dc2626;
     font-weight: 600;
     padding: 6px 14px;
@@ -76,13 +76,14 @@
 
 /* ACTION BUTTONS */
 .btn-outline-primary {
-    border-color: #3b82f6;
-    color: #3b82f6;
+    border-color: #grey;
+    color: #ffffff;
+    background: #1d4ed8;
     border-radius: 8px;
 }
 
 .btn-outline-primary:hover {
-    background: #3b82f6;
+    background: #2563eb;
     color: #fff;
 }
 
@@ -93,13 +94,7 @@
 .btn-outline-danger {
     border-radius: 8px;
 }
-/* FORCE TABLE TEXT COLOR */
-.modern-card .table,
-.modern-card .table tbody,
-.modern-card .table tbody td,
-.modern-card .table tbody tr {
-    color: #000 !important;
-}
+
 
 /* Pastikan header tetap putih */
 .modern-card .table thead th {
@@ -192,9 +187,9 @@ body {
 /* INPUT */
 /* INPUT PUTIH CLEAN */
 .filter-card .form-control {
-    background: #ffffff;
-    border: 1px solid #cbd5e1;
-    color: #0f172a;
+    background: #0f172a; /* navy */
+    border: 1px solid #0f172a;
+    color: #ffffff; /* biar teks kelihatan */
     border-radius: 12px;
     padding: 9px 14px;
     transition: all .2s ease;
@@ -271,6 +266,49 @@ body {
         font-size: 18px;
     }
 }
+.love-animation {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 50px;
+    pointer-events: none;
+    animation: lovePop 1s ease forwards;
+    z-index: 9999;
+}
+
+@keyframes lovePop {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -40%) scale(0.5);
+    }
+    30% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.2);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -70%) scale(1);
+    }
+}
+.heart-filter {
+    position: fixed;
+    font-size: 22px;
+    pointer-events: none;
+    animation: floatHeart 1s linear forwards;
+    z-index: 9999;
+}
+
+@keyframes floatHeart {
+    0%{
+        transform: translateY(0) scale(0.8);
+        opacity: 1;
+    }
+    100%{
+        transform: translateY(-120px) scale(1.3);
+        opacity: 0;
+    }
+}
 </style>
 <div class="row mb-4 align-items-center">
 
@@ -343,7 +381,7 @@ $nominalUnpaid = $transaksis->where('status', 'unpaid')->sum('total');
             <div class="row g-3 align-items-end">
 
                 <div class="col-md-3">
-                    <label class="form-label">Customer</label>
+                    <label class="form-label"><b>Customer</b></label>
                     <input type="text" name="search"
                            value="{{ request('search') }}"
                            class="form-control"
@@ -351,14 +389,14 @@ $nominalUnpaid = $transaksis->where('status', 'unpaid')->sum('total');
                 </div>
 
                 <div class="col-md-2">
-                    <label class="form-label">Dari</label>
+                    <label class="form-label"><b>Dari</b></label>
                     <input type="date" name="from"
                            value="{{ request('from') }}"
                            class="form-control">
                 </div>
 
                 <div class="col-md-2">
-                    <label class="form-label">Sampai</label>
+                    <label class="form-label"><b>Sampai</b></label>
                     <input type="date" name="to"
                            value="{{ request('to') }}"
                            class="form-control">
@@ -383,7 +421,7 @@ $nominalUnpaid = $transaksis->where('status', 'unpaid')->sum('total');
         <div class="card-body p-0">
             <div class="table-responsive">
 
-                <table class="table table-hover mb-0 align-middle">
+                <table class="table table-hover mb-0 align-middle table-dark table-bordered  ">
                     <thead>
                         <tr>
                             <th>Kode</th>
@@ -404,7 +442,7 @@ $isOverdue = $jatuhTempo && now()->greaterThan($jatuhTempo);
 $canPay = $trx->status === 'unpaid' && (!$jatuhTempo || now()->lessThanOrEqualTo($jatuhTempo));
 @endphp
                         <tr>
-                            <td class="fw-semibold text-dark">{{ $trx->kode_transaksi }}</td>
+                            <td class="fw-semibold text-white">{{ $trx->kode_transaksi }}</td>
                             <td>{{ $trx->nama_customer }}</td>
                             <td>{{ $trx->tanggal->format('d M Y') }}</td>
                             <td>
@@ -416,25 +454,25 @@ $canPay = $trx->status === 'unpaid' && (!$jatuhTempo || now()->lessThanOrEqualTo
                                     -
                                 @endif
                             </td>
-                            <td class="text-end fw-bold text-dark">
+                            <td class="text-end fw-bold text-white">
                                 Rp {{ number_format($trx->total,0,',','.') }}
                             </td>
                             <td>
                                 @if($trx->status == 'paid')
-                                    <span class="badge badge-paid">PAID</span>
+                                    <span class="badge badge-paid"><i class="far fa-smile "></i>PAID</span>
                                 @else
                                     <span class="badge badge-unpaid">UNPAID</span>
                                 @endif
                             </td>
-                            <td class="text-center">
+                            <td class="text-center text-white">
     <a href="{{ route('finance.transaksi.show', $trx->id) }}" 
-       class="btn btn-sm btn-outline-primary">
+       class="btn btn-sm btn-outline-primary ">
         <i class="fas fa-eye"></i>
     </a>
 
     @if(strtolower(trim($trx->status)) === 'unpaid')
         <a href="{{ route('finance.transaksi.payment.form', $trx->id) }}" 
-           class="btn btn-sm btn-success">
+           class="btn btn-sm btn-success btn-payment">
             <i class="fas fa-credit-card"></i>
         </a>
     @endif
@@ -453,7 +491,7 @@ $canPay = $trx->status === 'unpaid' && (!$jatuhTempo || now()->lessThanOrEqualTo
                         </tr>
 @empty
                         <tr>
-                            <td colspan="7" class="text-center py-4 text-muted">
+                            <td colspan="7" class="text-center py-4 text-white">
                                 Belum ada transaksi
                             </td>
                         </tr>
@@ -464,7 +502,7 @@ $canPay = $trx->status === 'unpaid' && (!$jatuhTempo || now()->lessThanOrEqualTo
             </div>
         </div>
 
-        <div class="card-footer bg-white">
+        <div class="card-footer bg-dark">
             {{ $transaksis->links('pagination::bootstrap-5') }}
         </div>
     </div>
@@ -503,5 +541,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
 });
+// LOVE animation when payment clicked
+
 </script>
 @endsection

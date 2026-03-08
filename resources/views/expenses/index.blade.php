@@ -218,8 +218,8 @@
         @endif
 
         <div class="table-responsive">
-            <table class="table table-bordered table-hover" width="100%" cellspacing="0">
-                <thead class="table-light">
+            <table class="table table-bordered table-hover table-dark"  width="100%" cellspacing="0">
+                <thead >
                     <tr>
                         <th>ID</th>
                         <th>Date</th>
@@ -281,7 +281,7 @@
                     @endforelse
                 </tbody>
                 @if($expenses->count() > 0)
-                    <tfoot class="table-light">
+                    <tfoot class="table-dark">
                         <tr>
                             <th colspan="4" class="text-end">Total (This Page):</th>
                             <th class="text-end">

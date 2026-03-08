@@ -4,6 +4,18 @@
 @section('page-title', 'Expense Detail')
 
 @section('content')
+<style>
+    .table-custom-dark {
+    background-color: #1e293b;
+    color: #f8f9fa;
+}
+.table-custom-dark thead {
+    background-color: #374151;
+}
+.text-primary-white{
+    color:# ffffff !important;
+}
+</style>
 <!-- Back Button -->
 <div class="mb-3">
     <a href="{{ route('expenses.index') }}" class="btn btn-secondary btn-sm">
@@ -34,7 +46,7 @@
     <div class="card-body">
         <div class="row">
             <div class="col-md-6">
-                <table class="table table-borderless">
+                <table class="table table-bordered table-dark ">
                     <tr>
                         <td width="180"><strong>Expense ID:</strong></td>
                         <td>{{ $expense->id }}</td>
@@ -57,7 +69,7 @@
                 </table>
             </div>
             <div class="col-md-6">
-                <table class="table table-borderless">
+            <table class="table table-sm table-bordered table-dark">
                     <tr>
                         <td width="180"><strong>Expense Account:</strong></td>
                         <td>
@@ -80,10 +92,10 @@
 
         <!-- Description -->
         <div class="row">
-            <div class="col-12">
+            <div class="col-12 ">
                 <h6 class="font-weight-bold">Description:</h6>
-                <div class="alert alert-light border">
-                    {{ $expense->description }}
+                <div class="alert alert-light border bg-dark ">
+                  <h6 class="text-white">  {{ $expense->description }}</h6>
                 </div>
             </div>
         </div>
@@ -133,8 +145,8 @@
         </div>
 
         <div class="table-responsive">
-            <table class="table table-sm table-bordered">
-                <thead class="table-light">
+            <table class="table table-sm table-bordered table-dark" >
+                <thead class="table-light table-dark">
                     <tr>
                         <th>Account Code</th>
                         <th>Account Name</th>
@@ -160,7 +172,7 @@
                         </tr>
                     @endforeach
                 </tbody>
-                <tfoot class="table-light">
+                <tfoot class="table-light table-dark">
                     <tr>
                         <th colspan="2" class="text-end">Total:</th>
                         <th class="text-end">Rp {{ number_format($journalEntry->total_debit, 0, ',', '.') }}</th>

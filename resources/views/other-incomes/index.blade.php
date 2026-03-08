@@ -40,31 +40,39 @@
 }
 
 /* ===============================
-   TABLE
+   DARK TABLE
 =================================*/
 
-.table-modern thead{
-    background:#f8fafc;
+.table-dark-custom{
+    background:#0f172a;
+    color:#e2e8f0;
 }
 
-.table-modern thead th{
-    font-size:11px;
-    text-transform:uppercase;
-    letter-spacing:.5px;
-    border:none;
+.table-dark-custom thead{
+    background:#020617;
 }
 
-.table-modern tbody tr{
-    transition:all .15s ease;
+.table-dark-custom thead th{
+    color:#94a3b8;
+    border-bottom:1px solid #1e293b;
 }
 
-.table-modern tbody tr:hover{
-    background:#f9fafb;
+.table-dark-custom tbody tr{
+    border-bottom:1px solid #1e293b;
 }
 
-.table-modern td{
-    vertical-align:middle;
-    font-size:14px;
+.table-dark-custom tbody tr:hover{
+    background:#1e293b;
+}
+
+.table-dark-custom td{
+    border-color:#1e293b;
+}
+
+/* amount tetap orange */
+.amount{
+    font-weight:600;
+    color:#fb923c;
 }
 
 /* ===============================
@@ -151,7 +159,94 @@
 }
 
 }
+/* ===============================
+   DARK BUTTON
+=================================*/
 
+.btn-outline-primary{
+    border-color:#334155;
+    color:#60a5fa;
+}
+
+.btn-outline-primary:hover{
+    background:#1e40af;
+    color:white;
+}
+
+.btn-outline-warning{
+    border-color:#334155;
+    color:#facc15;
+}
+
+.btn-outline-warning:hover{
+    background:#ca8a04;
+    color:white;
+}
+
+.btn-outline-danger{
+    border-color:#334155;
+    color:#f87171;
+}
+
+.btn-outline-danger:hover{
+    background:#dc2626;
+    color:white;
+}
+/* ===============================
+   TABLE TEXT IMPROVEMENT
+=================================*/
+
+.table-modern th{
+    font-weight:600;
+    font-size:12px;
+    letter-spacing:.6px;
+    text-transform:uppercase;
+    padding:14px 16px;
+}
+
+.table-modern td{
+    padding:14px 16px;
+    font-size:14px;
+    line-height:1.4;
+}
+
+/* tanggal */
+.table-modern td:first-child{
+    font-weight:500;
+    color:#cbd5f5;
+}
+
+/* deskripsi */
+.table-modern td:nth-child(2){
+    max-width:320px;
+    white-space:normal;
+}
+
+/* notes */
+.table-modern small{
+    display:block;
+    margin-top:4px;
+    font-size:12px;
+    color:#94a3b8;
+}
+
+/* amount */
+.amount{
+    font-size:15px;
+    font-weight:700;
+    letter-spacing:.3px;
+}
+
+/* user */
+.table-modern td:nth-child(5){
+    font-size:13px;
+    color:#cbd5f5;
+}
+
+/* aksi */
+.table-modern td:last-child{
+    text-align:center;
+}
 </style>
 
 
@@ -215,7 +310,7 @@ Tambah Income
 
 @if ($incomes->count() > 0)
 
-<table class="table table-modern mb-0">
+<table class="table-dark table-bordered table-modern mb-0">
 
 <thead>
 <tr>
@@ -364,14 +459,32 @@ Tambahkan pendapatan lain untuk mulai mencatat transaksi.
 
 function confirmDelete(url){
 
-if(confirm('Apakah Anda yakin ingin menghapus data ini?')){
+Swal.fire({
+    title: 'Yakin hapus data?',
+    text: "Data yang dihapus tidak bisa dikembalikan!",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#dc2626',
+    cancelButtonColor: '#64748b',
+    confirmButtonText: 'Ya, Hapus!',
+    cancelButtonText: 'Batal',
+    background: "#1e293b",
+    color: "#e2e8f0"
 
-document.getElementById('deleteForm').action = url
-document.getElementById('deleteForm').submit()
+}).then((result) => {
+
+    if (result.isConfirmed) {
+
+        document.getElementById('deleteForm').action = url
+        document.getElementById('deleteForm').submit()
+
+    }
+
+});
 
 }
 
-}
+
 
 </script>
 

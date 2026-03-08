@@ -119,13 +119,13 @@
 </div>
 <div class="card shadow mb-4">
 
-<div class="card-header py-3">
+<div class="card-header py-3 ">
     <h6 class="m-0 font-weight-bold text-primary-white">
         Filter Data
     </h6>
 </div>
 
-<div class="card-body">
+<div class="card-body filter-card">
     <form method="GET"
           action="{{ route('voucher-sales.index') }}"
           class="row g-3">
@@ -218,8 +218,8 @@
         @endif
 
         <div class="table-responsive">
-            <table class="table table-bordered table-hover" width="100%" cellspacing="0">
-                <thead class="table-light">
+            <table class="table table-bordered table-hover table-dark" width="100%" cellspacing="0">
+                <thead class="table-dark">
                     <tr>
                         <th>ID</th>
                         <th>Sale Date</th>
@@ -286,9 +286,9 @@
     </td>
 </tr>
 @endforelse
-</tbody>
+</tbody >
                 @if($sales->count() > 0)
-                    <tfoot class="table-light">
+                    <tfoot class="table-dark">
                         <tr>
                             {{-- FIX: colspan disesuaikan dengan jumlah kolom yang benar --}}
                             <th colspan="2" class="text-end">Total (This Page):</th>
@@ -348,7 +348,8 @@
             </div>
         </div>
     </div>
-</div><div class="modal fade" id="exportModal" tabindex="-1" aria-hidden="true">
+</div>
+<div class="modal fade" id="exportModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content p-4 text-center">
 

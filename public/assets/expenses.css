@@ -40,3 +40,29 @@
 .text-primary-white{
     color:#ffffff;
 }
+/* Filter Input Navy */
+.card-body .form-control{
+    background:#0f172a !important;   /* navy */
+    border:1px solid #334155 !important;
+    color:#ffffff !important;
+    border-radius:10px;
+}
+
+/* Focus */
+.card-body .form-control:focus{
+    background:#0f172a !important;
+    color:#fff !important;
+    border-color:#3b82f6 !important;
+    box-shadow:0 0 0 0.15rem rgba(59,130,246,.25);
+}
+
+/* Select dropdown */
+.card-body select{
+    background:#0f172a !important;
+    color:#fff !important;
+}
+
+/* Label biar kontras */
+.card-body label{
+    color:#e2e8f0;
+}

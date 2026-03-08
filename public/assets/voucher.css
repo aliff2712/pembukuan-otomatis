@@ -64,7 +64,7 @@
         width: 100%;
         margin-bottom: 12px;
     }
-
+    
     form button,
     form a {
         width: 100%;
@@ -181,4 +181,35 @@
         width: 100%;
     }
 
+}
+/* =========================
+   FILTER NAVY INPUT
+========================= */
+
+.filter-card .form-control,
+.filter-card select {
+    background: #0f172a !important;
+    border: 1px solid #334155 !important;
+    color: #ffffff !important;
+    border-radius: 10px;
+}
+
+/* focus */
+.filter-card .form-control:focus,
+.filter-card select:focus{
+    background: #0f172a !important;
+    color: #ffffff !important;
+    border-color: #3b82f6 !important;
+    box-shadow: 0 0 0 2px rgba(59,130,246,0.25);
+}
+
+/* dropdown option */
+.filter-card select option{
+    background:#0f172a;
+    color:#fff;
+}
+
+/* icon kalender */
+.filter-card input[type="date"]::-webkit-calendar-picker-indicator{
+    filter: invert(1);
 }

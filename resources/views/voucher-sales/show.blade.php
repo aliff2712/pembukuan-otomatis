@@ -12,12 +12,7 @@
 body {
     font-family: 'Inter', sans-serif;
 }
-/* TABLE TEXT BLACK CLEAN */
-.table,
-.table th,
-.table td {
-    color: #000 !important;
-}
+
 
 /* optional: biar header tetap tegas */
 .table thead th {
@@ -83,7 +78,7 @@ body {
         <div class="row g-4">
 
             <div class="col-md-6">
-                <table class="table table-borderless mb-0">
+                <table class="table table-bordered mb-0 table-dark">
                     <tr>
                         <td width="160"><strong>ID</strong></td>
                         <td>{{ $sale->id }}</td>
@@ -107,7 +102,7 @@ body {
             </div>
 
             <div class="col-md-6">
-                <table class="table table-borderless mb-0">
+                <table class="table table-bordered mb-0 table-dark">
                     <tr>
                         <td width="200"><strong>Total Transactions</strong></td>
                         <td>
@@ -184,10 +179,10 @@ body {
         </div>
 
         <div class="table-responsive">
-            <table class="table table-sm table-bordered">
-                <thead class="table-light">
+            <table class="table table-sm table-bordered table-dark ">
+                <thead class="table-dark ">
                     <tr>
-                        <th>Account Code</th>
+                        <th >Account Code</th>
                         <th>Account Name</th>
                         <th class="text-end">Debit</th>
                         <th class="text-end">Credit</th>
@@ -215,7 +210,7 @@ body {
                     </tr>
                     @endforeach
                 </tbody>
-                <tfoot class="table-light">
+                <tfoot class="table-dark">
                     <tr>
                         <th colspan="2" class="text-end">Total:</th>
                         <th class="text-end">

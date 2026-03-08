@@ -21,12 +21,12 @@
 
             <div class="card report-card shadow-sm border-0 h-100">
 
-                <div class="card-header bg-white border-0 pb-0">
+                <div class="card-header bg-navy border-0 pb-0">
                     <div class="d-flex align-items-center gap-2">
                         <div class="report-icon bg-primary-soft">
-                            <i class="fas fa-calendar-alt text-navy"></i>
+                            <i class="fas fa-calendar-alt text-white"></i>
                         </div>
-                        <h5 class="fw-bold mb-0 text-navy">Laporan Bulanan</h5>
+                        <h5 class="fw-bold mb-0 text-white">Laporan Bulanan</h5>
                     </div>
                 </div>
 
@@ -84,12 +84,12 @@
 
             <div class="card report-card shadow-sm border-0 h-100">
 
-                <div class="card-header bg-white border-0 pb-0">
+                <div class="card-header bg-navy border-0 pb-0">
                     <div class="d-flex align-items-center gap-2">
                         <div class="report-icon bg-success-soft">
-                            <i class="fas fa-chart-bar text-navy"></i>
+                            <i class="fas fa-chart-bar text-white"></i>
                         </div>
-                        <h5 class="fw-bold mb-0 text-navy">Laporan Tahunan</h5>
+                        <h5 class="fw-bold mb-0 text-white">Laporan Tahunan</h5>
                     </div>
                 </div>
 

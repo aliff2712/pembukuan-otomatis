@@ -18,7 +18,7 @@
             </h5>
 
             {{-- HEADER INFO --}}
-            <table class="table table-bordered">
+            <table class="table table-bordered table-dark">
                 <tr>
                     <th width="200">{{ __('Date') }}</th>
                     <td>{{ \Carbon\Carbon::parse($entry->journal_date)->format('Y-m-d') }}</td>
@@ -49,7 +49,7 @@
             {{-- JOURNAL LINES --}}
             <h6 class="mt-4">{{ __('Journal Lines') }}</h6>
 
-            <table class="table table-striped table-bordered">
+            <table class="table table-striped table-bordered table-dark">
                 <thead>
                     <tr>
                         <th>Account Code</th>
@@ -75,7 +75,7 @@
 
                 </tbody>
 
-                <tfoot>
+                <tfoot class="">
                     <tr class="fw-bold">
                         <td colspan="2" class="text-end">TOTAL</td>
                         <td class="text-end">{{ number_format($totalDebit,0,',','.') }}</td>
