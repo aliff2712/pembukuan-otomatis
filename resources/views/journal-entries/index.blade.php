@@ -185,7 +185,7 @@
             <i class="fas fa-filter me-1"></i> Filter
         </button>
 
-        <a href="{{ route('journal-entries.index') }}" class="btn btn-navy text-warning">
+        <a href="{{ route('journal-entries.index') }}" class="btn btn-grey text-warning">
             <b>RESET</b>
         </a>
 
