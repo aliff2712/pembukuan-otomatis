@@ -149,7 +149,7 @@
     <div class="offcanvas offcanvas-start text-bg-dark"
          tabindex="-1"
          id="mobileSidebar">
-        <div class="offcanvas-header border-bottom border-secondary">
+        <div class="offcanvas   -header border-bottom border-secondary">
             <h5>DHS FINANCE</h5>
             <button type="button"
                     class="btn-close btn-close-white"

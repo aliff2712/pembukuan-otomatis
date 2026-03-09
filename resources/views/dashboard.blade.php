@@ -45,8 +45,8 @@
 
     <div class="col-xl-4 col-md-6 mb-4">
         <x-dashboard.card
-            title="Belum Bayar (Piutang Usaha - 1103)"
-            :value="'Rp ' . number_format($arBalance, 0, ',', '.')"
+            title="Belum Bayar (Piutang Usaha)"
+            :value="'Rp ' . number_format( $arBalance, 0, ',', '.')"
             icon="fas fa-file-invoice-dollar"
             bg="bg-dark-blue"
             :href="route('finance.transaksi.index', ['status' => 'unpaid'])"
