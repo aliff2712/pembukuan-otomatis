@@ -274,7 +274,7 @@ btn.addEventListener('click', function(e){
         confetti.style.left = "50vw";
         confetti.style.top = "80vh";
 
-        const x = (Math.random()-0.5)*800;
+        const x = (Math.random()-0.5)*500;
         const y = -(Math.random()*600 + 200);
 
         confetti.style.setProperty('--x', x + "px");

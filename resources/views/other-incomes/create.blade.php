@@ -120,12 +120,14 @@
                             name="income_coa_id"
                             required>
                             <option value="">-- Pilih Akun Pendapatan --</option>
-                            @foreach($incomeAccounts as $account)
-                                <option value="{{ $account->id }}"
-                                    {{ old('income_coa_id') == $account->id ? 'selected' : '' }}>
-                                    {{ $account->account_code }} - {{ $account->account_name }}
-                                </option>
-                            @endforeach
+                          @foreach($incomeAccounts as $account)
+                                @if($account->account_code != 4101)
+                                    <option value="{{ $account->acccount_code }}"
+                                        {{ old('income_coa_id') == $account->id ? 'selected' : '' }}>
+                                        {{ $account->account_code }} - {{ $account->account_name }}
+                                    </option>
+                                @endif
+                          @endforeach
                         </select>
                         @error('income_coa_id')
                             <div class="invalid-feedback">{{ $message }}</div>
