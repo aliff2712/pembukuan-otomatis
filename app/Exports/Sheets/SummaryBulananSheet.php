@@ -20,58 +20,46 @@ class SummaryBulananSheet implements FromArray, WithTitle, WithStyles
         protected int $tahun
     ) {}
 
-    public function array(): array
-    {
-        $label = Carbon::create($this->tahun, $this->bulan)->translatedFormat('F Y');
+  public function array(): array
+{
+    $label = Carbon::create($this->tahun, $this->bulan)->translatedFormat('F Y');
 
-        $memberPaid   = $this->transaksis->where('status', 'paid')->sum('total');
-        $memberUnpaid = $this->transaksis->where('status', 'unpaid')->sum('total');
-        $voucher      = $this->vouchers->sum('total_amount');
-        $other        = $this->otherIncomes->sum('amount');
-        $expense      = $this->expenses->sum('amount');
+    $memberPaid   = $this->transaksis->where('status', 'paid')->sum('total');
+    $memberUnpaid = $this->transaksis->where('status', 'unpaid')->sum('total');
+    $voucher      = $this->vouchers->sum('total_amount');
+    $other        = $this->otherIncomes->sum('amount');
 
-        $totalPendapatan = $memberPaid + $voucher + $other;
-        $labaKotor       = $totalPendapatan - $expense;
+    // Sesuai Image 2: total tidak termasuk memberUnpaid
+    $totalPendapatan = $memberPaid + $voucher + $other;
 
-        return [
-            ['LAPORAN KEUANGAN DHS FINANCE'],
-            ['Periode', $label],
-            ['Dicetak', now()->format('d/m/Y H:i')],
-            [''],
+    return [
+        // Judul digabung dalam 1 baris
+        ['LAPORAN KEUANGAN DHS FINANCE - ' . strtoupper($label)],
+        [''],
 
-            ['RINGKASAN PENDAPATAN'],
-            ['Keterangan', 'Nominal'],
-            ['Member - Paid',   $memberPaid],
-            ['Member - Unpaid', $memberUnpaid],
-            ['Voucher',         $voucher],
-            ['Other Income',    $other],
-            ['TOTAL PENDAPATAN', $totalPendapatan],
-            [''],
+        ['RINGKASAN PENDAPATAN'],
+        ['Sumber', 'Nominal'],           // ← 'Sumber', bukan 'Keterangan'
+        ['Member - Paid',   $memberPaid],
+        ['Member - Unpaid', $memberUnpaid],
+        ['Voucher',         $voucher],
+        ['Other Income',    $other],
+        [''],
+        ['TOTAL PENDAPATAN BERSIH', $totalPendapatan], // ← label lengkap
+    ];
+}
 
-            ['RINGKASAN PENGELUARAN'],
-            ['Keterangan', 'Nominal'],
-            ['Total Expense', $expense],
-            [''],
-
-            ['LABA / RUGI', $labaKotor],
-        ];
-    }
+public function styles(Worksheet $sheet): array
+{
+    return [
+        1 => ['font' => ['bold' => true, 'size' => 14]],
+        3 => ['font' => ['bold' => true]],
+        4 => ['font' => ['bold' => true]],
+        10 => ['font' => ['bold' => true]],
+    ];
+}
 
     public function title(): string
     {
-        return 'Summary';
-    }
-
-    public function styles(Worksheet $sheet): array
-    {
-        return [
-            1  => ['font' => ['bold' => true, 'size' => 14]],
-            5  => ['font' => ['bold' => true]],
-            6  => ['font' => ['bold' => true]],
-            11 => ['font' => ['bold' => true]],
-            13 => ['font' => ['bold' => true]],
-            14 => ['font' => ['bold' => true]],
-            17 => ['font' => ['bold' => true, 'size' => 12]],
-        ];
+        return 'Summary Bulanan';
     }
 }

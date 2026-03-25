@@ -12,7 +12,7 @@
         <div class="col-md-3">
             <div class="card bg-success text-white shadow-sm">
                 <div class="card-body">
-                    <small>Member Paid</small>
+                    <small>Member Bayar</small>
                     <h5 class="fw-bold">
                         Rp {{ number_format($summary['memberPaid'],0,',','.') }}
                     </h5>
@@ -24,7 +24,7 @@
         <div class="col-md-3">
             <div class="card bg-warning text-dark shadow-sm">
                 <div class="card-body">
-                    <small>Member Unpaid</small>
+                    <small>Member Belum bayar</small>
                     <h5 class="fw-bold">
                         Rp {{ number_format($summary['memberUnpaid'],0,',','.') }}
                     </h5>
